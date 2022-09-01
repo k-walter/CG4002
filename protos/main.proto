@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+service RelayToUltra {
+  rpc EmitFoo(Foo) returns (google.protobuf.Empty) {}
+}
+
+message Foo {
+  string message = 1;
+}
