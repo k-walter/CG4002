@@ -4,30 +4,37 @@ import "google/protobuf/empty.proto";
 option go_package = "./";
 
 service Relay {
+  // glove (MPU6050) data for AI
   rpc Gesture(SensorData) returns (google.protobuf.Empty) {}
+  // detected by infrared (KY-022 rx, KY-005 tx)
   rpc Shoot(SensorData) returns (google.protobuf.Empty) {}
   rpc Shot(SensorData) returns (google.protobuf.Empty) {}
 }
 
 service Viz {
   rpc Update(State) returns (google.protobuf.Empty) {}
-  rpc InFov(google.protobuf.Empty) returns (google.protobuf.Empty) {}
+  rpc InFov(InFovMessage) returns (InFovMessage) {}
 }
 
 service Pynq {
   rpc Emit(SensorData) returns (google.protobuf.Empty) {}
-  rpc Poll(InFovMessage) returns (InFovMessage) {}
+  rpc Poll(google.protobuf.Empty) returns (Event) {}
 }
 
 message SensorData {
   uint32 player = 1;
   uint32 time = 2; // No need to fill, synchronized on engine
-  // TODO glove (MPU6050), infrared (KY-022 rx, KY-005 tx) data for AI
+  uint32 roll = 3;
+  uint32 pitch = 4;
+  uint32 yaw = 5;
+  uint32 x = 6;
+  uint32 y = 7;
+  uint32 z = 8;
 }
 
 message InFovMessage {
   uint32 player = 1;
-  uint32 time = 2; // No need to fill, synchronized on engine
+  uint32 time = 2;
   bool inFov = 3;
 }
 
@@ -63,4 +70,5 @@ enum Action {
     shield = 5;
     // private
     shot = 6;
+    grenaded = 7;
 }
