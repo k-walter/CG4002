@@ -17,7 +17,7 @@ def run():
                     player=1,
                     roll=random.randint(0, (1<<16) - 1),
                     pitch=random.randint(0, (1<<16) - 1),
-                    roll=random.randint(0, (1<<16) - 1),
+                    yaw=random.randint(0, (1<<16) - 1),
                     x=random.randint(0, (1<<16) - 1),
                     y=random.randint(0, (1<<16) - 1),
                     z=random.randint(0, (1<<16) - 1),
