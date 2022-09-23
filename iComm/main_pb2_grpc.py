@@ -22,12 +22,12 @@ class RelayStub(object):
                 )
         self.Shoot = channel.unary_unary(
                 '/Relay/Shoot',
-                request_serializer=main__pb2.SensorData.SerializeToString,
+                request_serializer=main__pb2.Event.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
         self.Shot = channel.unary_unary(
                 '/Relay/Shot',
-                request_serializer=main__pb2.SensorData.SerializeToString,
+                request_serializer=main__pb2.Event.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
 
@@ -65,12 +65,12 @@ def add_RelayServicer_to_server(servicer, server):
             ),
             'Shoot': grpc.unary_unary_rpc_method_handler(
                     servicer.Shoot,
-                    request_deserializer=main__pb2.SensorData.FromString,
+                    request_deserializer=main__pb2.Event.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
             'Shot': grpc.unary_unary_rpc_method_handler(
                     servicer.Shot,
-                    request_deserializer=main__pb2.SensorData.FromString,
+                    request_deserializer=main__pb2.Event.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
     }
@@ -112,7 +112,7 @@ class Relay(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Relay/Shoot',
-            main__pb2.SensorData.SerializeToString,
+            main__pb2.Event.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -129,7 +129,7 @@ class Relay(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Relay/Shot',
-            main__pb2.SensorData.SerializeToString,
+            main__pb2.Event.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
@@ -151,7 +151,7 @@ class VizStub(object):
                 )
         self.InFov = channel.unary_unary(
                 '/Viz/InFov',
-                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                request_serializer=main__pb2.InFovMessage.SerializeToString,
                 response_deserializer=main__pb2.InFovMessage.FromString,
                 )
 
@@ -181,7 +181,7 @@ def add_VizServicer_to_server(servicer, server):
             ),
             'InFov': grpc.unary_unary_rpc_method_handler(
                     servicer.InFov,
-                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    request_deserializer=main__pb2.InFovMessage.FromString,
                     response_serializer=main__pb2.InFovMessage.SerializeToString,
             ),
     }
@@ -223,7 +223,7 @@ class Viz(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Viz/InFov',
-            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            main__pb2.InFovMessage.SerializeToString,
             main__pb2.InFovMessage.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

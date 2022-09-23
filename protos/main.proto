@@ -7,8 +7,8 @@ service Relay {
   // glove (MPU6050) data for AI
   rpc Gesture(SensorData) returns (google.protobuf.Empty) {}
   // detected by infrared (KY-022 rx, KY-005 tx)
-  rpc Shoot(SensorData) returns (google.protobuf.Empty) {}
-  rpc Shot(SensorData) returns (google.protobuf.Empty) {}
+  rpc Shoot(Event) returns (google.protobuf.Empty) {}
+  rpc Shot(Event) returns (google.protobuf.Empty) {}
 }
 
 service Viz {
