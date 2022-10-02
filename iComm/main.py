@@ -1,36 +1,42 @@
 import logging
-
-import random
 import grpc
 import main_pb2
 import main_pb2_grpc
 
-def run():
+HEADER_GUN = 71
+HEADER_VEST = 86
+
+def run(*args):
     with grpc.insecure_channel('localhost:8081') as channel:
-        while True:
-            input("Enter to send dummy packet...")
-            stub = main_pb2_grpc.RelayStub(channel)
 
-            # grenade, reload, shield
-            if random.randint(1, 4) != 1:
-                msg = main_pb2.SensorData(
-                    player=1,
-                    roll=random.randint(0, (1<<16) - 1),
-                    pitch=random.randint(0, (1<<16) - 1),
-                    yaw=random.randint(0, (1<<16) - 1),
-                    x=random.randint(0, (1<<16) - 1),
-                    y=random.randint(0, (1<<16) - 1),
-                    z=random.randint(0, (1<<16) - 1),
-                )
-                resp = stub.Gesture(msg)
+        stub = main_pb2_grpc.RelayStub(channel)
 
-            # shoot
-            else:
+        # grenade, reload, shield
+        if len(args) == 2:
+            data_obj = args[1]
+            msg = main_pb2.SensorData(
+                player=1,
+                roll=data_obj["roll"],
+                pitch=data_obj["pitch"],
+                yaw=data_obj["yaw"],
+                x=data_obj["x"],
+                y=data_obj["y"],
+                z=data_obj["z"],
+            )
+            resp = stub.Gesture(msg)
+
+        # shoot/shot
+        else:
+            if args[0] == HEADER_GUN:
                 msg = main_pb2.Event(player=1, action=main_pb2.shoot)
                 resp = stub.Shoot(msg)
+            if args[0] == HEADER_VEST:
+                msg = main_pb2.Event(player=1, action=main_pb2.shot)
+                resp = stub.Shot(msg)
 
-            print(f"Received resp {resp}")
+        print(f"Received resp {resp}")
 
 if __name__ == "__main__":
     logging.basicConfig()
     run()
+
