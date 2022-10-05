@@ -13,11 +13,11 @@ const (
 	Event2Eng Topic = iota // *pb.Event
 	Data2Pynq              // *pb.SensorData
 
-	State2Eval // *pb.State
-	State2Eng  // *pb.State
+	State2Eval // *PlayerState
+	State2Eng  // *pb.PlayerState
 
-	State2Viz // *pb.State
-	InFovReq  // *pb.InFovMessage
+	State2Viz // *PlayerState
+	Event2Viz // *pb.Event
 )
 
 func (t Topic) String() string {
@@ -32,8 +32,8 @@ func (t Topic) String() string {
 		return "State2Eng"
 	case State2Viz:
 		return "State2Viz"
-	case InFovReq:
-		return "InFovReq"
+	case Event2Viz:
+		return "Event2Viz"
 	}
 	log.Fatalf("unknown enum %d\n", t)
 	return "unk"

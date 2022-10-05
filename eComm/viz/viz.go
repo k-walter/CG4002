@@ -13,9 +13,9 @@ const (
 	broker    = "tcp://broker.hivemq.com:1883"
 	timeoutMs = 1000
 
-	inFovReqTopic  = "cg4002/b7/inFovReq"
+	eventTopic     = "cg4002/b7/event"
 	inFovRespTopic = "cg4002/b7/inFovResp"
-	updateTopic    = "cg4002/b7/update"
+	updateTopic    = "cg4002/b7/state"
 )
 
 type Visualizer struct {
@@ -23,10 +23,10 @@ type Visualizer struct {
 	clnt mqtt.Client
 
 	chState chan *pb.State
-	chInFov chan *pb.InFovMessage
+	chEvent chan *pb.Event
 }
 
-func Make(a *common.Arg) *Visualizer {
+func Make(*common.Arg) *Visualizer {
 	// Connect to mqtt broker
 	opts := mqtt.NewClientOptions().
 		AddBroker(broker).
@@ -43,9 +43,9 @@ func Make(a *common.Arg) *Visualizer {
 	})
 
 	// Subscribe to mqtt grenade inFov req
-	chInFov := make(chan *pb.InFovMessage, common.ChSz)
-	common.Sub(common.InFovReq, func(i interface{}) {
-		go func(i *pb.InFovMessage) { chInFov <- i }(i.(*pb.InFovMessage))
+	chEvent := make(chan *pb.Event, common.ChSz)
+	common.Sub(common.Event2Viz, func(i interface{}) {
+		go func(i *pb.Event) { chEvent <- i }(i.(*pb.Event))
 	})
 
 	// Subscribe to mqtt grenade inFov resp
@@ -56,7 +56,7 @@ func Make(a *common.Arg) *Visualizer {
 	return &Visualizer{
 		clnt:    c,
 		chState: chState,
-		chInFov: chInFov,
+		chEvent: chEvent,
 	}
 }
 
@@ -69,8 +69,8 @@ func (v *Visualizer) Run() {
 		select { // Async send
 		case state := <-v.chState:
 			go v.publishState(state)
-		case msg := <-v.chInFov:
-			go v.inFovReq(msg)
+		case event := <-v.chEvent:
+			go v.publishEvent(event)
 		}
 	}
 }
@@ -88,12 +88,13 @@ func (v *Visualizer) publishState(s *pb.State) {
 	}
 }
 
-func (v *Visualizer) inFovReq(msg *pb.InFovMessage) {
-	data, err := proto.Marshal(msg)
+func (v *Visualizer) publishEvent(e *pb.Event) {
+	// NOTE Grenade event doubles as InFovRequest
+	data, err := proto.Marshal(e)
 	if err != nil {
 		log.Fatal(err)
 	}
-	if t := v.clnt.Publish(inFovReqTopic, 1, false, data); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
+	if t := v.clnt.Publish(eventTopic, 1, false, data); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
 		log.Fatal(t.Error())
 	}
 }
