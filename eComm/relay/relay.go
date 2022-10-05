@@ -14,23 +14,23 @@ import (
 	"time"
 )
 
-type RelayServer struct {
+type Server struct {
 	// From Relay
 	pb.UnimplementedRelayServer
 	lis net.Listener
 }
 
-func Make(a *common.Arg) *RelayServer {
+func Make(a *common.Arg) *Server {
 	// From relay
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", a.RelayPort))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	return &RelayServer{lis: lis}
+	return &Server{lis: lis}
 }
 
-func (s *RelayServer) Run() {
+func (s *Server) Run() {
 	g := grpc.NewServer()
 	pb.RegisterRelayServer(g, s)
 	if err := g.Serve(s.lis); err != nil {
@@ -40,18 +40,18 @@ func (s *RelayServer) Run() {
 
 }
 
-func (s *RelayServer) Close() {
+func (s *Server) Close() {
 	_ = s.lis.Close()
 }
 
-func (s *RelayServer) Gesture(c context.Context, d *pb.SensorData) (*emptypb.Empty, error) {
+func (s *Server) Gesture(c context.Context, d *pb.SensorData) (*emptypb.Empty, error) {
 	log.Println("relay|Received gesture")
 	d.Time = uint64(time.Now().UnixNano())
 	common.Pub(common.Data2Pynq, d)
 	return &emptypb.Empty{}, nil
 }
 
-func (s *RelayServer) Shoot(c context.Context, e *pb.Event) (*emptypb.Empty, error) {
+func (s *Server) Shoot(c context.Context, e *pb.Event) (*emptypb.Empty, error) {
 	log.Println("relay|Received shoot")
 
 	// Verification
@@ -69,7 +69,7 @@ func (s *RelayServer) Shoot(c context.Context, e *pb.Event) (*emptypb.Empty, err
 	return &emptypb.Empty{}, nil
 }
 
-func (s *RelayServer) Shot(c context.Context, e *pb.Event) (*emptypb.Empty, error) {
+func (s *Server) Shot(c context.Context, e *pb.Event) (*emptypb.Empty, error) {
 	log.Println("relay|Received shot")
 
 	// Verification
