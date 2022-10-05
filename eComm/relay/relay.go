@@ -15,12 +15,8 @@ import (
 
 type RelayServer struct {
 	// From Relay
-	pb.UnimplementedFromRelayServer
+	pb.UnimplementedRelayServer
 	lis net.Listener
-
-	// To PyNQ
-	py     pb.ToPynqClient
-	pyConn *grpc.ClientConn
 }
 
 func Make(a *common.Arg) *RelayServer {
@@ -60,21 +56,11 @@ func (s *RelayServer) Close() {
 func (s *RelayServer) Gesture(c context.Context, d *pb.SensorData) (*emptypb.Empty, error) {
 	log.Println("relay|Received gesture")
 	d.Time = uint32(time.Now().Nanosecond())
-
-	// Non-blocking forward to PyNQ
-	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), time.Second)
-		defer cancel()
-		_, err := s.py.Emit(ctx, d)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
-
+	common.Pub(common.Data2Pynq, d)
 	return &emptypb.Empty{}, nil
 }
 
-func (s *RelayServer) Shoot(c context.Context, d *pb.SensorData) (*emptypb.Empty, error) {
+func (s *RelayServer) Shoot(c context.Context, e *pb.Event) (*emptypb.Empty, error) {
 	log.Println("relay|Received shoot")
 	common.Pub(common.EventToEngine, pb.Event{
 		Player: d.Player,
@@ -84,7 +70,7 @@ func (s *RelayServer) Shoot(c context.Context, d *pb.SensorData) (*emptypb.Empty
 	return &emptypb.Empty{}, nil
 }
 
-func (s *RelayServer) Shot(c context.Context, d *pb.SensorData) (*emptypb.Empty, error) {
+func (s *RelayServer) Shot(c context.Context, e *pb.Event) (*emptypb.Empty, error) {
 	log.Println("relay|Received shot")
 	common.Pub(common.EventToEngine, pb.Event{
 		Player: d.Player,

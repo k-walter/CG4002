@@ -6,31 +6,55 @@ import (
 	"fmt"
 	"google.golang.org/grpc"
 	"log"
-	"net"
 )
 
 type Engine struct {
-	state pb.State
-	chRelay chan struct{}
-	chEval chan *pb.State
+	state   *pb.State
+	chEvent chan *pb.Event
+	chEval  chan *pb.State
 }
 
-func Make(a *common.Arg) Engine {
+func Make(*common.Arg) *Engine {
+	e := Engine{
+		state: &pb.State{
+			P1: &pb.PlayerState{},
+			P2: &pb.PlayerState{},
+		},
+		chEvent: make(chan *pb.Event, common.ChSz),
+		chEval:  make(chan *pb.State, common.ChSz),
+	}
+
 	// Subscribe to channels
-	RelayToEngine Topic = iota
-	EvalToEngine
+	common.Sub(common.Event2Eng, func(i interface{}) {
+		go func(i *pb.Event) { e.chEvent <- i }(i.(*pb.Event))
+	})
+	common.Sub(common.State2Eng, func(i interface{}) {
+		go func(i *pb.State) { e.chEval <- i }(i.(*pb.State))
+	})
 
-    return Engine{state: pb.State{
-		P1: &pb.PlayerState{},
-		P2: &pb.PlayerState{},
-	}}
+	return &e
 }
 
-func (s *RelayServer) Run() {
-	// Multiplex channels
+func (e *Engine) Run() {
+	for {
+		// Serialise channels
+		// TODO add timestamp
+		select {
+		case event := <-e.chEvent:
+			log.Println("engine|Received event", event.Action.String())
+			e.handleEvent(event)
+			common.Pub(common.State2Eval, e.state)
+			common.Pub(common.State2Viz, e.state) // TODO remove if often wrong/jerky
+
+		case state := <-e.chEval:
+			log.Println("engine|Update with eval's truth")
+			e.state = state
+			common.Pub(common.State2Viz, e.state)
+		}
+	}
 }
 
-func (s *RelayServer) Close() {
+func (e *Engine) Close() {
 	// TODO Close channels
 }
 

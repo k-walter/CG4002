@@ -15,12 +15,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-const (
-	mtu = 1500
-)
-
 type EvalClient struct {
-	// TODO reserve mem for reader, data
+	// OPTIMIZATION reserve mem for reader, data
 	conn     net.Conn
 	key      string
 	chEngine chan *pb.State
@@ -40,7 +36,7 @@ func Make(args *common.Arg) *EvalClient {
 	}
 
 	// Subscribe to state updates
-	common.Sub(common.EngineToEval, func(i interface{}) {
+	common.Sub(common.State2Eval, func(i interface{}) {
 		go func(i *pb.State) { e.chEngine <- i }(i.(*pb.State))
 	})
 
@@ -55,7 +51,7 @@ func (c *EvalClient) Run() {
 	for curState := range c.chEngine {
 		c.send(curState)
 		trueState := c.receive()
-		common.Pub(common.EvalToEngine, trueState)
+		common.Pub(common.State2Eng, trueState)
 	}
 }
 
