@@ -46,7 +46,7 @@ func (s *RelayServer) Close() {
 
 func (s *RelayServer) Gesture(c context.Context, d *pb.SensorData) (*emptypb.Empty, error) {
 	log.Println("relay|Received gesture")
-	d.Time = uint32(time.Now().Nanosecond())
+	d.Time = uint64(time.Now().UnixNano())
 	common.Pub(common.Data2Pynq, d)
 	return &emptypb.Empty{}, nil
 }
@@ -63,7 +63,7 @@ func (s *RelayServer) Shoot(c context.Context, e *pb.Event) (*emptypb.Empty, err
 	}
 
 	// Forward to engine
-	e.Time = uint32(time.Now().Nanosecond())
+	e.Time = uint64(time.Now().UnixNano())
 	common.Pub(common.Event2Eng, e)
 
 	return &emptypb.Empty{}, nil
@@ -81,7 +81,7 @@ func (s *RelayServer) Shot(c context.Context, e *pb.Event) (*emptypb.Empty, erro
 	}
 
 	// Forward to engine
-	e.Time = uint32(time.Now().Nanosecond())
+	e.Time = uint64(time.Now().UnixNano())
 	common.Pub(common.Event2Eng, e)
 
 	return &emptypb.Empty{}, nil

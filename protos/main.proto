@@ -23,7 +23,7 @@ service Pynq {
 
 message SensorData {
   uint32 player = 1;
-  uint32 time = 2; // No need to fill, synchronized on engine
+  uint64 time = 2; // No need to fill, synchronized on engine
   // Data
   uint32 roll = 3;
   uint32 pitch = 4;
@@ -35,13 +35,13 @@ message SensorData {
 
 message InFovMessage {
   uint32 player = 1;
-  uint32 time = 2;
+  uint64 time = 2;
   bool inFov = 3;
 }
 
 message Event {
   uint32 player = 1;
-  uint32 time = 2;
+  uint64 time = 2;
   Action action = 3;
 }
 
@@ -51,6 +51,7 @@ message State {
 }
 
 message PlayerState {
+  // public
   uint32 hp = 1 [json_name="hp"];
   Action action = 2 [json_name="action"];
   uint32 bullets = 3 [json_name="bullets"];
@@ -59,6 +60,8 @@ message PlayerState {
   uint32 shield_health = 6 [json_name="shield_health"];
   uint32 num_deaths = 7 [json_name="num_deaths"];
   uint32 num_shield = 8 [json_name="num_shield"];
+  // private
+  uint64 lastShieldNs = 9;
 }
 
 enum Action {
