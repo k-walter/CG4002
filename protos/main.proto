@@ -11,9 +11,10 @@ service Relay {
   rpc Shot(Event) returns (google.protobuf.Empty) {}
 }
 
+// Not in use impl with MQTT
 service Viz {
   rpc Update(State) returns (google.protobuf.Empty) {}
-  rpc InFov(InFovMessage) returns (InFovMessage) {}
+  rpc InFov(Event) returns (InFovResp) {} // Option<InFovResp>
 }
 
 service Pynq {
@@ -33,7 +34,7 @@ message SensorData {
   uint32 z = 8;
 }
 
-message InFovMessage {
+message InFovResp {
   uint32 player = 1;
   uint64 time = 2;
   bool inFov = 3;
@@ -51,7 +52,6 @@ message State {
 }
 
 message PlayerState {
-  // public
   uint32 hp = 1 [json_name="hp"];
   Action action = 2 [json_name="action"];
   uint32 bullets = 3 [json_name="bullets"];
@@ -60,8 +60,6 @@ message PlayerState {
   uint32 shield_health = 6 [json_name="shield_health"];
   uint32 num_deaths = 7 [json_name="num_deaths"];
   uint32 num_shield = 8 [json_name="num_shield"];
-  // private
-  uint64 lastShieldNs = 9;
 }
 
 enum Action {
@@ -74,5 +72,4 @@ enum Action {
     shield = 5;
     // private
     shot = 6;
-    grenaded = 7;
 }
