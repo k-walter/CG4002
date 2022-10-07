@@ -15,19 +15,15 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-const (
-	mtu = 1500
-)
-
-type EvalClient struct {
-	// TODO reserve mem for reader, data
+type Client struct {
+	// OPTIMIZATION reserve mem for reader, data
 	conn     net.Conn
 	key      string
 	chEngine chan *pb.State
 }
 
-func Make(args *common.Arg) *EvalClient {
-	e := EvalClient{
+func Make(args *common.Arg) *Client {
+	e := Client{
 		key:      args.EvalKey,
 		chEngine: make(chan *pb.State, common.ChSz),
 	}
@@ -40,27 +36,30 @@ func Make(args *common.Arg) *EvalClient {
 	}
 
 	// Subscribe to state updates
-	common.Sub(common.EngineToEval, func(i interface{}) {
+	common.Sub(common.State2Eval, func(i interface{}) {
 		go func(i *pb.State) { e.chEngine <- i }(i.(*pb.State))
 	})
 
 	return &e
 }
 
-func (c *EvalClient) Close() {
+func (c *Client) Close() {
 	_ = c.conn.Close()
 }
 
-func (c *EvalClient) Run() {
+func (c *Client) Run() {
 	for curState := range c.chEngine {
+		// TODO subtract RTT from shield time left
 		c.send(curState)
 		trueState := c.receive()
-		common.Pub(common.EvalToEngine, trueState)
+		// TODO convert shield time to ns
+		common.Pub(common.State2Eng, trueState)
 	}
 }
 
-func (c *EvalClient) send(s *pb.State) {
+func (c *Client) send(s *pb.State) {
 	// Get json
+	// TODO choose fields, convert shield time to sec
 	msg := common.PbToJson(s.ProtoReflect())
 	log.Println("eval|Send", string(msg))
 
@@ -82,7 +81,7 @@ func (c *EvalClient) send(s *pb.State) {
 	}
 }
 
-func (c *EvalClient) receive() *pb.State {
+func (c *Client) receive() *pb.State {
 	// Get length
 	r := bufio.NewReader(c.conn)
 	lenStr, err := r.ReadString('_')
