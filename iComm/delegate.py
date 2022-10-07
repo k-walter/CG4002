@@ -8,82 +8,78 @@ class Delegate(btle.DefaultDelegate):
         self.serial_char = serial_char
         self.header = header
         self.data_buffer = b""
+        self.packet = b""
         self.prev_seq_no = None
         self.hand_ack = False       
-        self.checksum = 0
-        self.is_fragmented = False
         self.is_valid_data = False
+        self.is_duplicate_pkt = False
 
     # Triggers whenever data comes in to the characteristic
     def handleNotification(self, cHandle, data):
-        if (len(data) == 1 and data[0] == 65):
-            self.__handle_acknowledgement()
-        else:
-            # when data is fragmented is true, there won't be a header,
-            # so pass in unconditionally
-            if (self.is_fragmented or data[0] == self.header):
-                self.__handle_data(data)
-
-    def __handle_acknowledgement(self):
-        print(f"Acknowledgement Received")
-        self.hand_ack = True
+        print("Data from handleNotif: ", data)
+        self.__handle_data(data)
     
     def __handle_data(self, data):
-        for b in data:
-            print(b, end=" ")
-        #Non-fragmented Data
-        if not self.is_fragmented and len(data) == PACKET_SIZE:
-            self.checksum = 0
-            for i in range(len(data)-1):
-                self.checksum ^= data[i]
-            
-            if self.prev_seq_no == data[1] or self.checksum != data[-1]:
-                self.is_valid_data = False
-            else:
-                self.prev_seq_no = data[1]
-                self.data_buffer = data
-                self.is_valid_data = True
+        # print("Data by individual bytes: ")
+        # for b in data:
+        #     print(b, end=" ")
+        # print()    
+        if (len(self.data_buffer) > 0
+         or (data[0] == self.header) or data[0] == 65):
+            self.data_buffer += data
         
-        #Fragmented Data
-        else:
-            self.is_fragmented = True
+        if (len(self.data_buffer) >= PACKET_SIZE):
+            # Assemble packet (To be sent or dropped)
+            self.packet = self.data_buffer[:PACKET_SIZE]
+            self.data_buffer = self.data_buffer[PACKET_SIZE:]
 
-            #Data coming in + current data buffer is under packet size
-            if (len(self.data_buffer) + len(data) < PACKET_SIZE):
-                for i in range(len(data)):
-                    self.checksum ^= data[i]  
-                self.data_buffer += data
-
-            #Data coming in + current data buffer is over packet size
-            elif (len(self.data_buffer) + len(data) > PACKET_SIZE):
-                rem = PACKET_SIZE - len(self.data_buffer)
-                for i in range(rem-1):
-                    self.checksum ^= data[i]
-                self.data_buffer += data
-                if (self.prev_seq_no == self.data_buffer[1] 
-                or self.checksum != self.data_buffer[PACKET_SIZE-1]):
-  
-                    self.is_valid_data = False
+            print("Assembled Packet: ", self.packet)
+            
+            if self.__is_valid_checksum():
+                if self.is_ack_pkt():
+                    if not self.hand_ack:
+                        self.hand_ack = True
+                    ## Need to handle case for when relay node send to beetle
                 else:
-                    self.prev_seq_no = self.data_buffer[1]
-                    self.is_valid_data = True
+                    if not self.__is_duplicate():
+                        self.is_duplicate_pkt = False
+                        self.is_valid_data = True
+                        self.prev_seq_no = self.packet[1]
+                        print("DATA OK TO SEND")
+                    else:
+                        self.is_duplicate_pkt = True
+                        self.is_valid_data = False
+                        print("DUP PACKET")
+                        
 
+            # Invalid data            
             else:
-                #Data coming in + Current data buffer meets packet size
-                self.is_fragmented = False
-                for i in range(len(data)-1):
-                    self.checksum ^= data[i]
-                self.data_buffer += data
+                self.is_valid_data = False
+                self.is_duplicate_pkt = False
+                print("CORRUPTED PACKET")
+        
+        # Packet not assembled yet, do not send
+        else:
+            self.is_valid_data = False
+            print("ASSEMBLING PACKET")
 
-                #At this point, data_buffer is assembled
-                # print("Assembled data: ", self.data_buffer)
-                # print("Calced Checksum: ", self.checksum)
-                if (self.prev_seq_no == self.data_buffer[1] 
-                or self.checksum != self.data_buffer[PACKET_SIZE-1]):
-                    self.is_valid_data = False
-                else:
-                    self.prev_seq_no = self.data_buffer[1]
-                    self.is_valid_data = True
+    def __is_duplicate(self):
+        return self.prev_seq_no == self.packet[1]
+
+    #Helper function to calculate and compare checksum
+    def __is_valid_checksum(self):
+        checksum = 0
+        for i in range(PACKET_SIZE-1):
+            checksum ^= self.packet[i]
+        return checksum == self.packet[-1]
+
+    def is_ack_pkt(self):
+        return self.packet[0] == 65
+
+
+        
+
+       
 
 
 
