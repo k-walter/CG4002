@@ -19,14 +19,17 @@ const (
 	// Damage
 	BulletMax   = 6 // unlimited mags, reload only if mag=0
 	BulletDmg   = 10
-	GrenadeDmg  = 10
+	GrenadeDmg  = 30
 	GrenadeMax  = 2               // per life
-	GrenadeSecs = 2 * time.Second // to damage and display
+	GrenadeSecs = 2 * time.Second // to display
+
+	ShieldRst = 0
 )
 
 type PlayerImpl struct {
-	Shoot []uint64
-	Shot  []uint64
+	LastShieldNs uint64
+	Shoot        []uint64
+	Shot         []uint64
 }
 
 type PlayerState struct {
@@ -46,6 +49,10 @@ func NewState() PlayerState {
 			NumDeaths:    0,
 			NumShield:    ShieldMax,
 		},
-		PlayerImpl: PlayerImpl{},
+		PlayerImpl: PlayerImpl{
+			LastShieldNs: ShieldRst,
+			Shoot:        make([]uint64, 0),
+			Shot:         make([]uint64, 0),
+		},
 	}
 }
