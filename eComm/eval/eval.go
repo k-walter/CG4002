@@ -49,17 +49,15 @@ func (c *Client) Close() {
 
 func (c *Client) Run() {
 	for curState := range c.chEngine {
-		// TODO subtract RTT from shield time left
 		c.send(curState)
 		trueState := c.receive()
-		// TODO convert shield time to ns
+		// OPTIMIZE add RTT/2 to shield time left?
 		common.Pub(common.State2Eng, trueState)
 	}
 }
 
 func (c *Client) send(s *pb.State) {
 	// Get json
-	// TODO choose fields, convert shield time to sec
 	msg := common.PbToJson(s.ProtoReflect())
 	log.Println("eval|Send", string(msg))
 
