@@ -2,8 +2,10 @@ package viz
 
 import (
 	"cg4002/eComm/common"
+	"cg4002/eComm/engine"
 	pb "cg4002/protos"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
+	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"log"
 	"time"
@@ -90,7 +92,7 @@ func (v *Visualizer) publishState(s *pb.State) {
 
 func (v *Visualizer) publishEvent(e *pb.Event) {
 	// NOTE Grenade event doubles as InFovRequest
-	data, err := proto.Marshal(e)
+	data, err := protojson.Marshal(e)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -101,16 +103,10 @@ func (v *Visualizer) publishEvent(e *pb.Event) {
 
 func inFovRespHandler(c mqtt.Client, m mqtt.Message) {
 	data := m.Payload()
-	msg := pb.InFovMessage{}
-	if err := proto.Unmarshal(data, &msg); err != nil {
+	msg := pb.InFovResp{}
+	if err := protojson.Unmarshal(data, &msg); err != nil {
 		log.Fatal(err)
 	}
 
-	if msg.InFov {
-		common.Pub(common.Event2Eng, &pb.Event{
-			Player: msg.Player,
-			Time:   msg.Time,
-			Action: pb.Action_grenaded,
-		})
-	}
+	common.Pub(common.Grenade2Eng, &engine.EGrenaded{InFovResp: &msg})
 }
