@@ -3,7 +3,7 @@ package main
 import (
 	"cg4002/eComm/common"
 	"cg4002/eComm/engine"
-	// "cg4002/eComm/eval"
+	"cg4002/eComm/eval"
 	"cg4002/eComm/pynq"
 	"cg4002/eComm/relay"
 	"cg4002/eComm/viz"
@@ -28,7 +28,7 @@ func main() {
 		relay.Make(&args),
 		pynq.Make(&args),
 		viz.Make(&args),
-		// eval.Make(&args),
+		eval.Make(&args),
 	}
 	defer func() { // RAII
 		for _, p := range proc {

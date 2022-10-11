@@ -63,13 +63,14 @@ message PlayerState {
 }
 
 enum Action {
-    // public
+    // for eval
     none = 0;
     grenade = 1;
     reload = 2;
     shoot = 3;
     logout = 4;
     shield = 5;
-    // private
+    // internal use
     shot = 6;
+    shieldAvailable = 7;
 }

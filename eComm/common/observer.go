@@ -5,19 +5,26 @@ import "log"
 type Topic uint16
 
 const (
-	nTopic = 6
+	nTopic = 8
 	ChSz   = 1
 )
 
 const (
+	// From relay
 	Event2Eng Topic = iota // *pb.Event
 	Data2Pynq              // *pb.SensorData
 
-	State2Eval // *PlayerState
-	State2Eng  // *pb.PlayerState
+	// From engine
+	State2Eng    // *pb.State
+	State2Viz    // *pb.State
+	Event2Viz    // *pb.Event
+	Unshield2Eng // *eUnshield
 
-	State2Viz // *PlayerState
-	Event2Viz // *pb.Event
+	// From viz
+	Grenade2Eng // *EGrenaded
+
+	// From relay
+	State2Eval // *pb.State
 )
 
 func (t Topic) String() string {
@@ -34,6 +41,10 @@ func (t Topic) String() string {
 		return "State2Viz"
 	case Event2Viz:
 		return "Event2Viz"
+	case Unshield2Eng:
+		return "Unshield2Eng"
+	case Grenade2Eng:
+		return "Grenade2Eng"
 	}
 	log.Fatalf("unknown enum %d\n", t)
 	return "unk"

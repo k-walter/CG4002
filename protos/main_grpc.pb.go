@@ -186,7 +186,7 @@ var Relay_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type VizClient interface {
 	Update(ctx context.Context, in *State, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	InFov(ctx context.Context, in *InFovMessage, opts ...grpc.CallOption) (*InFovMessage, error)
+	InFov(ctx context.Context, in *Event, opts ...grpc.CallOption) (*InFovResp, error)
 }
 
 type vizClient struct {
@@ -206,8 +206,8 @@ func (c *vizClient) Update(ctx context.Context, in *State, opts ...grpc.CallOpti
 	return out, nil
 }
 
-func (c *vizClient) InFov(ctx context.Context, in *InFovMessage, opts ...grpc.CallOption) (*InFovMessage, error) {
-	out := new(InFovMessage)
+func (c *vizClient) InFov(ctx context.Context, in *Event, opts ...grpc.CallOption) (*InFovResp, error) {
+	out := new(InFovResp)
 	err := c.cc.Invoke(ctx, "/Viz/InFov", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -220,7 +220,7 @@ func (c *vizClient) InFov(ctx context.Context, in *InFovMessage, opts ...grpc.Ca
 // for forward compatibility
 type VizServer interface {
 	Update(context.Context, *State) (*emptypb.Empty, error)
-	InFov(context.Context, *InFovMessage) (*InFovMessage, error)
+	InFov(context.Context, *Event) (*InFovResp, error)
 	mustEmbedUnimplementedVizServer()
 }
 
@@ -231,7 +231,7 @@ type UnimplementedVizServer struct {
 func (UnimplementedVizServer) Update(context.Context, *State) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Update not implemented")
 }
-func (UnimplementedVizServer) InFov(context.Context, *InFovMessage) (*InFovMessage, error) {
+func (UnimplementedVizServer) InFov(context.Context, *Event) (*InFovResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InFov not implemented")
 }
 func (UnimplementedVizServer) mustEmbedUnimplementedVizServer() {}
@@ -266,7 +266,7 @@ func _Viz_Update_Handler(srv interface{}, ctx context.Context, dec func(interfac
 }
 
 func _Viz_InFov_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(InFovMessage)
+	in := new(Event)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -278,7 +278,7 @@ func _Viz_InFov_Handler(srv interface{}, ctx context.Context, dec func(interface
 		FullMethod: "/Viz/InFov",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(VizServer).InFov(ctx, req.(*InFovMessage))
+		return srv.(VizServer).InFov(ctx, req.(*Event))
 	}
 	return interceptor(ctx, in, info, handler)
 }
