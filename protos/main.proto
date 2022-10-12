@@ -26,12 +26,12 @@ message SensorData {
   uint32 player = 1;
   uint64 time = 2; // No need to fill, synchronized on engine
   // Data
-  uint32 roll = 3;
-  uint32 pitch = 4;
-  uint32 yaw = 5;
-  uint32 x = 6;
-  uint32 y = 7;
-  uint32 z = 8;
+  int32 roll = 3;
+  int32 pitch = 4;
+  int32 yaw = 5;
+  int32 x = 6;
+  int32 y = 7;
+  int32 z = 8;
   uint32 index = 9; // 0 == reset
 }
 
