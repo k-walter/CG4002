@@ -18,8 +18,12 @@ func (e *eEvalResp) updateEngine(engine *Engine) bool {
 		}
 
 		// Clear shoot/shot stream
-		old.Shoot = old.Shoot[:0]
-		old.Shot = old.Shot[:0]
+		old.Shoot = make(map[uint32]struct{})
+		old.Shot = make(map[uint32]struct{})
+
+		// TODO if inference not working :(
+		// If previous was shield, need to send shieldAvailable
+		// If previous not shield, but actual is shield, send shield (assuming immediate resp)
 
 		// Copy pb
 		old.PlayerState = new

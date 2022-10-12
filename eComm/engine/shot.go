@@ -1,8 +1,8 @@
 package engine
 
 import (
-	cmn "cg4002/eComm/common"
 	pb "cg4002/protos"
+	"log"
 )
 
 type eShot struct {
@@ -12,10 +12,12 @@ type eShot struct {
 func (e *eShot) updateEngine(engine *Engine) bool {
 	v, u := engine.getStates(e.Player)
 
-	// Add to shot stream and match with shoot
-	cmn.EXIT_UNLESS(len(v.Shoot) == 0 || v.Shoot[len(v.Shoot)-1] <= e.Time)
-	v.Shot = append(v.Shot, e.Time)
-	if !matchShot(e.Player, v) {
+	// Add to shoot stream and match with shot
+	if _, fnd := v.Shot[e.ShootID]; fnd {
+		log.Fatalf("should not have duplicate shootID %v\n", e.ShootID)
+	}
+	v.Shot[e.ShootID] = struct{}{}
+	if !matchShot(e.ShootID, e.Player, v) {
 		return false
 	}
 

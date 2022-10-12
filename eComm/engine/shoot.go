@@ -3,6 +3,7 @@ package engine
 import (
 	cmn "cg4002/eComm/common"
 	pb "cg4002/protos"
+	"log"
 	"time"
 )
 
@@ -17,14 +18,14 @@ func (e *eShoot) updateEngine(engine *Engine) bool {
 		return false
 	}
 	u.Bullets -= 1
-
-	// Add to shoot stream and match with shot
-	cmn.EXIT_UNLESS(len(v.Shoot) == 0 || v.Shoot[len(v.Shoot)-1] <= e.Time)
-	v.Shoot = append(v.Shoot, e.Time)
 	u.Action = pb.Action_shoot
 
-	// Shot arrived?
-	e.matchedShot = matchShot(0b11^e.Player, v)
+	// Add to shoot stream and match with shot
+	if _, fnd := v.Shoot[e.ShootID]; fnd {
+		log.Fatalf("should not have duplicate shootID %v\n", e.ShootID)
+	}
+	v.Shoot[e.ShootID] = struct{}{}
+	e.matchedShot = matchShot(e.ShootID, 0b11^e.Player, v)
 
 	// Set miss timeout to update state after
 	if !e.matchedShot {
@@ -62,33 +63,16 @@ func (e *eShoot) waitForShot(ch chan *eShootTimeout) {
 
 // Match then clear preceding shoot/shot, else no updates
 // Goal: update eval when match (should clear preceding shoots), or when timeout (shootTimeout clears preceding shoots)
-func matchShot(u uint32, s *cmn.PlayerState) bool {
-	isValid := func(i, j int) bool {
-		return 0 <= i && i < len(s.Shoot) && 0 <= j && j < len(s.Shot)
-	}
-	isMatch := func(i, j int) bool {
-		return cmn.AbsDiff(s.Shoot[i], s.Shot[j]) <= cmn.ShootErrNs
-	}
-	isAfter := func(j, i int) bool {
-		return s.Shoot[i]+cmn.ShootErrNs < s.Shot[j]
-	}
-
-	// Match forwards
-	i, j := 0, 0
-	for ; isValid(i, j); i++ {
-		for ; isValid(i, j) && !isMatch(i, j) && !isAfter(j, i); j++ {
-		}
-		if isValid(i, j) && isMatch(i, j) {
-			break
-		}
-	}
-	if !(isValid(i, j) && isMatch(i, j)) {
+func matchShot(shootID uint32, u uint32, s *cmn.PlayerState) bool {
+	// Match shoot and shot
+	if _, found := s.Shoot[shootID]; !found {
+		log.Printf("could not find shooter, %v\n", s.Shoot)
 		return false
 	}
-
-	// Clear match and preceding
-	s.Shoot = s.Shoot[i+1:]
-	s.Shot = s.Shot[j+1:]
+	if _, found := s.Shot[shootID]; !found {
+		log.Printf("could not find victim, %v\n", s.Shot)
+		return false
+	}
 
 	// inflict dmg
 	inflict(u, s, cmn.BulletDmg)

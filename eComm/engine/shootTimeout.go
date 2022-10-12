@@ -1,7 +1,6 @@
 package engine
 
 import (
-	cmn "cg4002/eComm/common"
 	pb "cg4002/protos"
 )
 
@@ -10,17 +9,14 @@ type eShootTimeout struct {
 }
 
 func (s *eShootTimeout) updateEngine(e *Engine) bool {
-	// Find for uncleared shoot
-	u, v := e.getStates(s.Player)
-	idx := cmn.BinarySearch(v.Shoot, s.Time)
-
 	// If cleared, do nothing
-	if idx != -1 {
+	u, v := e.getStates(s.Player)
+	if _, fnd := v.Shoot[s.ShootID]; !fnd {
 		return false
 	}
 
-	// Clear preceding shoots
-	v.Shoot = v.Shoot[idx+1:]
+	// Clear shoot
+	delete(v.Shoot, s.ShootID)
 
 	u.Action = pb.Action_shoot
 	return true

@@ -28,8 +28,8 @@ const (
 
 type PlayerImpl struct {
 	LastShieldNs uint64
-	Shoot        []uint64
-	Shot         []uint64
+	Shoot        map[uint32]struct{}
+	Shot         map[uint32]struct{}
 }
 
 type PlayerState struct {
@@ -51,8 +51,8 @@ func NewState() PlayerState {
 		},
 		PlayerImpl: PlayerImpl{
 			LastShieldNs: ShieldRst,
-			Shoot:        make([]uint64, 0),
-			Shot:         make([]uint64, 0),
+			Shoot:        make(map[uint32]struct{}),
+			Shot:         make(map[uint32]struct{}),
 		},
 	}
 }
