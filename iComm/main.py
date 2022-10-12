@@ -25,7 +25,6 @@ def pass_params(header, data_obj):
             )
             resp = stub.Gesture(msg)
         # shoot/shot
-        # TODO Add Packet IDs for Vest/Gun
         elif header == HEADER_GUN:
             msg = main_pb2.Event(player=1, shootID=data_obj, action=main_pb2.shoot)
             resp = stub.Shoot(msg)

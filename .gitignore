@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Side Effect
+*.csv
+*.json
+.idea/
+eComm/ecomm
+
+# FPGA Research
+/eComm/pynq/CG4002_CNN_PYNQ_deployment/*
+/eComm/pynq/CG4002_CNN_PYNQ_deployment/.ipynb_checkpoints/PYNQ_CNN-checkpoint.ipynb
