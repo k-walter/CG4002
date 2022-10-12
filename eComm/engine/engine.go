@@ -78,7 +78,15 @@ func (e *Engine) Run() {
 		if ev.updateEvalState() {
 			cmn.Pub(cmn.State2Eval, snapshot(e.state))
 		}
+		if ev.updateVizState() || ev.updateEvalState() {
+			resetAction(e.state)
+		}
 	}
+}
+
+func resetAction(state State) {
+	state[0].Action = pb.Action_none
+	state[1].Action = pb.Action_none
 }
 
 func (e *Engine) waitAnyEvent() IEvent {
