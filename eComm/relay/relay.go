@@ -17,7 +17,9 @@ import (
 type Server struct {
 	// From Relay
 	pb.UnimplementedRelayServer
-	lis net.Listener
+	lis     net.Listener
+	currSec int
+	hz      int
 }
 
 func Make(a *common.Arg) *Server {
@@ -45,9 +47,21 @@ func (s *Server) Close() {
 }
 
 func (s *Server) Gesture(c context.Context, d *pb.SensorData) (*emptypb.Empty, error) {
-	log.Println("relay|Received gesture")
-	d.Time = uint64(time.Now().UnixNano())
-	common.Pub(common.Data2Pynq, d)
+	// measure data rate using tumbling window
+	s.hz += len(d.Data)
+	if now := time.Now().Second(); s.currSec != now {
+		log.Println("data rate = ", s.hz)
+		s.hz = 0
+		s.currSec = now
+	}
+
+	// Send each data separately
+	// OPTIMIZE send all together and change py logic
+	for i := range d.Data {
+		d.Data[i].Time = uint64(time.Now().UnixNano())
+		common.PubFull(common.Data2Pynq, d.Data[i], false)
+	}
+
 	return &emptypb.Empty{}, nil
 }
 

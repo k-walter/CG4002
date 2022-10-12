@@ -124,7 +124,6 @@ def pass_params(header, data_obj):
         send_buf = main_pb2.SensorData()
 
     # shoot/shot
-    # TODO Add Packet IDs for Vest/Gun
     elif header == HEADER_GUN:
         msg = main_pb2.Event(player=1, shootID=data_obj, action=main_pb2.shoot)
         resp = stub.Shoot(msg)
@@ -203,5 +202,5 @@ if __name__ == "__main__":
         # receiver.start()
 
     while True:
-        pass
+        time.sleep(int(1e9)
 

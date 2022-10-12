@@ -66,8 +66,14 @@ func Sub(t Topic, f func(interface{})) {
 
 // Pub is thread safe and blocking. To publish asynchronously, subscriber should pass a goroutine closure
 func Pub(t Topic, i interface{}) {
-	for _, f := range observer[t] {
+	PubFull(t, i, true)
+}
+
+func PubFull(t Topic, i interface{}, debug bool) {
+	if debug {
 		log.Println("Publish", t)
+	}
+	for _, f := range observer[t] {
 		f(i)
 	}
 }
