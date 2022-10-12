@@ -16,52 +16,62 @@ class Delegate(btle.DefaultDelegate):
 
     # Triggers whenever data comes in to the characteristic
     def handleNotification(self, cHandle, data):
-        print("Data from handleNotif: ", data)
-        self.__handle_data(data)
-    
-    def __handle_data(self, data):
-        # print("Data by individual bytes: ")
-        # for b in data:
-        #     print(b, end=" ")
-        # print()    
-        if (len(self.data_buffer) > 0
-         or (data[0] == self.header) or data[0] == 65):
+        # print("Data Rec: ", data)
+        self.receive_data(data)
+
+    def receive_data(self, data):
+        if (len(self.data_buffer) > 0 
+        or (data[0] == self.header or data[0] == 65)):
             self.data_buffer += data
-        
-        if (len(self.data_buffer) >= PACKET_SIZE):
+
+    def handle_data(self):
+        if len(self.data_buffer) >= PACKET_SIZE:
             # Assemble packet (To be sent or dropped)
             self.packet = self.data_buffer[:PACKET_SIZE]
             self.data_buffer = self.data_buffer[PACKET_SIZE:]
 
-            print("Assembled Packet: ", self.packet)
-            
-            if self.__is_valid_checksum():
-                if self.is_ack_pkt():
-                    if not self.hand_ack:
-                        self.hand_ack = True
-                    ## Need to handle case for when relay node send to beetle
-                else:
-                    if not self.__is_duplicate():
-                        self.is_duplicate_pkt = False
-                        self.is_valid_data = True
-                        self.prev_seq_no = self.packet[1]
-                        print("DATA OK TO SEND")
-                    else:
-                        self.is_duplicate_pkt = True
-                        self.is_valid_data = False
-                        print("DUP PACKET")
-                        
-
-            # Invalid data            
+            if not self.is_ack_pkt() and self.header == 77:
+                self.__handle_without_ack()
             else:
-                self.is_valid_data = False
-                self.is_duplicate_pkt = False
-                print("CORRUPTED PACKET")
+                self.__handle_with_ack()
         
         # Packet not assembled yet, do not send
         else:
             self.is_valid_data = False
             print("ASSEMBLING PACKET")
+
+    def __handle_without_ack(self):
+        if self.__is_valid_checksum():
+            self.is_valid_data = True
+            #print("DATA OK TO SEND")
+        else:
+            self.is_valid_data = False
+            print("CORRUPTED")
+
+    def __handle_with_ack(self):
+        if self.__is_valid_checksum():
+            if self.is_ack_pkt():
+                if not self.hand_ack:
+                    self.hand_ack = True
+                ## Need to handle case for when relay node send to beetle
+            else:
+                if not self.__is_duplicate():
+                    self.is_duplicate_pkt = False
+                    self.is_valid_data = True
+                    self.prev_seq_no = self.packet[1]
+                    self.serial_char.write(b'A')
+                    #print("DATA OK TO SEND")
+                else:
+                    self.is_duplicate_pkt = True
+                    self.is_valid_data = False
+                    self.serial_char.write(b'A')
+                    print("DUP PACKET")    
+
+        # Invalid data            
+        else:
+            self.is_valid_data = False
+            self.is_duplicate_pkt = False
+            print("CORRUPTED PACKET")
 
     def __is_duplicate(self):
         return self.prev_seq_no == self.packet[1]

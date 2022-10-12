@@ -63,6 +63,7 @@ class Beetle():
         while not self.has_handshake:
             self.__send_handshake()
             if self.peripheral.waitForNotifications(5.0):
+                self.delegate.handle_data()
                 self.__receive_ack()
 
     # Sets serial characteristic in order to write to beetle

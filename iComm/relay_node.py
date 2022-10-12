@@ -1,22 +1,31 @@
 from bluepy import btle
 from beetle import Beetle
-from main import run
+
 import threading
 import time
+import grpc
+import main_pb2
+import main_pb2_grpc
 
-ADDRESS_GUN = "d0:39:72:bf:c8:87"
-ADDRESS_VEST = "d0:39:72:bf:c6:51"
-ADDRESS_GLOVE = "d0:39:72:bf:c6:47"
+ADDRESS_GUN_1 = "d0:39:72:bf:c8:87"
+ADDRESS_GUN_2 = "d0:39:72:bf:c6:51"
+
+ADDRESS_GLOVE_1 = "d0:39:72:bf:c6:47"
+
+ADDRESS_VEST_1 = "c4:be:84:20:1b:5e"
 ADDRESS_BACKUP = "50:F1:4A:DA:CC:EB"
-
-HEADER_ACK = 65
-HEADER_GUN = 71
-HEADER_GLOVE = 77
-HEADER_VEST = 86
 
 PACKET_SIZE = 15
 
+HEADER_ACK = 65
+HEADER_GUN = 70
+HEADER_GLOVE = 77
+HEADER_VEST = 86
+
+MAX_16_BIT_SIGNED = 32768
 MAX_16_BIT_UNSIGNED = 65535
+
+MY_PORT = 'localhost:8080'
 
 count = 0
 
@@ -24,20 +33,15 @@ count = 0
 # name_list = ["Vest1", "Glove1", "Gun1"]
 # header_list = [HEADER_VEST, HEADER_GLOVE, HEADER_GUN]
 
-# address_list = [ADDRESS_GLOVE, ADDRESS_VEST]
-# name_list = ["Beetle Glove", "Beetle Vest"]
-# header_list = [HEADER_GLOVE, HEADER_VEST]
-
-address_list = [ADDRESS_BACKUP]
-name_list = ["Beetle Vest"]
+address_list = [ADDRESS_GLOVE_1]
+name_list = ["Beetle Glove"]
 header_list = [HEADER_GLOVE]
 
+# address_list = [ADDRESS_GUN_2, ADDRESS_VEST_1]
+# name_list = ["Beetle gun", "vest"]
+# header_list = [HEADER_GUN, HEADER_VEST]
+
 RETRY_COUNT = 8
-
-data_count = 0
-frag_packet_count = 0
-drop_packet_count = 0
-
 ultra96_mutex = threading.Lock()
 
 # Helper function for initialisation
@@ -78,42 +82,68 @@ def init_handshake_beetle_list():
 # Helper function to unpack IMU sensor data
 def unpack_glove_data_into_dict(glove_data):
     glove_dict = {
-        "roll": bytes_to_uint16_t(glove_data[0:2]),
-        "pitch": bytes_to_uint16_t(glove_data[2:4]),
-        "yaw": bytes_to_uint16_t(glove_data[4:6]),
-        "x": bytes_to_uint16_t(glove_data[6:8]),
-        "y": bytes_to_uint16_t(glove_data[8:10]),
-        "z": bytes_to_uint16_t(glove_data[10:12]),
+        "index": glove_data[0],
+        "roll": bytes_to_uint16_t(glove_data[1:3]),
+        "pitch": bytes_to_uint16_t(glove_data[3:5]),
+        "yaw": bytes_to_uint16_t(glove_data[5:7]),
+        "x": bytes_to_uint16_t(glove_data[7:9]),
+        "y": bytes_to_uint16_t(glove_data[9:11]),
+        "z": bytes_to_uint16_t(glove_data[11:13]),
     }
     return glove_dict
 
+def dummy_dict(index):
+    dummy_dict = {
+        "index": index,
+        "roll": 0,
+        "pitch": 0,
+        "yaw": 0,
+        "x": 0,
+        "y": 0,
+        "z": 0,
+    }
+    return dummy_dict
+
 def bytes_to_uint16_t(bytes):
     val = (bytes[0] << 8) + bytes[1]
-    if val > MAX_16_BIT_UNSIGNED:
-        val = MAX_16_BIT_UNSIGNED - val
+    if val > MAX_16_BIT_SIGNED:
+        val = val - MAX_16_BIT_UNSIGNED
     return val
 
-# Thread Worker that relays valid data to Ultra96
-def serial_handler(beetle):
+def pass_params(header, data_obj):
+
+    st = time.monotonic_ns()
+
+    # grenade, reload, shield
+    if header == HEADER_GLOVE:
+        msg = main_pb2.SensorData(
+            player=1,
+            index=data_obj["index"],
+            roll=data_obj["roll"],
+            pitch=data_obj["pitch"],
+            yaw=data_obj["yaw"],
+            x=data_obj["x"],
+            y=data_obj["y"],
+            z=data_obj["z"],
+        )
+        resp = stub.Gesture(msg)
+    # shoot/shot
+    # TODO Add Packet IDs for Vest/Gun
+    elif header == HEADER_GUN:
+        msg = main_pb2.Event(player=1, shootID=data_obj, action=main_pb2.shoot)
+        resp = stub.Shoot(msg)
+    elif header == HEADER_VEST:
+        msg = main_pb2.Event(player=2, shootID=data_obj, action=main_pb2.shot)
+        resp = stub.Shot(msg)
+
+    # print(f"Received resp {resp}")
+
+    print(f"rtt {(time.monotonic_ns() - st)/1e6}ms")
+
+def beetle_receiver(beetle):
     while True:
         try:
-            if beetle.peripheral.waitForNotifications(5):         
-                if beetle.delegate.is_valid_data:
-                    print("Valid data! Relaying to Ultra96...")
-                    print("Data: ", beetle.delegate.packet)
-                    if beetle.header == HEADER_GLOVE:
-                        glove_data = beetle.delegate.packet[2:14]
-                        data_obj = unpack_glove_data_into_dict(glove_data)
-                        # if (ultra96_mutex.acquire()):
-                        #     run(beetle.header, data_obj)
-                        #     ultra96_mutex.release()
-                        print(data_obj)
-                    beetle.serial_char.write(b'A')           
-                else: 
-                    if beetle.delegate.is_duplicate_pkt:         
-                        beetle.serial_char.write(b'A')            
-                                   
-                
+            beetle.peripheral.waitForNotifications(0.01)
         # Handles disconnect by attempting reconnection/rehandshake
         except btle.BTLEDisconnectError:
             beetle.set_disconnected()
@@ -122,34 +152,89 @@ def serial_handler(beetle):
                 print(f"{beetle.name} reconnected. Reinitialising handshake...")
                 beetle.init_handshake()
 
+# Thread Worker that relays valid data to Ultra96
+def serial_handler(beetle):
+    global packet_count
+    global expected_index
+    
+    while True:
+        # print("Buffer Len: ", len(beetle.delegate.data_buffer))
+        try:
+            #print("waiting")
+            beetle.peripheral.waitForNotifications(0.01)
+            # beetle.peripheral.waitForNotifications(0.0001)
+
+            while len(beetle.delegate.data_buffer) >= PACKET_SIZE:
+                #print(f"buffer size {len(beetle.delegate.data_buffer)}")
+                beetle.delegate.handle_data()
+                if beetle.delegate.is_valid_data:
+                    #packet_count += 1
+                    #print("Time Elapsed: ", time.time()-start_time)
+                    if beetle.header == HEADER_GLOVE:
+                        glove_data = beetle.delegate.packet[1:14]
+                        curr_index = beetle.delegate.packet[1]
+                        #print("Index: ", curr_index)
+                        #print("Valid data! Packet Index: ", curr_index)
+                        data_obj = unpack_glove_data_into_dict(glove_data)
+                        # if curr_index == 0:
+                        #     expected_index = 0
+                        # else:
+                        #     expected_index += 1
+
+                        st = time.monotonic_ns()
+                        if (ultra96_mutex.acquire()):
+                            # while curr_index > expected_index:
+                            #     pass_params(beetle.header, dummy_dict(expected_index))
+                            #     expected_index += 1
+                            pass_params(beetle.header, data_obj)
+                            ultra96_mutex.release()
+                        print(f"sending took {(time.monotonic_ns() - st)/1e6}ms")
+                            
+                    else:
+
+                        st = time.monotonic_ns()
+                        if ultra96_mutex.acquire():
+                            data_obj = beetle.delegate.packet[2]
+                            pass_params(beetle.header, data_obj)
+                            ultra96_mutex.release()
+                        
+                        print(f"sending took {(time.monotonic_ns() - st)/1e6}ms")
+                    #print(data_obj)
+                
+        except btle.BTLEDisconnectError:
+            beetle.set_disconnected()
+            while not beetle.is_connected:
+                beetle.connect_with_retries(RETRY_COUNT)
+                print(f"{beetle.name} reconnected. Reinitialising handshake...")
+                beetle.init_handshake()
+
+       
+      
 
 if __name__ == "__main__":
 
     beetle_list = []
-
     initialise_beetle_list()
 
     # Delay to read the initial print statements
     time.sleep(2)
 
     start_time = time.time()
+    packet_count = 0
+    expected_index = 0
+
+    channel = grpc.insecure_channel('localhost:8081')
+    stub = main_pb2_grpc.RelayStub(channel)
 
     # Starts threads
     for beetle in beetle_list:
         handler = threading.Thread(
             target=serial_handler, args=(beetle,))
+        # receiver = threading.Thread(
+        #     target=beetle_receiver, args=(beetle,))
         handler.start()
+        # receiver.start()
 
     while True:
         pass
 
-
-
-    # elapsed_time = time.time() - start_time
-    #                 print(f"Packet Statuses for {beetle.name}:")
-    #                 print("Time Elapsed: ", elapsed_time, end=" ")
-    #                 print("Good Packets: ", data_count, end=" ")
-    #                 print("Dropped Packets: ", drop_packet_count, end=" ")
-    #                 print("Fragmented Packets: ", frag_packet_count, end=" ")
-    #                 data_rate = ((data_count*15)/1000) / elapsed_time
-    #                 print(f"Data Rate: {data_rate:.3f}kB/s")
