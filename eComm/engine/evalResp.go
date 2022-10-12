@@ -13,7 +13,7 @@ func (e *eEvalResp) updateEngine(engine *Engine) bool {
 	updatePlayer := func(old *cmn.PlayerState, new *pb.PlayerState) {
 		// Update shield time if drift
 		lastShield := now - uint64(new.ShieldTime)
-		if cmn.AbsDiff(old.LastShieldNs, lastShield) > cmn.ShieldErrNs {
+		if cmn.AbsDiff(old.LastShieldNs, lastShield) > engine.ShieldErrNs {
 			old.LastShieldNs = lastShield
 		}
 

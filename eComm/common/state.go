@@ -6,9 +6,7 @@ import (
 )
 
 const (
-	NPlayer     = 2
-	ShootErrNs  = 100_000_000 // 100ms
-	ShieldErrNs = 100_000_000 // 100ms
+	NPlayer = 2
 
 	// Health
 	HpMax       = 100 // instant rebirth

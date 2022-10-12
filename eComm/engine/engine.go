@@ -19,8 +19,10 @@ type Engine struct {
 	chShield  chan *eUnshield
 
 	// private
-	chShoot chan *eShootTimeout
-	running bool
+	chShoot     chan *eShootTimeout
+	ShieldErrNs uint64
+	ShootErrNs  uint64
+	running     bool
 }
 
 type IEvent interface {
@@ -30,15 +32,17 @@ type IEvent interface {
 	updateEvalState() bool
 }
 
-func Make(*cmn.Arg) *Engine {
+func Make(a *cmn.Arg) *Engine {
 	e := Engine{
-		state:     State{cmn.NewState(), cmn.NewState()},
-		chEvent:   make(chan *pb.Event, cmn.ChSz),
-		chEval:    make(chan *pb.State, cmn.ChSz),
-		chShoot:   make(chan *eShootTimeout, cmn.ChSz),
-		chGrenade: make(chan *EGrenaded, cmn.ChSz),
-		chShield:  make(chan *eUnshield, cmn.ChSz),
-		running:   true,
+		state:       State{cmn.NewState(), cmn.NewState()},
+		chEvent:     make(chan *pb.Event, cmn.ChSz),
+		chEval:      make(chan *pb.State, cmn.ChSz),
+		chShoot:     make(chan *eShootTimeout, cmn.ChSz),
+		chGrenade:   make(chan *EGrenaded, cmn.ChSz),
+		chShield:    make(chan *eUnshield, cmn.ChSz),
+		ShieldErrNs: a.ShieldErrNs,
+		ShootErrNs:  a.ShootErrNs,
+		running:     true,
 	}
 
 	// Subscribe to channels

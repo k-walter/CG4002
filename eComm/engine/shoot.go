@@ -29,7 +29,7 @@ func (e *eShoot) updateEngine(engine *Engine) bool {
 
 	// Set miss timeout to update state after
 	if !e.matchedShot {
-		go e.waitForShot(engine.chShoot)
+		go e.waitForShot(engine.chShoot, int64(e.Time+engine.ShootErrNs))
 	} else {
 		// Shot, not idiomatic ><
 		cmn.Pub(cmn.Event2Viz, &pb.Event{
@@ -55,9 +55,9 @@ func (e *eShoot) updateEvalState() bool {
 	return e.matchedShot
 }
 
-func (e *eShoot) waitForShot(ch chan *eShootTimeout) {
-	end := time.Unix(0, int64(e.Time+cmn.ShootErrNs))
-	time.Sleep(time.Until(end))
+func (e *eShoot) waitForShot(ch chan *eShootTimeout, end int64) {
+	t := time.Unix(0, end)
+	time.Sleep(time.Until(t))
 	ch <- &eShootTimeout{Event: e.Event}
 }
 
