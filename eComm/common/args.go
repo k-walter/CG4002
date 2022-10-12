@@ -6,7 +6,7 @@ import (
 )
 
 type Arg struct {
-	EvalPort  uint
+	EvalAddr  string
 	EvalKey   string
 	RelayPort uint
 	PynqPort  uint
@@ -15,7 +15,7 @@ type Arg struct {
 func ParseArgs() Arg {
 	// Bind a
 	a := Arg{}
-	flag.UintVar(&a.EvalPort, "evalPort", 8080, "Eval server port")
+	flag.StringVar(&a.EvalAddr, "evalAddr", ":8080", "Eval server IP and port")
 	flag.StringVar(&a.EvalKey, "evalKey", "PLSPLSPLSPLSWORK", "Symmetric key for eval server")
 	flag.UintVar(&a.RelayPort, "relayPort", 8081, "Port to be SSH forwarded to relay")
 	flag.UintVar(&a.PynqPort, "pynqPort", 8082, "Port to send/poll signals")

@@ -30,7 +30,7 @@ func Make(args *common.Arg) *Client {
 
 	// Connect to eval server
 	var err error
-	e.conn, err = net.Dial("tcp", fmt.Sprintf(":%v", args.EvalPort))
+	e.conn, err = net.Dial("tcp", args.EvalAddr)
 	if err != nil {
 		log.Fatal(err)
 	}
