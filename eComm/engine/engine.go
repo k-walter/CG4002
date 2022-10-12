@@ -16,7 +16,6 @@ type Engine struct {
 	chEvent   chan *pb.Event  // from relay
 	chEval    chan *pb.State  // from eval
 	chGrenade chan *EGrenaded // from viz
-	chShield  chan *eUnshield
 
 	// private
 	chShoot     chan *eShootTimeout
@@ -39,7 +38,6 @@ func Make(a *cmn.Arg) *Engine {
 		chEval:      make(chan *pb.State, cmn.ChSz),
 		chShoot:     make(chan *eShootTimeout, cmn.ChSz),
 		chGrenade:   make(chan *EGrenaded, cmn.ChSz),
-		chShield:    make(chan *eUnshield, cmn.ChSz),
 		ShieldErrNs: a.ShieldErrNs,
 		ShootErrNs:  a.ShootErrNs,
 		running:     true,
@@ -51,9 +49,6 @@ func Make(a *cmn.Arg) *Engine {
 	})
 	cmn.Sub(cmn.State2Eng, func(i interface{}) {
 		go func(i *pb.State) { e.chEval <- i }(i.(*pb.State))
-	})
-	cmn.Sub(cmn.Unshield2Eng, func(i interface{}) {
-		go func(i *eUnshield) { e.chShield <- i }(i.(*eUnshield))
 	})
 	cmn.Sub(cmn.Grenade2Eng, func(i interface{}) {
 		go func(i *EGrenaded) { e.chGrenade <- i }(i.(*EGrenaded))
@@ -105,8 +100,6 @@ func (e *Engine) waitAnyEvent() IEvent {
 		return grenaded
 	case state := <-e.chEval: // eval updates state
 		return &eEvalResp{State: state}
-	case unshield := <-e.chShield: // shield timeout
-		return unshield
 	case event := <-e.chEvent: // relay/infer actions
 		switch event.Action {
 		case pb.Action_none:
@@ -121,6 +114,8 @@ func (e *Engine) waitAnyEvent() IEvent {
 			return &eReload{Event: event}
 		case pb.Action_shield:
 			return &eShield{Event: event}
+		case pb.Action_shieldAvailable:
+			return &eUnshield{Event: event}
 		case pb.Action_logout:
 			return &eLogout{Event: event}
 		default:
@@ -158,14 +153,15 @@ func inflict(u uint32, player *cmn.PlayerState, dmg uint32) {
 		player.Bullets = cmn.BulletMax
 
 		// RULE shield cooldown rest
-		if player.LastShieldNs != cmn.ShieldRst {
+		if player.ShieldExpireNs != cmn.ShieldRst {
 			// Why async? Current event can be sent < sending unshield event to viz
-			cmn.Pub(cmn.Unshield2Eng, &eUnshield{&pb.Event{
+			cmn.Pub(cmn.Event2Eng, &pb.Event{
 				Player: u,
-				Time:   player.LastShieldNs,
+				Time:   player.ShieldExpireNs,
 				Action: pb.Action_shieldAvailable,
-			}})
-			player.LastShieldNs = cmn.ShieldRst
+			})
+			player.ShieldExpireNs = cmn.ShieldRst
+
 		}
 
 	} else if player.ShieldHealth <= dmg {
@@ -193,10 +189,11 @@ func snapshot(state State) *pb.State {
 		}
 
 		// Set last shield time
-		if src.LastShieldNs+cmn.ShieldNs >= now { // expired?
+		if src.ShieldExpireNs <= now { // expired?
 			dst.ShieldTime = 0
 		} else { // ticking
-			dst.ShieldTime = float64(now-src.LastShieldNs) / 1e9 // in seconds
+			// remaining time
+			dst.ShieldTime = float64(src.ShieldExpireNs-now) / 1e9 // in seconds
 		}
 	}
 

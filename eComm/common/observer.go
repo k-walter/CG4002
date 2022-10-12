@@ -5,7 +5,7 @@ import "log"
 type Topic uint16
 
 const (
-	nTopic = 8
+	nTopic = 7
 	ChSz   = 1
 )
 
@@ -15,10 +15,9 @@ const (
 	Data2Pynq              // *pb.SensorData
 
 	// From engine
-	State2Eng    // *pb.State
-	State2Viz    // *pb.State
-	Event2Viz    // *pb.Event
-	Unshield2Eng // *eUnshield
+	State2Eng // *pb.State
+	State2Viz // *pb.State
+	Event2Viz // *pb.Event
 
 	// From viz
 	Grenade2Eng // *EGrenaded
@@ -41,8 +40,6 @@ func (t Topic) String() string {
 		return "State2Viz"
 	case Event2Viz:
 		return "Event2Viz"
-	case Unshield2Eng:
-		return "Unshield2Eng"
 	case Grenade2Eng:
 		return "Grenade2Eng"
 	}

@@ -3,6 +3,7 @@ package engine
 import (
 	cmn "cg4002/eComm/common"
 	pb "cg4002/protos"
+	"log"
 	"time"
 )
 
@@ -11,30 +12,39 @@ type eShield struct {
 }
 
 func (e *eShield) updateEngine(engine *Engine) bool {
-	// RULE No shields left in this life?
 	u, _ := engine.getStates(e.Player)
+	u.Action = pb.Action_shield
+
+	// RULE No shields left in this life?
 	if u.NumShield == 0 {
-		return false
+		return true
 	}
 
 	// RULE Cooldown (across lifetimes)?
-	if u.LastShieldNs+cmn.ShieldNs > e.Time {
-		return false
+	if u.ShieldExpireNs > e.Time {
+		return true
 	}
 
 	// Shield up
-	u.Action = pb.Action_shield
 	u.ShieldHealth = cmn.ShieldHpMax
-	u.LastShieldNs = e.Time
+	u.ShieldExpireNs = uint64(time.Now().UnixNano()) + cmn.ShieldNs // RULE start from when engine detects
 	u.NumShield--
 
 	// Shield timeout
-	go func() {
-		end := time.Unix(0, int64(e.Time+cmn.ShieldNs))
-		time.Sleep(time.Until(end))
-		cmn.Pub(cmn.Unshield2Eng, &eUnshield{e.Event})
-	}()
+	go waitUnshield(u.ShieldExpireNs, &pb.Event{
+		Player: e.Player,
+		Time:   u.ShieldExpireNs,
+		Action: pb.Action_shieldAvailable,
+	})
+
 	return true
+}
+
+func waitUnshield(end uint64, event *pb.Event) {
+	t := time.Unix(0, int64(end))
+	time.Sleep(time.Until(t))
+	log.Println("Trying to unshield")
+	cmn.Pub(cmn.Event2Eng, event)
 }
 
 func (e *eShield) alertVizEvent() *pb.Event {
@@ -53,9 +63,10 @@ func (e *eShield) updateEvalState() bool {
 type eUnshield struct{ *pb.Event }
 
 func (e *eUnshield) updateEngine(engine *Engine) bool {
-	// Already unshielded?
+	// Already unshielded by reviving?
+	// NOTE if evalResp drifts ShieldExpireNs, can't compare ==
 	u, _ := engine.getStates(e.Player)
-	if u.LastShieldNs != e.Time {
+	if u.ShieldExpireNs == e.Time {
 		return false
 	}
 

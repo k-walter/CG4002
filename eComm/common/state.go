@@ -25,9 +25,9 @@ const (
 )
 
 type PlayerImpl struct {
-	LastShieldNs uint64
-	Shoot        map[uint32]struct{}
-	Shot         map[uint32]struct{}
+	ShieldExpireNs uint64
+	Shoot          map[uint32]struct{}
+	Shot           map[uint32]struct{}
 }
 
 type PlayerState struct {
@@ -48,9 +48,9 @@ func NewState() PlayerState {
 			NumShield:    ShieldMax,
 		},
 		PlayerImpl: PlayerImpl{
-			LastShieldNs: ShieldRst,
-			Shoot:        make(map[uint32]struct{}),
-			Shot:         make(map[uint32]struct{}),
+			ShieldExpireNs: ShieldRst,
+			Shoot:          make(map[uint32]struct{}),
+			Shot:           make(map[uint32]struct{}),
 		},
 	}
 }

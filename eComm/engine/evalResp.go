@@ -13,20 +13,41 @@ type eEvalResp struct {
 
 func (e *eEvalResp) updateEngine(engine *Engine) bool {
 	now := uint64(time.Now().UnixNano())
-	updatePlayer := func(old *cmn.PlayerState, new *pb.PlayerState) {
-		// Update shield time if drift
-		lastShield := now - uint64(new.ShieldTime)
-		if cmn.AbsDiff(old.LastShieldNs, lastShield) > engine.ShieldErrNs {
-			old.LastShieldNs = lastShield
-		}
-
+	updatePlayer := func(p uint32, old *cmn.PlayerState, new *pb.PlayerState) {
 		// Clear shoot/shot stream
 		old.Shoot = make(map[uint32]struct{})
 		old.Shot = make(map[uint32]struct{})
 
-		// TODO if inference not working :(
-		// If previous was shield, need to send shieldAvailable
-		// If previous not shield, but actual is shield, send shield (assuming immediate resp)
+		// Update drifitng shield time
+		nextShield := now + uint64(new.ShieldTime*1e9)
+		//if new.ShieldTime > 0 && cmn.AbsDiff(old.ShieldExpireNs, nextShield) > engine.ShieldErrNs {
+		//	old.ShieldExpireNs = nextShield
+		//}
+
+		// Clear wrong shield
+		if old.Action == pb.Action_shield && new.Action != pb.Action_shield {
+			old.ShieldExpireNs = cmn.ShieldRst
+			cmn.Pub(cmn.Event2Viz, &pb.Event{
+				Player: p,
+				Time:   now,
+				Action: pb.Action_shieldAvailable,
+			})
+		}
+
+		// Didn't predict shield
+		if old.Action != pb.Action_shield && new.Action == pb.Action_shield {
+			old.ShieldExpireNs = nextShield
+			cmn.Pub(cmn.Event2Viz, &pb.Event{
+				Player: p,
+				Time:   now,
+				Action: pb.Action_shield,
+			})
+			go waitUnshield(nextShield, &pb.Event{
+				Player: p,
+				Time:   nextShield,
+				Action: pb.Action_shieldAvailable,
+			})
+		}
 
 		// Logout?
 		e.isLogout = e.isLogout || (new.Action == pb.Action_logout)
@@ -37,8 +58,8 @@ func (e *eEvalResp) updateEngine(engine *Engine) bool {
 
 	// Update each player
 	e.isLogout = false
-	updatePlayer(&engine.state[0], e.P1)
-	updatePlayer(&engine.state[1], e.P2)
+	updatePlayer(1, &engine.state[0], e.P1)
+	updatePlayer(2, &engine.state[1], e.P2)
 
 	// Logout?
 	if e.isLogout {
