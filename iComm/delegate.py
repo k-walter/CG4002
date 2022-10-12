@@ -16,7 +16,6 @@ class Delegate(btle.DefaultDelegate):
 
     # Triggers whenever data comes in to the characteristic
     def handleNotification(self, cHandle, data):
-        # print("Data Rec: ", data)
         self.receive_data(data)
 
     def receive_data(self, data):
@@ -43,7 +42,6 @@ class Delegate(btle.DefaultDelegate):
     def __handle_without_ack(self):
         if self.__is_valid_checksum():
             self.is_valid_data = True
-            #print("DATA OK TO SEND")
         else:
             self.is_valid_data = False
             print("CORRUPTED")
@@ -60,7 +58,6 @@ class Delegate(btle.DefaultDelegate):
                     self.is_valid_data = True
                     self.prev_seq_no = self.packet[1]
                     self.serial_char.write(b'A')
-                    #print("DATA OK TO SEND")
                 else:
                     self.is_duplicate_pkt = True
                     self.is_valid_data = False

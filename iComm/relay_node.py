@@ -7,10 +7,10 @@ import grpc
 import main_pb2
 import main_pb2_grpc
 
-ADDRESS_GUN_1 = "d0:39:72:bf:c8:87"
 ADDRESS_GUN_2 = "d0:39:72:bf:c6:51"
 
 ADDRESS_GLOVE_1 = "d0:39:72:bf:c6:47"
+ADDRESS_GLOVE_2 = "d0:39:72:bf:c8:87"
 
 ADDRESS_VEST_1 = "c4:be:84:20:1b:5e"
 ADDRESS_BACKUP = "50:F1:4A:DA:CC:EB"
@@ -25,21 +25,22 @@ HEADER_VEST = 86
 MAX_16_BIT_SIGNED = 32768
 MAX_16_BIT_UNSIGNED = 65535
 
-MY_PORT = 'localhost:8080'
+next_send = 0
+send_buf = main_pb2.SensorData()
 
-count = 0
+MY_PORT = 'localhost:8080'
 
 # address_list = [ADDRESS_VEST, ADDRESS_GLOVE, ADDRESS_GUN]
 # name_list = ["Vest1", "Glove1", "Gun1"]
 # header_list = [HEADER_VEST, HEADER_GLOVE, HEADER_GUN]
 
-address_list = [ADDRESS_GLOVE_1]
-name_list = ["Beetle Glove"]
-header_list = [HEADER_GLOVE]
+# address_list = [ADDRESS_GLOVE_1]
+# name_list = ["Beetle Glove"]
+# header_list = [HEADER_GLOVE]
 
-# address_list = [ADDRESS_GUN_2, ADDRESS_VEST_1]
-# name_list = ["Beetle gun", "vest"]
-# header_list = [HEADER_GUN, HEADER_VEST]
+address_list = [ADDRESS_GLOVE_2, ADDRESS_GUN_2, ADDRESS_VEST_1]
+name_list = ["GLOVE", "Beetle gun", "vest"]
+header_list = [HEADER_GLOVE, HEADER_GUN, HEADER_VEST]
 
 RETRY_COUNT = 8
 ultra96_mutex = threading.Lock()
@@ -92,18 +93,6 @@ def unpack_glove_data_into_dict(glove_data):
     }
     return glove_dict
 
-def dummy_dict(index):
-    dummy_dict = {
-        "index": index,
-        "roll": 0,
-        "pitch": 0,
-        "yaw": 0,
-        "x": 0,
-        "y": 0,
-        "z": 0,
-    }
-    return dummy_dict
-
 def bytes_to_uint16_t(bytes):
     val = (bytes[0] << 8) + bytes[1]
     if val > MAX_16_BIT_SIGNED:
@@ -111,22 +100,29 @@ def bytes_to_uint16_t(bytes):
     return val
 
 def pass_params(header, data_obj):
-
-    st = time.monotonic_ns()
+    global next_send
+    global send_buf
+    now = time.monotonic_ns()
 
     # grenade, reload, shield
     if header == HEADER_GLOVE:
-        msg = main_pb2.SensorData(
-            player=1,
-            index=data_obj["index"],
-            roll=data_obj["roll"],
-            pitch=data_obj["pitch"],
-            yaw=data_obj["yaw"],
-            x=data_obj["x"],
-            y=data_obj["y"],
-            z=data_obj["z"],
-        )
-        resp = stub.Gesture(msg)
+        data = send_buf.data.add()
+        data.player=1
+        data.index=data_obj["index"]
+        data.roll=data_obj["roll"]
+        data.pitch=data_obj["pitch"]
+        data.yaw=data_obj["yaw"]
+        data.x=data_obj["x"]
+        data.y=data_obj["y"]
+        data.z=data_obj["z"]
+
+        if now < next_send:
+            return
+        
+        next_send = now + int(20e6)
+        resp = stub.Gesture(send_buf)
+        send_buf = main_pb2.SensorData()
+
     # shoot/shot
     # TODO Add Packet IDs for Vest/Gun
     elif header == HEADER_GUN:
@@ -135,10 +131,6 @@ def pass_params(header, data_obj):
     elif header == HEADER_VEST:
         msg = main_pb2.Event(player=2, shootID=data_obj, action=main_pb2.shot)
         resp = stub.Shot(msg)
-
-    # print(f"Received resp {resp}")
-
-    print(f"rtt {(time.monotonic_ns() - st)/1e6}ms")
 
 def beetle_receiver(beetle):
     while True:
@@ -158,48 +150,23 @@ def serial_handler(beetle):
     global expected_index
     
     while True:
-        # print("Buffer Len: ", len(beetle.delegate.data_buffer))
         try:
-            #print("waiting")
             beetle.peripheral.waitForNotifications(0.01)
-            # beetle.peripheral.waitForNotifications(0.0001)
-
             while len(beetle.delegate.data_buffer) >= PACKET_SIZE:
-                #print(f"buffer size {len(beetle.delegate.data_buffer)}")
                 beetle.delegate.handle_data()
                 if beetle.delegate.is_valid_data:
-                    #packet_count += 1
-                    #print("Time Elapsed: ", time.time()-start_time)
                     if beetle.header == HEADER_GLOVE:
                         glove_data = beetle.delegate.packet[1:14]
-                        curr_index = beetle.delegate.packet[1]
-                        #print("Index: ", curr_index)
-                        #print("Valid data! Packet Index: ", curr_index)
                         data_obj = unpack_glove_data_into_dict(glove_data)
-                        # if curr_index == 0:
-                        #     expected_index = 0
-                        # else:
-                        #     expected_index += 1
-
-                        st = time.monotonic_ns()
                         if (ultra96_mutex.acquire()):
-                            # while curr_index > expected_index:
-                            #     pass_params(beetle.header, dummy_dict(expected_index))
-                            #     expected_index += 1
                             pass_params(beetle.header, data_obj)
                             ultra96_mutex.release()
-                        print(f"sending took {(time.monotonic_ns() - st)/1e6}ms")
                             
                     else:
-
-                        st = time.monotonic_ns()
                         if ultra96_mutex.acquire():
                             data_obj = beetle.delegate.packet[2]
                             pass_params(beetle.header, data_obj)
                             ultra96_mutex.release()
-                        
-                        print(f"sending took {(time.monotonic_ns() - st)/1e6}ms")
-                    #print(data_obj)
                 
         except btle.BTLEDisconnectError:
             beetle.set_disconnected()
