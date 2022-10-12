@@ -18,7 +18,7 @@ service Viz {
 }
 
 service Pynq {
-  rpc Emit(SensorData) returns (google.protobuf.Empty) {}
+  rpc Emit(SensorData) returns (Event) {}
   rpc Poll(google.protobuf.Empty) returns (Event) {}
 }
 

@@ -136,7 +136,8 @@ class Relay(object):
 
 
 class VizStub(object):
-    """Missing associated documentation comment in .proto file."""
+    """Not in use impl with MQTT
+    """
 
     def __init__(self, channel):
         """Constructor.
@@ -151,13 +152,14 @@ class VizStub(object):
                 )
         self.InFov = channel.unary_unary(
                 '/Viz/InFov',
-                request_serializer=main__pb2.InFovMessage.SerializeToString,
-                response_deserializer=main__pb2.InFovMessage.FromString,
+                request_serializer=main__pb2.Event.SerializeToString,
+                response_deserializer=main__pb2.InFovResp.FromString,
                 )
 
 
 class VizServicer(object):
-    """Missing associated documentation comment in .proto file."""
+    """Not in use impl with MQTT
+    """
 
     def Update(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -181,8 +183,8 @@ def add_VizServicer_to_server(servicer, server):
             ),
             'InFov': grpc.unary_unary_rpc_method_handler(
                     servicer.InFov,
-                    request_deserializer=main__pb2.InFovMessage.FromString,
-                    response_serializer=main__pb2.InFovMessage.SerializeToString,
+                    request_deserializer=main__pb2.Event.FromString,
+                    response_serializer=main__pb2.InFovResp.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -192,7 +194,8 @@ def add_VizServicer_to_server(servicer, server):
 
  # This class is part of an EXPERIMENTAL API.
 class Viz(object):
-    """Missing associated documentation comment in .proto file."""
+    """Not in use impl with MQTT
+    """
 
     @staticmethod
     def Update(request,
@@ -223,8 +226,8 @@ class Viz(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Viz/InFov',
-            main__pb2.InFovMessage.SerializeToString,
-            main__pb2.InFovMessage.FromString,
+            main__pb2.Event.SerializeToString,
+            main__pb2.InFovResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -241,7 +244,7 @@ class PynqStub(object):
         self.Emit = channel.unary_unary(
                 '/Pynq/Emit',
                 request_serializer=main__pb2.SensorData.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                response_deserializer=main__pb2.Event.FromString,
                 )
         self.Poll = channel.unary_unary(
                 '/Pynq/Poll',
@@ -271,7 +274,7 @@ def add_PynqServicer_to_server(servicer, server):
             'Emit': grpc.unary_unary_rpc_method_handler(
                     servicer.Emit,
                     request_deserializer=main__pb2.SensorData.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    response_serializer=main__pb2.Event.SerializeToString,
             ),
             'Poll': grpc.unary_unary_rpc_method_handler(
                     servicer.Poll,
@@ -301,7 +304,7 @@ class Pynq(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Pynq/Emit',
             main__pb2.SensorData.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            main__pb2.Event.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
