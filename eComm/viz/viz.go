@@ -92,6 +92,16 @@ func (v *Visualizer) publishEvent(e *pb.Event) {
 	if t := v.clnt.Publish(eventTopic, 1, false, data); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
 		log.Fatal(t.Error())
 	}
+
+	// Mock visualizer
+	//if e.Action == pb.Action_grenade {
+	//	msg := pb.InFovResp{
+	//		Player: 0b11 ^ e.Player,
+	//		Time:   e.Time,
+	//		InFov:  true,
+	//	}
+	//	common.Pub(common.Grenade2Eng, &engine.EGrenaded{InFovResp: &msg})
+	//}
 }
 
 func inFovRespHandler(c mqtt.Client, m mqtt.Message) {

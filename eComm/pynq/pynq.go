@@ -90,7 +90,7 @@ func (c *Client) Close() {
 }
 
 func (c *Client) forward(d *pb.Data) *pb.Event {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	ev, err := c.py.Emit(ctx, d)
 	if err != nil {
