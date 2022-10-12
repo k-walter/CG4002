@@ -20,7 +20,6 @@ func (e *eShot) updateEngine(engine *Engine) bool {
 	}
 
 	u.Action = pb.Action_shoot
-	v.Action = pb.Action_shot
 	return true
 }
 

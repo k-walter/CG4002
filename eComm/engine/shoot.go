@@ -21,7 +21,7 @@ func (e *eShoot) updateEngine(engine *Engine) bool {
 	// Add to shoot stream and match with shot
 	cmn.EXIT_UNLESS(len(v.Shoot) == 0 || v.Shoot[len(v.Shoot)-1] <= e.Time)
 	v.Shoot = append(v.Shoot, e.Time)
-	v.Action = pb.Action_shot
+	u.Action = pb.Action_shoot
 
 	// Shot arrived?
 	e.matchedShot = matchShot(0b11^e.Player, v)

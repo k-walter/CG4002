@@ -11,7 +11,7 @@ type eShootTimeout struct {
 
 func (s *eShootTimeout) updateEngine(e *Engine) bool {
 	// Find for uncleared shoot
-	_, v := e.getStates(s.Player)
+	u, v := e.getStates(s.Player)
 	idx := cmn.BinarySearch(v.Shoot, s.Time)
 
 	// If cleared, do nothing
@@ -21,6 +21,8 @@ func (s *eShootTimeout) updateEngine(e *Engine) bool {
 
 	// Clear preceding shoots
 	v.Shoot = v.Shoot[idx+1:]
+
+	u.Action = pb.Action_shoot
 	return true
 }
 
