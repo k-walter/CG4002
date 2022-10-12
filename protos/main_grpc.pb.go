@@ -307,7 +307,7 @@ var Viz_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PynqClient interface {
-	Emit(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*Event, error)
+	Emit(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Event, error)
 	Poll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*Event, error)
 }
 
@@ -319,7 +319,7 @@ func NewPynqClient(cc grpc.ClientConnInterface) PynqClient {
 	return &pynqClient{cc}
 }
 
-func (c *pynqClient) Emit(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*Event, error) {
+func (c *pynqClient) Emit(ctx context.Context, in *Data, opts ...grpc.CallOption) (*Event, error) {
 	out := new(Event)
 	err := c.cc.Invoke(ctx, "/Pynq/Emit", in, out, opts...)
 	if err != nil {
@@ -341,7 +341,7 @@ func (c *pynqClient) Poll(ctx context.Context, in *emptypb.Empty, opts ...grpc.C
 // All implementations must embed UnimplementedPynqServer
 // for forward compatibility
 type PynqServer interface {
-	Emit(context.Context, *SensorData) (*Event, error)
+	Emit(context.Context, *Data) (*Event, error)
 	Poll(context.Context, *emptypb.Empty) (*Event, error)
 	mustEmbedUnimplementedPynqServer()
 }
@@ -350,7 +350,7 @@ type PynqServer interface {
 type UnimplementedPynqServer struct {
 }
 
-func (UnimplementedPynqServer) Emit(context.Context, *SensorData) (*Event, error) {
+func (UnimplementedPynqServer) Emit(context.Context, *Data) (*Event, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Emit not implemented")
 }
 func (UnimplementedPynqServer) Poll(context.Context, *emptypb.Empty) (*Event, error) {
@@ -370,7 +370,7 @@ func RegisterPynqServer(s grpc.ServiceRegistrar, srv PynqServer) {
 }
 
 func _Pynq_Emit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SensorData)
+	in := new(Data)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -382,7 +382,7 @@ func _Pynq_Emit_Handler(srv interface{}, ctx context.Context, dec func(interface
 		FullMethod: "/Pynq/Emit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PynqServer).Emit(ctx, req.(*SensorData))
+		return srv.(PynqServer).Emit(ctx, req.(*Data))
 	}
 	return interceptor(ctx, in, info, handler)
 }

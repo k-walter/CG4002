@@ -243,7 +243,7 @@ class PynqStub(object):
         """
         self.Emit = channel.unary_unary(
                 '/Pynq/Emit',
-                request_serializer=main__pb2.SensorData.SerializeToString,
+                request_serializer=main__pb2.Data.SerializeToString,
                 response_deserializer=main__pb2.Event.FromString,
                 )
         self.Poll = channel.unary_unary(
@@ -273,7 +273,7 @@ def add_PynqServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Emit': grpc.unary_unary_rpc_method_handler(
                     servicer.Emit,
-                    request_deserializer=main__pb2.SensorData.FromString,
+                    request_deserializer=main__pb2.Data.FromString,
                     response_serializer=main__pb2.Event.SerializeToString,
             ),
             'Poll': grpc.unary_unary_rpc_method_handler(
@@ -303,7 +303,7 @@ class Pynq(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Pynq/Emit',
-            main__pb2.SensorData.SerializeToString,
+            main__pb2.Data.SerializeToString,
             main__pb2.Event.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
