@@ -32,6 +32,7 @@ message SensorData {
   uint32 x = 6;
   uint32 y = 7;
   uint32 z = 8;
+  uint32 index = 9; // 0 == reset
 }
 
 message InFovResp {
@@ -44,6 +45,8 @@ message Event {
   uint32 player = 1;
   uint64 time = 2;
   Action action = 3;
+  // shoot/shot
+  uint32 shootID = 4;
 }
 
 message State {
@@ -71,6 +74,7 @@ enum Action {
     logout = 4;
     shield = 5;
     // internal use
-    shot = 6;
+    shot = 6; // damaged
     shieldAvailable = 7;
+    // TODO grenadeHit, send shieldAvail + shot
 }
