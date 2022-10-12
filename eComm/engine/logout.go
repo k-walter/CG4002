@@ -9,10 +9,10 @@ type eLogout struct {
 }
 
 func (e *eLogout) updateEngine(engine *Engine) bool {
-	// RULE shutdow for both player, even if 1 signal
-	u, v := engine.getStates(e.Event.Player)
+	// RULE shutdown for player who signalled
+	// RULE shutdown ends game for both, even if 1 player signalled
+	u, _ := engine.getStates(e.Event.Player)
 	u.Action = pb.Action_logout
-	v.Action = pb.Action_logout
 
 	// DO NOT turn off engine. Check with eval first
 	return true

@@ -7,36 +7,45 @@ import (
 
 type eGrenade struct {
 	*pb.Event
+	didGrenade bool
 }
 
 func (e *eGrenade) updateEngine(engine *Engine) bool {
-	// Have grenades?
 	u, _ := engine.getStates(e.Player)
-	if u.Grenades == 0 {
-		return false
+	u.Action = pb.Action_grenade
+
+	// Have grenades?
+	e.didGrenade = u.Grenades != 0
+	if e.didGrenade {
+		u.Grenades--
 	}
-	u.Grenades--
 
 	// No timeout needed. Why?
 	// 1. grenade countdown on viz
 	// 2. checking inFov should return true/false regardless, we update eval then
-	u.Action = pb.Action_grenade
 	return true
 }
 
 func (e *eGrenade) alertVizEvent() *pb.Event {
+	// Send only if didGrenade
+	if !e.didGrenade {
+		return nil
+	}
+
 	// RULE check if hit/miss
 	return e.Event
 }
 
 func (e *eGrenade) updateVizState() bool {
 	// Either is fine, might have 2 updates if grenaded
-	return false
+	return !e.didGrenade
 }
 
 func (e *eGrenade) updateEvalState() bool {
 	// RULE check hit/miss < update
-	return false
+	// If no grenade left, just update now
+	// Else, wait for viz event to get back
+	return !e.didGrenade
 }
 
 type EGrenaded struct {

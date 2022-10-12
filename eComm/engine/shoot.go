@@ -9,16 +9,20 @@ import (
 
 type eShoot struct {
 	*pb.Event
+	didShoot    bool
 	matchedShot bool
 }
 
 func (e *eShoot) updateEngine(engine *Engine) bool {
 	u, v := engine.getStates(e.Player)
-	if u.Bullets == 0 {
-		return false
+	u.Action = pb.Action_shoot
+
+	// Enough bullets?
+	e.didShoot = u.Bullets > 0
+	if !e.didShoot {
+		return true
 	}
 	u.Bullets -= 1
-	u.Action = pb.Action_shoot
 
 	// Add to shoot stream and match with shot
 	if _, fnd := v.Shoot[e.ShootID]; fnd {
@@ -43,16 +47,24 @@ func (e *eShoot) updateEngine(engine *Engine) bool {
 }
 
 func (e *eShoot) alertVizEvent() *pb.Event {
+	if !e.didShoot {
+		return nil
+	}
+
 	// Shoot event
 	return e.Event
 }
 
 func (e *eShoot) updateVizState() bool {
-	return e.matchedShot
+	// See updateEvalState() for logic
+	return !e.didShoot || e.matchedShot
 }
 
 func (e *eShoot) updateEvalState() bool {
-	return e.matchedShot
+	// If no bullets, send now
+	// Else if matched shot, send now
+	// Else wait for min(timmeout, match from shot)
+	return !e.didShoot || e.matchedShot
 }
 
 func (e *eShoot) waitForShot(ch chan *eShootTimeout, end int64) {

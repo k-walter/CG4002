@@ -29,7 +29,7 @@ def pass_params(header, data_obj):
             msg = main_pb2.Event(player=1, shootID=data_obj, action=main_pb2.shoot)
             resp = stub.Shoot(msg)
         elif header == HEADER_VEST:
-            msg = main_pb2.Event(player=1, shootID=data_obj, action=main_pb2.shot)
+            msg = main_pb2.Event(player=2, shootID=data_obj, action=main_pb2.shot)
             resp = stub.Shot(msg)
 
         print(f"Received resp {resp}")

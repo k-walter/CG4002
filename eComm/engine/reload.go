@@ -12,14 +12,13 @@ type eReload struct {
 func (e *eReload) updateEngine(engine *Engine) bool {
 	// Reload only if empty mag
 	u, _ := engine.getStates(e.Player)
-	if u.Bullets > 0 {
-		return false
+	if u.Bullets == 0 {
+		// RULE Unlimited magazines
+		u.Bullets = cmn.BulletMax
 	}
 
-	// RULE Unlimited magazines
-	u.Bullets = cmn.BulletMax
+	// Even if couldn't reload, should send to eval
 	u.Action = pb.Action_reload
-
 	return true
 }
 

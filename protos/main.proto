@@ -49,7 +49,9 @@ message Event {
   uint32 player = 1;
   uint64 time = 2;
   Action action = 3;
-  // shoot/shot
+
+  // Action specific
+  // OPTIMIZE oneof
   uint32 shootID = 4;
 }
 
