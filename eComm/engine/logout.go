@@ -13,16 +13,17 @@ func (e *eLogout) updateEngine(engine *Engine) bool {
 	u, v := engine.getStates(e.Event.Player)
 	u.Action = pb.Action_logout
 	v.Action = pb.Action_logout
-	engine.running = false
+
+	// DO NOT turn off engine. Check with eval first
 	return true
 }
 
 func (e *eLogout) alertVizEvent() *pb.Event {
-	return e.Event
+	return nil
 }
 
 func (e *eLogout) updateVizState() bool {
-	return true
+	return false
 }
 
 func (e *eLogout) updateEvalState() bool {

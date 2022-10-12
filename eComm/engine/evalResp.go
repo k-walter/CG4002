@@ -6,7 +6,10 @@ import (
 	"time"
 )
 
-type eEvalResp struct{ *pb.State }
+type eEvalResp struct {
+	*pb.State
+	isLogout bool
+}
 
 func (e *eEvalResp) updateEngine(engine *Engine) bool {
 	now := uint64(time.Now().UnixNano())
@@ -25,17 +28,35 @@ func (e *eEvalResp) updateEngine(engine *Engine) bool {
 		// If previous was shield, need to send shieldAvailable
 		// If previous not shield, but actual is shield, send shield (assuming immediate resp)
 
+		// Logout?
+		e.isLogout = e.isLogout || (new.Action == pb.Action_logout)
+
 		// Copy pb
 		old.PlayerState = new
 	}
 
+	// Update each player
+	e.isLogout = false
 	updatePlayer(&engine.state[0], e.P1)
 	updatePlayer(&engine.state[1], e.P2)
+
+	// Logout?
+	if e.isLogout {
+		engine.running = false
+	}
+
 	return true
 }
 
 func (e *eEvalResp) alertVizEvent() *pb.Event {
-	return nil
+	if !e.isLogout {
+		return nil
+	}
+	return &pb.Event{
+		Player: 1,
+		Time:   uint64(time.Now().UnixNano()),
+		Action: pb.Action_none,
+	}
 }
 
 func (e *eEvalResp) updateVizState() bool {

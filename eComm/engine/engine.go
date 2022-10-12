@@ -82,6 +82,8 @@ func (e *Engine) Run() {
 		if ev.updateEvalState() {
 			cmn.Pub(cmn.State2Eval, snapshot(e.state))
 		}
+
+		// Set back to none if sent state
 		if ev.updateVizState() || ev.updateEvalState() {
 			resetAction(e.state)
 		}
@@ -102,7 +104,7 @@ func (e *Engine) waitAnyEvent() IEvent {
 	case grenaded := <-e.chGrenade: // viz checks if grenade hit
 		return grenaded
 	case state := <-e.chEval: // eval updates state
-		return &eEvalResp{state}
+		return &eEvalResp{State: state}
 	case unshield := <-e.chShield: // shield timeout
 		return unshield
 	case event := <-e.chEvent: // relay/infer actions
