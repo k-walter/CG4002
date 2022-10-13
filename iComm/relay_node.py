@@ -67,7 +67,10 @@ def init_connect_beetle_list():
 
 def init_peripheral_beetle_list():
     for beetle in beetle_list:
-        beetle.init_peripheral()
+        while beetle.is_connected:
+            beetle.init_peripheral()
+        if not beetle.is_connected():
+            beetle.connect_with_retries(RETRY_COUNT)
 
 
 def init_handshake_beetle_list():
