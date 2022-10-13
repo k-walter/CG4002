@@ -13,6 +13,7 @@ class Delegate(btle.DefaultDelegate):
         self.hand_ack = False       
         self.is_valid_data = False
         self.is_duplicate_pkt = False
+        self.corrupt_pkt_count = 0
 
     # Triggers whenever data comes in to the characteristic
     def handleNotification(self, cHandle, data):
@@ -42,9 +43,14 @@ class Delegate(btle.DefaultDelegate):
     def __handle_without_ack(self):
         if self.__is_valid_checksum():
             self.is_valid_data = True
+            self.corrupt_pkt_count = 0
         else:
             self.is_valid_data = False
+            self.corrupt_pkt_count += 1
             print("CORRUPTED")
+            if self.corrupt_pkt_count >= 10:
+                print("Flushing buffer...")
+                self.data_buffer = b""
 
     def __handle_with_ack(self):
         if self.__is_valid_checksum():
