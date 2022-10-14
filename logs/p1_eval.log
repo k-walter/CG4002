@@ -1,0 +1,352 @@
+> ./ecomm -evalAddr "137.132.92.184:9999"
+2022/10/13 09:52:16 init|Subscribe to Event2Eng 0
+2022/10/13 09:52:16 init|Subscribe to State2Eng 2
+2022/10/13 09:52:16 init|Subscribe to Grenade2Eng 5
+2022/10/13 09:52:16 init|Subscribe to Data2Pynq 1
+2022/10/13 09:52:16 init|Subscribe to State2Viz 3
+2022/10/13 09:52:16 init|Subscribe to Event2Viz 4
+2022/10/13 09:52:16 init|Subscribe to State2Eval 6
+2022/10/13 09:53:12 data rate =  1
+2022/10/13 09:53:12 Publish Event2Eng
+2022/10/13 09:53:12 Publish State2Viz
+2022/10/13 09:53:12 Publish State2Eval
+2022/10/13 09:53:12 eval|Send {"p1":{"hp":100,"action":"reload","bullets":6,"grenades":2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3},"p2":{"hp":100,"action":"none","bullets":6,"grenades":
+2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:12 eval|Received {"p1": {"hp": 100, "action": "reload", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}, "p2": {"hp": 100, "action": "none
+", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:12 Publish State2Eng
+2022/10/13 09:53:12 Publish State2Viz
+2022/10/13 09:53:13 data rate =  24
+2022/10/13 09:53:14 data rate =  63
+2022/10/13 09:53:15 data rate =  46
+2022/10/13 09:53:16 data rate =  39
+2022/10/13 09:53:17 data rate =  49
+2022/10/13 09:53:18 data rate =  6
+2022/10/13 09:53:19 data rate =  22
+2022/10/13 09:53:19 Publish Event2Eng
+2022/10/13 09:53:19 Publish Event2Viz
+2022/10/13 09:53:20 Publish Grenade2Eng
+2022/10/13 09:53:20 Publish State2Viz
+2022/10/13 09:53:20 Publish State2Eval
+2022/10/13 09:53:20 eval|Send {"p1":{"hp":100,"action":"grenade","bullets":6,"grenades":1,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3},"p2":{"hp":100,"action":"none","bullets":6,"grenades"
+:2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:20 data rate =  22
+2022/10/13 09:53:20 eval|Received {"p1": {"hp": 100, "action": "grenade", "bullets": 6, "grenades": 1, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}, "p2": {"hp": 70, "action": "none
+", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:20 Publish State2Eng
+2022/10/13 09:53:20 Publish State2Viz
+2022/10/13 09:53:21 data rate =  75
+2022/10/13 09:53:21 relay|Received shoot
+2022/10/13 09:53:21 Publish Event2Eng
+2022/10/13 09:53:21 could not find victim, map[]
+2022/10/13 09:53:21 Publish Event2Viz
+2022/10/13 09:53:21 Publish State2Viz
+2022/10/13 09:53:21 Publish State2Eval
+2022/10/13 09:53:21 eval|Send {"p1":{"hp":100,"action":"shoot","bullets":5,"grenades":1,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3},"p2":{"hp":70,"action":"none","bullets":6,"grenades":2,
+"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:21 eval|Received {"p1": {"hp": 100, "action": "shoot", "bullets": 5, "grenades": 1, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}, "p2": {"hp": 60, "action": "none",
+ "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:21 Publish State2Eng
+2022/10/13 09:53:21 Publish State2Viz
+2022/10/13 09:53:21 relay|Received shot
+2022/10/13 09:53:21 Publish Event2Eng
+2022/10/13 09:53:21 could not find shooter, map[]
+2022/10/13 09:53:23 relay|Received shoot
+2022/10/13 09:53:23 Publish Event2Eng
+2022/10/13 09:53:23 could not find victim, map[7:{}]
+2022/10/13 09:53:23 Publish Event2Viz
+2022/10/13 09:53:23 relay|Received shot
+2022/10/13 09:53:23 Publish Event2Eng
+2022/10/13 09:53:23 Publish Event2Viz
+2022/10/13 09:53:23 Publish State2Viz
+2022/10/13 09:53:23 Publish State2Eval
+2022/10/13 09:53:23 eval|Send {"p1":{"hp":100,"action":"shoot","bullets":4,"grenades":1,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3},"p2":{"hp":50,"action":"none","bullets":6,"grenades":2,
+"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:23 eval|Received {"p1": {"hp": 100, "action": "shoot", "bullets": 4, "grenades": 1, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}, "p2": {"hp": 50, "action": "none",
+ "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:23 Publish State2Eng
+2022/10/13 09:53:23 Publish State2Viz
+2022/10/13 09:53:25 data rate =  9
+2022/10/13 09:53:26 data rate =  21
+2022/10/13 09:53:27 data rate =  15
+2022/10/13 09:53:27 Publish Event2Eng
+2022/10/13 09:53:27 Publish Event2Viz
+2022/10/13 09:53:27 Publish Grenade2Eng
+2022/10/13 09:53:27 Publish State2Viz
+2022/10/13 09:53:27 Publish State2Eval
+2022/10/13 09:53:27 eval|Send {"p1":{"hp":100,"action":"grenade","bullets":4,"grenades":0,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3},"p2":{"hp":50,"action":"none","bullets":6,"grenades":
+2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:28 eval|Received {"p1": {"hp": 100, "action": "grenade", "bullets": 4, "grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}, "p2": {"hp": 20, "action": "none
+", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:28 Publish State2Eng
+2022/10/13 09:53:28 Publish State2Viz
+2022/10/13 09:53:28 data rate =  29
+2022/10/13 09:53:29 data rate =  28
+2022/10/13 09:53:30 data rate =  32
+2022/10/13 09:53:31 data rate =  54
+2022/10/13 09:53:32 data rate =  15
+2022/10/13 09:53:33 data rate =  3
+2022/10/13 09:53:35 data rate =  4
+2022/10/13 09:53:36 data rate =  3
+2022/10/13 09:53:36 Publish Event2Eng
+2022/10/13 09:53:36 Publish Event2Viz
+2022/10/13 09:53:36 Publish State2Viz
+2022/10/13 09:53:36 Publish State2Eval
+2022/10/13 09:53:36 eval|Send {"p1":{"hp":100,"action":"shield","bullets":4,"grenades":0,"shield_time":9.999895574,"shield_health":30,"num_deaths":0,"num_shield":2},"p2":{"hp":20,"action":"none","bullets":6,"
+grenades":2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:36 eval|Received {"p1": {"hp": 100, "action": "shield", "bullets": 4, "grenades": 0, "shield_time": 10, "shield_health": 30, "num_deaths": 0, "num_shield": 2}, "p2": {"hp": 20, "action": "non
+e", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:36 Publish State2Eng
+2022/10/13 09:53:36 Publish State2Viz
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 51
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 55
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 52
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 53
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 54
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 56
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 57
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 58
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 59
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 60
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 61
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 62
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 63
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 64
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 66
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 65
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 67
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 68
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 69
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 70
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 71
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 72
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 73
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 74
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 75
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 76
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 77
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 78
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 79
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 80
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 81
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 82
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 83
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 84
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 85
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 86
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 77
+2022/10/13 09:53:36 Warning: relay->fpga buffer size = 53
+2022/10/13 09:53:36 Publish Event2Eng
+2022/10/13 09:53:36 Publish Event2Viz
+2022/10/13 09:53:36 Publish State2Viz
+2022/10/13 09:53:36 Publish State2Eval
+2022/10/13 09:53:36 eval|Send {"p1":{"hp":100,"action":"shield","bullets":4,"grenades":0,"shield_time":9.337068678,"shield_health":30,"num_deaths":0,"num_shield":2},"p2":{"hp":20,"action":"none","bullets":6,"
+grenades":2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:36 eval|Received {"p1": {"hp": 100, "action": "shoot", "bullets": 3, "grenades": 0, "shield_time": 1.7516100406646729, "shield_health": 30, "num_deaths": 0, "num_shield": 2}, "p2": {"hp": 10,
+ "action": "none", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:36 Publish State2Eng
+2022/10/13 09:53:36 Publish State2Viz
+2022/10/13 09:53:37 data rate =  157
+2022/10/13 09:53:38 data rate =  52
+2022/10/13 09:53:39 data rate =  8
+2022/10/13 09:53:40 data rate =  17
+2022/10/13 09:53:40 Publish Event2Eng
+2022/10/13 09:53:40 Publish State2Viz
+2022/10/13 09:53:40 Publish State2Eval
+2022/10/13 09:53:40 eval|Send {"p1":{"hp":100,"action":"reload","bullets":3,"grenades":0,"shield_time":6.043994342,"shield_health":30,"num_deaths":0,"num_shield":2},"p2":{"hp":10,"action":"none","bullets":6,"
+grenades":2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:40 eval|Received {"p1": {"hp": 100, "action": "reload", "bullets": 3, "grenades": 0, "shield_time": 1.090160846710205, "shield_health": 30, "num_deaths": 0, "num_shield": 2}, "p2": {"hp": 10,
+ "action": "none", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:40 Publish State2Eng
+2022/10/13 09:53:40 Publish State2Viz
+2022/10/13 09:53:41 data rate =  71
+2022/10/13 09:53:42 data rate =  20
+2022/10/13 09:53:43 data rate =  29
+2022/10/13 09:53:43 Publish Event2Eng
+2022/10/13 09:53:43 Publish Event2Viz
+2022/10/13 09:53:43 Publish State2Viz
+2022/10/13 09:53:43 Publish State2Eval
+2022/10/13 09:53:43 eval|Send {"p1":{"hp":100,"action":"shield","bullets":3,"grenades":0,"shield_time":2.647472175,"shield_health":30,"num_deaths":0,"num_shield":2},"p2":{"hp":10,"action":"none","bullets":6,"
+grenades":2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:43 eval|Received {"p1": {"hp": 100, "action": "shield", "bullets": 3, "grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}, "p2": {"hp": 10, "action": "none"
+, "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:43 Publish State2Eng
+2022/10/13 09:53:43 Publish State2Viz
+2022/10/13 09:53:44 data rate =  61
+2022/10/13 09:53:45 data rate =  52
+2022/10/13 09:53:46 data rate =  47
+2022/10/13 09:53:46 Trying to unshield
+2022/10/13 09:53:46 Publish Event2Eng
+2022/10/13 09:53:46 Publish Event2Viz
+2022/10/13 09:53:46 Publish State2Viz
+2022/10/13 09:53:47 data rate =  49
+2022/10/13 09:53:48 data rate =  54
+2022/10/13 09:53:49 data rate =  14
+2022/10/13 09:53:50 data rate =  2
+2022/10/13 09:53:50 Publish Event2Eng
+2022/10/13 09:53:50 Publish State2Viz
+2022/10/13 09:53:50 Publish State2Eval
+2022/10/13 09:53:50 eval|Send {"p1":{"hp":100,"action":"grenade","bullets":3,"grenades":0,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":2},"p2":{"hp":10,"action":"none","bullets":6,"grenades":
+2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:50 eval|Received {"p1": {"hp": 100, "action": "grenade", "bullets": 3, "grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}, "p2": {"hp": 10, "action": "none
+", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:50 Publish State2Eng
+2022/10/13 09:53:50 Publish State2Viz
+2022/10/13 09:53:51 data rate =  31
+2022/10/13 09:53:52 data rate =  57
+2022/10/13 09:53:53 data rate =  17
+2022/10/13 09:53:54 data rate =  41
+2022/10/13 09:53:54 Publish Event2Eng
+2022/10/13 09:53:54 Publish Event2Viz
+2022/10/13 09:53:54 Publish State2Viz
+2022/10/13 09:53:54 Publish State2Eval
+2022/10/13 09:53:54 eval|Send {"p1":{"hp":100,"action":"shield","bullets":3,"grenades":0,"shield_time":9.999904345,"shield_health":30,"num_deaths":0,"num_shield":1},"p2":{"hp":10,"action":"none","bullets":6,"
+grenades":2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:54 eval|Received {"p1": {"hp": 100, "action": "shield", "bullets": 3, "grenades": 0, "shield_time": 10, "shield_health": 30, "num_deaths": 0, "num_shield": 1}, "p2": {"hp": 10, "action": "non
+e", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:54 Publish State2Eng
+2022/10/13 09:53:54 Publish State2Viz
+2022/10/13 09:53:55 data rate =  48
+2022/10/13 09:53:56 data rate =  42
+2022/10/13 09:53:57 data rate =  30
+2022/10/13 09:53:57 Publish Event2Eng
+2022/10/13 09:53:57 Publish State2Viz
+2022/10/13 09:53:57 Publish State2Eval
+2022/10/13 09:53:57 eval|Send {"p1":{"hp":100,"action":"reload","bullets":3,"grenades":0,"shield_time":7.224621683,"shield_health":30,"num_deaths":0,"num_shield":1},"p2":{"hp":10,"action":"none","bullets":6,"
+grenades":2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:57 eval|Received {"p1": {"hp": 100, "action": "reload", "bullets": 3, "grenades": 0, "shield_time": 5.963114023208618, "shield_health": 30, "num_deaths": 0, "num_shield": 1}, "p2": {"hp": 10,
+ "action": "none", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/10/13 09:53:57 Publish State2Eng
+2022/10/13 09:53:57 Publish State2Viz
+2022/10/13 09:53:58 data rate =  38
+2022/10/13 09:53:59 data rate =  56
+2022/10/13 09:53:59 relay|Received shoot
+2022/10/13 09:53:59 Publish Event2Eng
+2022/10/13 09:53:59 could not find victim, map[]
+2022/10/13 09:53:59 Publish Event2Viz
+2022/10/13 09:53:59 Publish State2Viz
+2022/10/13 09:53:59 Publish State2Eval
+2022/10/13 09:53:59 eval|Send {"p1":{"hp":100,"action":"shoot","bullets":2,"grenades":0,"shield_time":5.065701374,"shield_health":30,"num_deaths":0,"num_shield":1},"p2":{"hp":10,"action":"none","bullets":6,"g
+renades":2,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/10/13 09:53:59 eval|Received {"p1": {"hp": 100, "action": "shoot", "bullets": 2, "grenades": 0, "shield_time": 3.1943862438201904, "shield_health": 30, "num_deaths": 0, "num_shield": 1}, "p2": {"hp": 100
+, "action": "none", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 1, "num_shield": 3}}
+2022/10/13 09:53:59 Publish State2Eng
+2022/10/13 09:53:59 Publish State2Viz
+2022/10/13 09:54:01 data rate =  35
+2022/10/13 09:54:01 Publish Event2Eng
+2022/10/13 09:54:01 Publish State2Viz
+2022/10/13 09:54:01 Publish State2Eval
+2022/10/13 09:54:01 eval|Send {"p1":{"hp":100,"action":"reload","bullets":2,"grenades":0,"shield_time":2.849093394,"shield_health":30,"num_deaths":0,"num_shield":1},"p2":{"hp":100,"action":"none","bullets":6,
+"grenades":2,"shield_time":0,"shield_health":0,"num_deaths":1,"num_shield":3}}
+2022/10/13 09:54:01 eval|Received {"p1": {"hp": 100, "action": "reload", "bullets": 2, "grenades": 0, "shield_time": 1.0352802276611328, "shield_health": 30, "num_deaths": 0, "num_shield": 1}, "p2": {"hp": 10
+0, "action": "none", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 1, "num_shield": 3}}
+2022/10/13 09:54:01 Publish State2Eng
+2022/10/13 09:54:01 Publish State2Viz
+2022/10/13 09:54:02 data rate =  24
+2022/10/13 09:54:03 data rate =  52
+2022/10/13 09:54:04 data rate =  57
+2022/10/13 09:54:04 relay|Received shoot
+2022/10/13 09:54:04 Publish Event2Eng
+2022/10/13 09:54:04 could not find victim, map[]
+2022/10/13 09:54:04 Publish Event2Viz
+2022/10/13 09:54:04 relay|Received shot
+2022/10/13 09:54:04 Publish Event2Eng
+2022/10/13 09:54:04 Publish Event2Viz
+2022/10/13 09:54:04 Publish State2Viz
+2022/10/13 09:54:04 Publish State2Eval
+2022/10/13 09:54:04 eval|Send {"p1":{"hp":100,"action":"shoot","bullets":1,"grenades":0,"shield_time":0.590946191,"shield_health":30,"num_deaths":0,"num_shield":1},"p2":{"hp":90,"action":"none","bullets":6,"g
+renades":2,"shield_time":0,"shield_health":0,"num_deaths":1,"num_shield":3}}
+2022/10/13 09:54:04 eval|Received {"p1": {"hp": 100, "action": "shoot", "bullets": 1, "grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 1}, "p2": {"hp": 90, "action": "none",
+ "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 1, "num_shield": 3}}
+2022/10/13 09:54:04 Publish State2Eng
+2022/10/13 09:54:04 Publish State2Viz
+2022/10/13 09:54:04 Trying to unshield
+2022/10/13 09:54:04 Publish Event2Eng
+2022/10/13 09:54:04 Publish Event2Viz
+2022/10/13 09:54:04 Publish State2Viz
+2022/10/13 09:54:05 data rate =  1
+2022/10/13 09:54:06 data rate =  11
+2022/10/13 09:54:06 Publish Event2Eng
+2022/10/13 09:54:06 Publish Event2Viz
+2022/10/13 09:54:06 Publish State2Viz
+2022/10/13 09:54:06 Publish State2Eval
+2022/10/13 09:54:06 eval|Send {"p1":{"hp":100,"action":"shield","bullets":1,"grenades":0,"shield_time":9.999898835,"shield_health":30,"num_deaths":0,"num_shield":0},"p2":{"hp":90,"action":"none","bullets":6,"
+grenades":2,"shield_time":0,"shield_health":0,"num_deaths":1,"num_shield":3}}
+2022/10/13 09:54:06 eval|Received {"p1": {"hp": 100, "action": "shield", "bullets": 1, "grenades": 0, "shield_time": 10, "shield_health": 30, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 90, "action": "non
+e", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 1, "num_shield": 3}}
+2022/10/13 09:54:06 Publish State2Eng
+2022/10/13 09:54:06 Publish State2Viz
+2022/10/13 09:54:07 data rate =  51
+2022/10/13 09:54:08 data rate =  35
+2022/10/13 09:54:09 data rate =  19
+2022/10/13 09:54:10 data rate =  17
+2022/10/13 09:54:10 Publish Event2Eng
+2022/10/13 09:54:10 Publish State2Viz
+2022/10/13 09:54:10 Publish State2Eval
+2022/10/13 09:54:10 eval|Send {"p1":{"hp":100,"action":"grenade","bullets":1,"grenades":0,"shield_time":5.819771978,"shield_health":30,"num_deaths":0,"num_shield":0},"p2":{"hp":90,"action":"none","bullets":6,
+"grenades":2,"shield_time":0,"shield_health":0,"num_deaths":1,"num_shield":3}}
+2022/10/13 09:54:10 eval|Received {"p1": {"hp": 100, "action": "grenade", "bullets": 1, "grenades": 0, "shield_time": 7.3535003662109375, "shield_health": 30, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 9
+0, "action": "none", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 1, "num_shield": 3}}
+2022/10/13 09:54:10 Publish State2Eng
+2022/10/13 09:54:10 Publish State2Viz
+2022/10/13 09:54:11 data rate =  27
+2022/10/13 09:54:12 data rate =  85
+2022/10/13 09:54:12 relay|Received shoot
+2022/10/13 09:54:12 Publish Event2Eng
+2022/10/13 09:54:12 could not find victim, map[]
+2022/10/13 09:54:12 Publish Event2Viz
+2022/10/13 09:54:12 relay|Received shot
+2022/10/13 09:54:12 Publish Event2Eng
+2022/10/13 09:54:12 Publish Event2Viz
+2022/10/13 09:54:12 Publish State2Viz
+2022/10/13 09:54:12 Publish State2Eval
+2022/10/13 09:54:12 eval|Send {"p1":{"hp":100,"action":"shoot","bullets":0,"grenades":0,"shield_time":4.125137959,"shield_health":30,"num_deaths":0,"num_shield":0},"p2":{"hp":80,"action":"none","bullets":6,"g
+renades":2,"shield_time":0,"shield_health":0,"num_deaths":1,"num_shield":3}}
+2022/10/13 09:54:12 eval|Received {"p1": {"hp": 100, "action": "shoot", "bullets": 0, "grenades": 0, "shield_time": 3.1767349243164062, "shield_health": 30, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 80,
+ "action": "none", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 1, "num_shield": 3}}
+2022/10/13 09:54:12 Publish State2Eng
+2022/10/13 09:54:12 Publish State2Viz
+2022/10/13 09:54:16 Trying to unshield
+2022/10/13 09:54:16 Publish Event2Eng
+2022/10/13 09:54:16 Publish Event2Viz
+2022/10/13 09:54:16 Publish State2Viz
+2022/10/13 09:54:26 data rate =  24
+2022/10/13 09:54:27 data rate =  4
+2022/10/13 09:54:28 data rate =  22
+2022/10/13 09:54:43 data rate =  2
+2022/10/13 09:54:44 data rate =  23
+2022/10/13 09:54:45 data rate =  47
+2022/10/13 09:54:46 data rate =  47
+2022/10/13 09:54:55 relay|Received shoot
+2022/10/13 09:54:55 Publish Event2Eng
+2022/10/13 09:54:55 Publish State2Viz
+2022/10/13 09:54:55 Publish State2Eval
+2022/10/13 09:54:55 eval|Send {"p1":{"hp":100,"action":"shoot","bullets":0,"grenades":0,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":80,"action":"none","bullets":6,"grenades":2,
+"shield_time":0,"shield_health":0,"num_deaths":1,"num_shield":3}}
+2022/10/13 09:54:55 eval|Received {"p1": {"hp": 100, "action": "shoot", "bullets": 0, "grenades": 0, "shield_time": 1.4805378913879395, "shield_health": 30, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 80,
+ "action": "none", "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 1, "num_shield": 3}}
+2022/10/13 09:54:55 Publish State2Eng
+2022/10/13 09:54:55 Publish State2Viz
+2022/10/13 09:54:55 relay|Received shot
+2022/10/13 09:54:55 Publish Event2Eng
+2022/10/13 09:54:55 could not find shooter, map[]
+2022/10/13 09:54:56 data rate =  13
+2022/10/13 09:54:57 data rate =  2
+2022/10/13 09:54:58 data rate =  24
+2022/10/13 09:54:58 Publish Event2Eng
+2022/10/13 09:54:58 Publish State2Eval
+2022/10/13 09:54:58 eval|Send {"p1":{"hp":100,"action":"logout","bullets":0,"grenades":0,"shield_time":0,"shield_health":30,"num_deaths":0,"num_shield":0},"p2":{"hp":80,"action":"none","bullets":6,"grenades":
+2,"shield_time":0,"shield_health":0,"num_deaths":1,"num_shield":3}}
+2022/10/13 09:54:58 eval|Received {"p1": {"hp": 100, "action": "logout", "bullets": 0, "grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 80, "action": "none"
+, "bullets": 6, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 1, "num_shield": 3}}
+2022/10/13 09:54:58 Publish State2Eng
+2022/10/13 09:54:58 Publish Event2Viz
+2022/10/13 09:54:58 Publish State2Viz
+2022/10/13 09:54:59 data rate =  75
+2022/10/13 09:55:00 data rate =  53
+2022/10/13 09:55:01 data rate =  28
+2022/10/13 09:55:02 data rate =  30
+^C
+~/cg4002 ---------------------------------------------------------------------------------------------------------------------------------------------- INT to~/cg4002 ------------- INT took 3m 0s py pynq-venv
+~/cg4002 ---------------------------------------------------------------------------------------------------------------------------------------------- INT took 3m 0s py pynq-venv with xilinx@pynq at 01:55:16
+<
