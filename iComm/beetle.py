@@ -36,12 +36,9 @@ class Beetle():
         self.is_connected = False
 
     def init_peripheral(self):
-        try:
-            self.__set_serial_char()
-            self.__set_delegate()
-            self.__attach_delegate()
-        except btle.BTLEDisconnectError:
-            self.set_disconnected()
+        self.__set_serial_char()
+        self.__set_delegate()
+        self.__attach_delegate()
 
     def init_handshake(self):
         try:
@@ -54,7 +51,6 @@ class Beetle():
 
 
     #Private Methods
-
     def __connect(self):
         print(f"Connecting to {self.address}...")
         self.peripheral.connect(self.address)
@@ -76,8 +72,6 @@ class Beetle():
         serial_char = [c for c in chars if c.uuid == SERIAL_UUID][0]
         self.serial_char = serial_char
         print("Serial characteristic set.")
-
-
 
     # Creates delegate object to receive notifications
     def __set_delegate(self):
