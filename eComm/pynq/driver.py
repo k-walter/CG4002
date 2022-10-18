@@ -69,8 +69,7 @@ class CNNDriver(DefaultIP):
         
         # start inferencing
         self.register_map.function_select=0
-        if self.debug:
-            start_time = time()
+        start_time = time()
         self.register_map.CTRL.AP_START=1
         while(self.register_map.CTRL.AP_DONE == 0):pass # mostly immediate
         if self.debug:
@@ -82,7 +81,7 @@ class CNNDriver(DefaultIP):
         if confidence < THRESH:
             return -1
 
-        print(f"{predicted_class} ({confidence}) in={self.input} out={self.raw_outputs}")
+        print(f"FPGA Prediction: {["Shield", "Reload", "Grenade", "Logout"][predicted_class]}({confidence}), took {(time()-start_time)*1000}ms")
         return predicted_class
     
     def resetBuffer(self):
