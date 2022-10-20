@@ -4,6 +4,10 @@ from helper import unpack_glove_data_into_dict
 from bluepy.btle import BTLEDisconnectError
 import time
 import main_pb2
+import os
+
+count = 0
+data_str = ''
 
 class SerialHandler(Thread):
     def __init__(self, beetle, lock, stub):
@@ -41,26 +45,41 @@ class GloveHandler(SerialHandler):
         self.send_buf = main_pb2.SensorData()
 
     def pass_params(self, packet):
+        global count
+        global data_str
         glove_data = packet[1:14]
         data_obj = unpack_glove_data_into_dict(glove_data)
-        now = time.monotonic_ns()
+        # now = time.monotonic_ns()
+        if data_obj["index"] == 0:
+            if count == 50:
+                print("\n\n\n\n\nCollected 50! Exiting...")
+                exit()
+            if len(data_str) != 0:
+                with open(f'shield{count}.csv', 'w') as f:
+                    f.write(data_str)
+                    count += 1
+                    data_str = ''
+                    print(f'wrote to shield{count-1}')
 
-        data = self.send_buf.data.add()
-        data.player=1
-        data.index=data_obj["index"]
-        data.roll=data_obj["roll"]
-        data.pitch=data_obj["pitch"]
-        data.yaw=data_obj["yaw"]
-        data.x=data_obj["x"]
-        data.y=data_obj["y"]
-        data.z=data_obj["z"]
+            
+        # data = self.send_buf.data.add()
+        # data.player=1
+        # data.index=data_obj["index"]
+        # data.roll=data_obj["roll"]
+        # data.pitch=data_obj["pitch"]
+        # data.yaw=data_obj["yaw"]
+        # data.x=data_obj["x"]
+        # data.y=data_obj["y"]
+        # data.z=data_obj["z"]
 
-        if now < self.next_send:
-            return
+        data_str += f'{data_obj["roll"]}, {data_obj["pitch"]}, {data_obj["yaw"]}, {data_obj["x"]}, {data_obj["y"]}, {data_obj["z"]}\n'
+
+        # if now < self.next_send:
+        #     return
         
-        self.next_send = now + int(20e6)
-        self.stub.Gesture(self.send_buf)
-        self.send_buf = main_pb2.SensorData()
+        # self.next_send = now + int(20e6)
+        # self.stub.Gesture(self.send_buf)
+        # self.send_buf = main_pb2.SensorData()
 
     
 class VestHandler(SerialHandler):
