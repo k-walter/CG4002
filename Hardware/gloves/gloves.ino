@@ -60,9 +60,9 @@ bool isDataCollecting = false;
 #define MASK_BYTE 0xff
 
 #define BUFFER_SIZE 100
-#define PACKET_SIZE 15  // 15 bytes in a packet
+#define PACKET_SIZE 16  // 16 bytes in a packet
 
-const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'q'};
+const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'A'};
 uint8_t sendCounter = 0;
 
 //IMU Data Structure
@@ -87,10 +87,10 @@ volatile char seq_no;
 
 //Assembles the 15 byte packet and sends it out over serial
 void assemble_and_send_data(IMUData data) {
-  char packet[16];
+  char packet[PACKET_SIZE];
   packet[0] = 'M';
-  packet[1] = motionDataCounter;
-  int ptr = 2;
+  int ptr = 1;
+  append_value(packet, motionDataCounter, &ptr);
   append_value(packet, data.roll, &ptr);
   append_value(packet, data.pitch, &ptr);
   append_value(packet, data.yaw, &ptr);
@@ -100,12 +100,11 @@ void assemble_and_send_data(IMUData data) {
 
   char checksum = 0;
   
-  for (int i = 0; i < 14; i++) {
+  for (int i = 0; i < PACKET_SIZE-1; i++) {
     checksum ^= packet[i];
   }
 
-  packet[14] = checksum;
-  packet[15] = '\0';
+  packet[PACKET_SIZE-1] = checksum;
 
   for (int i = 0; i < PACKET_SIZE; i++) {
     serialSend(packet[i]);
