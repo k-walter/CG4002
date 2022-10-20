@@ -5,10 +5,10 @@ option go_package = "./";
 
 service Relay {
   // glove (MPU6050) data for AI
-  rpc Gesture(SensorData) returns (google.protobuf.Empty) {}
+  rpc Gesture(SensorData) returns (RndResp) {}
   // detected by infrared (KY-022 rx, KY-005 tx)
-  rpc Shoot(Event) returns (google.protobuf.Empty) {}
-  rpc Shot(Event) returns (google.protobuf.Empty) {}
+  rpc Shoot(Event) returns (RndResp) {}
+  rpc Shot(Event) returns (RndResp) {}
 }
 
 // Not in use impl with MQTT
@@ -25,18 +25,23 @@ service Pynq {
 message Data {
   uint32 player = 1;
   uint64 time = 2; // No need to fill, synchronized on engine
+  uint32 rnd = 3; // Fill with logical clock on relay
   // Data
-  int32 roll = 3;
-  int32 pitch = 4;
-  int32 yaw = 5;
-  int32 x = 6;
-  int32 y = 7;
-  int32 z = 8;
-  uint32 index = 9; // 0 == reset
+  int32 roll = 4;
+  int32 pitch = 5;
+  int32 yaw = 6;
+  int32 x = 7;
+  int32 y = 8;
+  int32 z = 9;
+  uint32 index = 10; // 0 == reset
 }
 
 message SensorData {
   repeated Data data = 1;
+}
+
+message RndResp {
+  uint32 rnd = 1;
 }
 
 message InFovResp {

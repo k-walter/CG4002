@@ -24,10 +24,10 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RelayClient interface {
 	// glove (MPU6050) data for AI
-	Gesture(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Gesture(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*RndResp, error)
 	// detected by infrared (KY-022 rx, KY-005 tx)
-	Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error)
+	Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error)
 }
 
 type relayClient struct {
@@ -38,8 +38,8 @@ func NewRelayClient(cc grpc.ClientConnInterface) RelayClient {
 	return &relayClient{cc}
 }
 
-func (c *relayClient) Gesture(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *relayClient) Gesture(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*RndResp, error) {
+	out := new(RndResp)
 	err := c.cc.Invoke(ctx, "/Relay/Gesture", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -47,8 +47,8 @@ func (c *relayClient) Gesture(ctx context.Context, in *SensorData, opts ...grpc.
 	return out, nil
 }
 
-func (c *relayClient) Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *relayClient) Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error) {
+	out := new(RndResp)
 	err := c.cc.Invoke(ctx, "/Relay/Shoot", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -56,8 +56,8 @@ func (c *relayClient) Shoot(ctx context.Context, in *Event, opts ...grpc.CallOpt
 	return out, nil
 }
 
-func (c *relayClient) Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *relayClient) Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error) {
+	out := new(RndResp)
 	err := c.cc.Invoke(ctx, "/Relay/Shot", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -70,10 +70,10 @@ func (c *relayClient) Shot(ctx context.Context, in *Event, opts ...grpc.CallOpti
 // for forward compatibility
 type RelayServer interface {
 	// glove (MPU6050) data for AI
-	Gesture(context.Context, *SensorData) (*emptypb.Empty, error)
+	Gesture(context.Context, *SensorData) (*RndResp, error)
 	// detected by infrared (KY-022 rx, KY-005 tx)
-	Shoot(context.Context, *Event) (*emptypb.Empty, error)
-	Shot(context.Context, *Event) (*emptypb.Empty, error)
+	Shoot(context.Context, *Event) (*RndResp, error)
+	Shot(context.Context, *Event) (*RndResp, error)
 	mustEmbedUnimplementedRelayServer()
 }
 
@@ -81,13 +81,13 @@ type RelayServer interface {
 type UnimplementedRelayServer struct {
 }
 
-func (UnimplementedRelayServer) Gesture(context.Context, *SensorData) (*emptypb.Empty, error) {
+func (UnimplementedRelayServer) Gesture(context.Context, *SensorData) (*RndResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Gesture not implemented")
 }
-func (UnimplementedRelayServer) Shoot(context.Context, *Event) (*emptypb.Empty, error) {
+func (UnimplementedRelayServer) Shoot(context.Context, *Event) (*RndResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Shoot not implemented")
 }
-func (UnimplementedRelayServer) Shot(context.Context, *Event) (*emptypb.Empty, error) {
+func (UnimplementedRelayServer) Shot(context.Context, *Event) (*RndResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Shot not implemented")
 }
 func (UnimplementedRelayServer) mustEmbedUnimplementedRelayServer() {}

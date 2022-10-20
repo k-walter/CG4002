@@ -18,17 +18,17 @@ class RelayStub(object):
         self.Gesture = channel.unary_unary(
                 '/Relay/Gesture',
                 request_serializer=main__pb2.SensorData.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                response_deserializer=main__pb2.RndResp.FromString,
                 )
         self.Shoot = channel.unary_unary(
                 '/Relay/Shoot',
                 request_serializer=main__pb2.Event.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                response_deserializer=main__pb2.RndResp.FromString,
                 )
         self.Shot = channel.unary_unary(
                 '/Relay/Shot',
                 request_serializer=main__pb2.Event.SerializeToString,
-                response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                response_deserializer=main__pb2.RndResp.FromString,
                 )
 
 
@@ -61,17 +61,17 @@ def add_RelayServicer_to_server(servicer, server):
             'Gesture': grpc.unary_unary_rpc_method_handler(
                     servicer.Gesture,
                     request_deserializer=main__pb2.SensorData.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    response_serializer=main__pb2.RndResp.SerializeToString,
             ),
             'Shoot': grpc.unary_unary_rpc_method_handler(
                     servicer.Shoot,
                     request_deserializer=main__pb2.Event.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    response_serializer=main__pb2.RndResp.SerializeToString,
             ),
             'Shot': grpc.unary_unary_rpc_method_handler(
                     servicer.Shot,
                     request_deserializer=main__pb2.Event.FromString,
-                    response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                    response_serializer=main__pb2.RndResp.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -96,7 +96,7 @@ class Relay(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Relay/Gesture',
             main__pb2.SensorData.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            main__pb2.RndResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -113,7 +113,7 @@ class Relay(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Relay/Shoot',
             main__pb2.Event.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            main__pb2.RndResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
@@ -130,7 +130,7 @@ class Relay(object):
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/Relay/Shot',
             main__pb2.Event.SerializeToString,
-            google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+            main__pb2.RndResp.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
