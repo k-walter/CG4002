@@ -1,6 +1,6 @@
 from bluepy import btle
-
-PACKET_SIZE = 15
+import logging
+from constants import PACKET_SIZE, HEADER_GLOVE, HEADER_ACK
 
 class Delegate(btle.DefaultDelegate):
     def __init__(self, serial_char, header):
@@ -21,7 +21,7 @@ class Delegate(btle.DefaultDelegate):
 
     def receive_data(self, data):
         if (len(self.data_buffer) > 0 
-        or (data[0] == self.header or data[0] == 65)):
+        or (data[0] == self.header or data[0] == HEADER_ACK)):
             self.data_buffer += data
 
     def handle_data(self):
@@ -30,7 +30,7 @@ class Delegate(btle.DefaultDelegate):
             self.packet = self.data_buffer[:PACKET_SIZE]
             self.data_buffer = self.data_buffer[PACKET_SIZE:]
 
-            if not self.is_ack_pkt() and self.header == 77:
+            if not self.is_ack_pkt() and self.header == HEADER_GLOVE:
                 self.__handle_without_ack()
             else:
                 self.__handle_with_ack()
@@ -38,7 +38,7 @@ class Delegate(btle.DefaultDelegate):
         # Packet not assembled yet, do not send
         else:
             self.is_valid_data = False
-            print("ASSEMBLING PACKET")
+            logging.info("ASSEMBLING PACKET")
 
     def __handle_without_ack(self):
         if self.__is_valid_checksum():
@@ -47,9 +47,9 @@ class Delegate(btle.DefaultDelegate):
         else:
             self.is_valid_data = False
             self.corrupt_pkt_count += 1
-            print("CORRUPTED")
+            logging.warning("CORRUPTED PACKET")
             if self.corrupt_pkt_count >= 10:
-                print("Flushing buffer...")
+                logging.info("Flushing buffer...")
                 self.data_buffer = b""
 
     def __handle_with_ack(self):
@@ -68,13 +68,13 @@ class Delegate(btle.DefaultDelegate):
                     self.is_duplicate_pkt = True
                     self.is_valid_data = False
                     self.serial_char.write(b'A')
-                    print("DUP PACKET")    
+                    logging.warning("DUPLICATE PACKET")    
 
         # Invalid data            
         else:
             self.is_valid_data = False
             self.is_duplicate_pkt = False
-            print("CORRUPTED PACKET")
+            logging.warning("CORRUPTED PACKET")
 
     def __is_duplicate(self):
         return self.prev_seq_no == self.packet[1]
@@ -87,7 +87,7 @@ class Delegate(btle.DefaultDelegate):
         return checksum == self.packet[-1]
 
     def is_ack_pkt(self):
-        return self.packet[0] == 65
+        return self.packet[0] == HEADER_ACK
 
 
         
