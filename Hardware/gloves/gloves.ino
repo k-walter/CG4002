@@ -60,9 +60,9 @@ bool isDataCollecting = false;
 #define MASK_BYTE 0xff
 
 #define BUFFER_SIZE 100
-#define PACKET_SIZE 16  // 16 bytes in a packet
+#define PACKET_SIZE 17  // 17 bytes in a packet
 
-const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'A'};
+const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'q'};
 uint8_t sendCounter = 0;
 
 //IMU Data Structure
@@ -83,13 +83,14 @@ IMUData imu_data;
 
 bool has_handshake;
 volatile bool has_ack;
-volatile char seq_no;
+uint8_t seq_no;
 
 //Assembles the 15 byte packet and sends it out over serial
 void assemble_and_send_data(IMUData data) {
   char packet[PACKET_SIZE];
   packet[0] = 'M';
-  int ptr = 1;
+  packet[1] = seq_no;
+  int ptr = 2;
   append_value(packet, motionDataCounter, &ptr);
   append_value(packet, data.roll, &ptr);
   append_value(packet, data.pitch, &ptr);
