@@ -50,14 +50,14 @@ bool shootTune = false;
 ///////////////////////////////////////////////////////////////////////////
 /////////////////////////////// BLE RELATED ///////////////////////////////
 #define TIMEOUT 200
-#define PACKET_SIZE 15
+#define PACKET_SIZE 16
 uint8_t shootID;
 bool has_handshake;
 bool has_ack;
 char seq_no;
-const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'q'};
+const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'A'};
 
-//Assembles the 15 byte packet and sends it out over serial
+//Assembles the 16 byte packet and sends it out over serial
 void assemble_and_send_data(uint8_t shootID) {
     char packet[PACKET_SIZE];
 

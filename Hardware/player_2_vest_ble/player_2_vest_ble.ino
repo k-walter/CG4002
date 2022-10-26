@@ -24,10 +24,10 @@ bool isShot = false;
 /////////////////////////////////////////////////////////////
 
 //////////////////////// BLE RELATED ////////////////////////
-#define PACKET_SIZE 15
+#define PACKET_SIZE 16
 #define TIMEOUT 100
 
-const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'q'};
+const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'A'};
 
 uint8_t shotID;
 bool has_handshake;

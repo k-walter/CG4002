@@ -60,9 +60,9 @@ bool isDataCollecting = false;
 #define MASK_BYTE 0xff
 
 #define BUFFER_SIZE 100
-#define PACKET_SIZE 17  // 17 bytes in a packet
+#define PACKET_SIZE 16  // 16 bytes in a packet
 
-const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'q'};
+const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'A'};
 uint8_t sendCounter = 0;
 
 //IMU Data Structure
@@ -85,12 +85,11 @@ bool has_handshake;
 volatile bool has_ack;
 uint8_t seq_no;
 
-//Assembles the 15 byte packet and sends it out over serial
+//Assembles the 16 byte packet and sends it out over serial
 void assemble_and_send_data(IMUData data) {
   char packet[PACKET_SIZE];
   packet[0] = 'M';
-  packet[1] = seq_no;
-  int ptr = 2;
+  int ptr = 1;
   append_value(packet, motionDataCounter, &ptr);
   append_value(packet, data.roll, &ptr);
   append_value(packet, data.pitch, &ptr);
@@ -147,7 +146,6 @@ void setup() {
       for (int i = 0; i < PACKET_SIZE; i++) {
         serialSend(ackPacket[i]);
       }
-      //serialSend('A');
     } 
   }
   
@@ -381,17 +379,10 @@ ISR(USART_RX_vect)
   char hdr;
   hdr = UDR0;
 
-  //Successfully received ACK, and flips seq_no for next packet
-  //if (hdr == 'A') {
-  //  has_ack = true;
-  //  seq_no = (seq_no == '0') ? '1' : '0';
-  //}
-
   //In the event that connection loss occured and relay_node re-inits handshake
   if (hdr == 'H') {
     for (int i = 0; i < PACKET_SIZE; i++) {
       serialSend(ackPacket[i]);
     }
-    //serialSend('A');
   }
 }
