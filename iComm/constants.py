@@ -15,11 +15,10 @@ HEADER_VEST = 86
 # name_list = ["GLOVE", "Beetle gun", "vest"]
 # header_list = [HEADER_GLOVE, HEADER_GUN, HEADER_VEST]
 
-address_list = [ADDRESS_GLOVE_2]
+address_list = [ADDRESS_GLOVE_1]
 name_list = ["Beetle Glove"]
 header_list = [HEADER_GLOVE]
 
-MAX_16_BIT_UNSIGNED = 32768
 MY_PORT = 'localhost:8081'
 
 RETRY_COUNT = 8
