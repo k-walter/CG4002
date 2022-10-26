@@ -66,12 +66,13 @@ func (e *eUnshield) updateEngine(engine *Engine) bool {
 	// Already unshielded by reviving?
 	// NOTE if evalResp drifts ShieldExpireNs, can't compare ==
 	u, _ := engine.getStates(e.Player)
-	if u.ShieldExpireNs == e.Time {
+	if u.ShieldExpireNs != e.Time {
 		return false
 	}
 
 	e.Action = pb.Action_shieldAvailable
 	u.ShieldHealth = 0
+	u.ShieldExpireNs = cmn.ShieldRst
 	return true
 }
 

@@ -25,7 +25,9 @@ func (e *eEvalResp) updateEngine(engine *Engine) bool {
 		//}
 
 		// Clear wrong shield
-		if old.Action == pb.Action_shield && new.Action != pb.Action_shield {
+		// if eval time is zero, must have sent new shield event
+		// if eval time not zero, must have exactly 1 previous shield --> didnt semd new shield event
+		if old.Action == pb.Action_shield && new.Action != pb.Action_shield && new.ShieldTime == 0 {
 			old.ShieldExpireNs = cmn.ShieldRst
 			cmn.Pub(cmn.Event2Viz, &pb.Event{
 				Player: p,
@@ -35,13 +37,8 @@ func (e *eEvalResp) updateEngine(engine *Engine) bool {
 		}
 
 		// Didn't predict shield
-		if old.Action != pb.Action_shield && new.Action == pb.Action_shield {
+		if old.Action != pb.Action_shield && new.Action == pb.Action_shield && old.ShieldExpireNs == 0 {
 			old.ShieldExpireNs = nextShield
-			cmn.Pub(cmn.Event2Viz, &pb.Event{
-				Player: p,
-				Time:   now,
-				Action: pb.Action_shield,
-			})
 			go waitUnshield(nextShield, &pb.Event{
 				Player: p,
 				Time:   nextShield,

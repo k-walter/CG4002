@@ -148,6 +148,7 @@ func inflict(u uint32, player *cmn.PlayerState, dmg uint32) {
 		// Die & revive
 		player.NumDeaths += 1
 		player.Hp = cmn.HpMax
+		player.ShieldHealth = 0
 		player.Grenades = cmn.GrenadeMax
 		player.NumShield = cmn.ShieldMax
 		player.Bullets = cmn.BulletMax

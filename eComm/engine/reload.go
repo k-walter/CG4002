@@ -24,7 +24,7 @@ func (e *eReload) updateEngine(engine *Engine) bool {
 
 func (e *eReload) alertVizEvent() *pb.Event {
 	// Viz no action, only update display with state
-	return nil
+	return e.Event
 }
 
 func (e *eReload) updateVizState() bool {
