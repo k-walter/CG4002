@@ -55,11 +55,11 @@ class GloveHandler(SerialHandler):
                 print("\n\n\n\n\nCollected 50! Exiting...")
                 exit()
             if len(data_str) != 0:
-                with open(f'final{count}.csv', 'w') as f:
+                with open(f'reload{count}.csv', 'w') as f:
                     f.write(data_str)
                     count += 1
                     data_str = ''
-                    print(f'wrote to final{count-1}')
+                    print(f'wrote to reload{count-1}')
 
             
         # data = self.send_buf.data.add()
