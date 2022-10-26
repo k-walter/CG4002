@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type RelayClient interface {
+	GetRound(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Relay_GetRoundClient, error)
 	// glove (MPU6050) data for AI
 	Gesture(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*RndResp, error)
 	// detected by infrared (KY-022 rx, KY-005 tx)
@@ -36,6 +37,38 @@ type relayClient struct {
 
 func NewRelayClient(cc grpc.ClientConnInterface) RelayClient {
 	return &relayClient{cc}
+}
+
+func (c *relayClient) GetRound(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Relay_GetRoundClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Relay_ServiceDesc.Streams[0], "/Relay/GetRound", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &relayGetRoundClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type Relay_GetRoundClient interface {
+	Recv() (*RndResp, error)
+	grpc.ClientStream
+}
+
+type relayGetRoundClient struct {
+	grpc.ClientStream
+}
+
+func (x *relayGetRoundClient) Recv() (*RndResp, error) {
+	m := new(RndResp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *relayClient) Gesture(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*RndResp, error) {
@@ -69,6 +102,7 @@ func (c *relayClient) Shot(ctx context.Context, in *Event, opts ...grpc.CallOpti
 // All implementations must embed UnimplementedRelayServer
 // for forward compatibility
 type RelayServer interface {
+	GetRound(*emptypb.Empty, Relay_GetRoundServer) error
 	// glove (MPU6050) data for AI
 	Gesture(context.Context, *SensorData) (*RndResp, error)
 	// detected by infrared (KY-022 rx, KY-005 tx)
@@ -81,6 +115,9 @@ type RelayServer interface {
 type UnimplementedRelayServer struct {
 }
 
+func (UnimplementedRelayServer) GetRound(*emptypb.Empty, Relay_GetRoundServer) error {
+	return status.Errorf(codes.Unimplemented, "method GetRound not implemented")
+}
 func (UnimplementedRelayServer) Gesture(context.Context, *SensorData) (*RndResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Gesture not implemented")
 }
@@ -101,6 +138,27 @@ type UnsafeRelayServer interface {
 
 func RegisterRelayServer(s grpc.ServiceRegistrar, srv RelayServer) {
 	s.RegisterService(&Relay_ServiceDesc, srv)
+}
+
+func _Relay_GetRound_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(emptypb.Empty)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(RelayServer).GetRound(m, &relayGetRoundServer{stream})
+}
+
+type Relay_GetRoundServer interface {
+	Send(*RndResp) error
+	grpc.ServerStream
+}
+
+type relayGetRoundServer struct {
+	grpc.ServerStream
+}
+
+func (x *relayGetRoundServer) Send(m *RndResp) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _Relay_Gesture_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -177,7 +235,13 @@ var Relay_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Relay_Shot_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "GetRound",
+			Handler:       _Relay_GetRound_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "protos/main.proto",
 }
 
