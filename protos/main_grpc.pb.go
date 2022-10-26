@@ -27,8 +27,8 @@ type RelayClient interface {
 	// glove (MPU6050) data for AI
 	Gesture(ctx context.Context, opts ...grpc.CallOption) (Relay_GestureClient, error)
 	// detected by infrared (KY-022 rx, KY-005 tx)
-	Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error)
-	Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error)
+	Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type relayClient struct {
@@ -81,8 +81,8 @@ func (c *relayClient) Gesture(ctx context.Context, opts ...grpc.CallOption) (Rel
 }
 
 type Relay_GestureClient interface {
-	Send(*SensorData) error
-	CloseAndRecv() (*RndResp, error)
+	Send(*Data) error
+	CloseAndRecv() (*emptypb.Empty, error)
 	grpc.ClientStream
 }
 
@@ -90,23 +90,23 @@ type relayGestureClient struct {
 	grpc.ClientStream
 }
 
-func (x *relayGestureClient) Send(m *SensorData) error {
+func (x *relayGestureClient) Send(m *Data) error {
 	return x.ClientStream.SendMsg(m)
 }
 
-func (x *relayGestureClient) CloseAndRecv() (*RndResp, error) {
+func (x *relayGestureClient) CloseAndRecv() (*emptypb.Empty, error) {
 	if err := x.ClientStream.CloseSend(); err != nil {
 		return nil, err
 	}
-	m := new(RndResp)
+	m := new(emptypb.Empty)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-func (c *relayClient) Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error) {
-	out := new(RndResp)
+func (c *relayClient) Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/Relay/Shoot", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -114,8 +114,8 @@ func (c *relayClient) Shoot(ctx context.Context, in *Event, opts ...grpc.CallOpt
 	return out, nil
 }
 
-func (c *relayClient) Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error) {
-	out := new(RndResp)
+func (c *relayClient) Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/Relay/Shot", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -131,8 +131,8 @@ type RelayServer interface {
 	// glove (MPU6050) data for AI
 	Gesture(Relay_GestureServer) error
 	// detected by infrared (KY-022 rx, KY-005 tx)
-	Shoot(context.Context, *Event) (*RndResp, error)
-	Shot(context.Context, *Event) (*RndResp, error)
+	Shoot(context.Context, *Event) (*emptypb.Empty, error)
+	Shot(context.Context, *Event) (*emptypb.Empty, error)
 	mustEmbedUnimplementedRelayServer()
 }
 
@@ -146,10 +146,10 @@ func (UnimplementedRelayServer) GetRound(*emptypb.Empty, Relay_GetRoundServer) e
 func (UnimplementedRelayServer) Gesture(Relay_GestureServer) error {
 	return status.Errorf(codes.Unimplemented, "method Gesture not implemented")
 }
-func (UnimplementedRelayServer) Shoot(context.Context, *Event) (*RndResp, error) {
+func (UnimplementedRelayServer) Shoot(context.Context, *Event) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Shoot not implemented")
 }
-func (UnimplementedRelayServer) Shot(context.Context, *Event) (*RndResp, error) {
+func (UnimplementedRelayServer) Shot(context.Context, *Event) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Shot not implemented")
 }
 func (UnimplementedRelayServer) mustEmbedUnimplementedRelayServer() {}
@@ -191,8 +191,8 @@ func _Relay_Gesture_Handler(srv interface{}, stream grpc.ServerStream) error {
 }
 
 type Relay_GestureServer interface {
-	SendAndClose(*RndResp) error
-	Recv() (*SensorData, error)
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*Data, error)
 	grpc.ServerStream
 }
 
@@ -200,12 +200,12 @@ type relayGestureServer struct {
 	grpc.ServerStream
 }
 
-func (x *relayGestureServer) SendAndClose(m *RndResp) error {
+func (x *relayGestureServer) SendAndClose(m *emptypb.Empty) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func (x *relayGestureServer) Recv() (*SensorData, error) {
-	m := new(SensorData)
+func (x *relayGestureServer) Recv() (*Data, error) {
+	m := new(Data)
 	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}

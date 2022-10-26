@@ -28,22 +28,19 @@ class EComm(Thread):
     def gesture(self, data: main_pb2.Data) -> None:
         async def f(data: main_pb2.Data):
             data.rnd = self._rnd
-            resp = await self._gestureStub.write(data)
-            self._rnd = max(self._rnd, resp.rnd)
+            await self._gestureStub.write(data)
         self._loop.create_task(f(data))
 
     def shoot(self, data: main_pb2.Event) -> None:
         async def f(data: main_pb2.Event):
             data.rnd = self._rnd
-            resp = await self._stub.Shoot(data) # OPTIMIZE stream
-            self._rnd = max(self._rnd, resp.rnd)
+            await self._stub.Shoot(data) # OPTIMIZE stream
         self._loop.create_task(f(data))
 
     def shot(self, data: main_pb2.Event) -> None:
         async def f(data: main_pb2.Event):
             data.rnd = self._rnd
-            resp = await self._stub.Shot(data)
-            self._rnd = max(self._rnd, resp.rnd)
+            await self._stub.Shot(data)
         self._loop.create_task(f(data))
 
     """ ASYNCIO SAFE """

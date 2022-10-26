@@ -6,10 +6,10 @@ option go_package = "./";
 service Relay {
   rpc GetRound(google.protobuf.Empty) returns (stream RndResp) {}
   // glove (MPU6050) data for AI
-  rpc Gesture(stream SensorData) returns (RndResp) {} // OPTIMIZE client stream
+  rpc Gesture(stream Data) returns (google.protobuf.Empty) {}
   // detected by infrared (KY-022 rx, KY-005 tx)
-  rpc Shoot(Event) returns (RndResp) {}
-  rpc Shot(Event) returns (RndResp) {}
+  rpc Shoot(Event) returns (google.protobuf.Empty) {} // OPTIMIZE client stream
+  rpc Shot(Event) returns (google.protobuf.Empty) {}
 }
 
 // Not in use impl with MQTT
