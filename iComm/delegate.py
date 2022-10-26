@@ -38,7 +38,7 @@ class Delegate(btle.DefaultDelegate):
         # Packet not assembled yet, do not send
         else:
             self.is_valid_data = False
-            logging.info("ASSEMBLING PACKET")
+            print("ASSEMBLING PACKET")
 
     def __handle_without_ack(self):
         if self.__is_valid_checksum():
@@ -47,9 +47,9 @@ class Delegate(btle.DefaultDelegate):
         else:
             self.is_valid_data = False
             self.corrupt_pkt_count += 1
-            logging.warning("CORRUPTED PACKET")
+            print("CORRUPTED PACKET")
             if self.corrupt_pkt_count >= 10:
-                logging.info("Flushing buffer...")
+                print("Flushing buffer...")
                 self.data_buffer = b""
 
     def __handle_with_ack(self):
@@ -68,13 +68,13 @@ class Delegate(btle.DefaultDelegate):
                     self.is_duplicate_pkt = True
                     self.is_valid_data = False
                     self.serial_char.write(b'A')
-                    logging.warning("DUPLICATE PACKET")    
+                    print("DUPLICATE PACKET")    
 
         # Invalid data            
         else:
             self.is_valid_data = False
             self.is_duplicate_pkt = False
-            logging.warning("CORRUPTED PACKET")
+            print("CORRUPTED PACKET")
 
     def __is_duplicate(self):
         return self.prev_seq_no == self.packet[1]

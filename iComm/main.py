@@ -8,7 +8,6 @@ import grpc
 import main_pb2_grpc
 
 if __name__ == "__main__":
-
     beetle_manager = BeetleManager()
     beetle_manager.initialise_beetle_list()
 

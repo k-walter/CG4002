@@ -3,6 +3,8 @@ ADDRESS_GLOVE_1 = "d0:39:72:bf:c8:87"
 ADDRESS_VEST_1 = "c4:be:84:20:1b:5e"
 
 ADDRESS_GLOVE_2 = "d0:39:72:bf:c6:47"
+ADDRESS_GUN_2 = "d0:39:72:bf:bd:ec"
+ADDRESS_VEST_2 = "d0:39:72:bf:cd:00"
 
 ADDRESS_BACKUP = "50:F1:4A:DA:CC:EB"
 
@@ -22,14 +24,13 @@ name_dict = {
 
 # header_list = [HEADER_GLOVE, HEADER_GUN, HEADER_VEST]
 
-address_list_1 = [ADDRESS_BACKUP]
-header_list = [HEADER_GUN]
+address_list_2 = [ADDRESS_GLOVE_2]
+header_list = [HEADER_GLOVE]
 
-MAX_16_BIT_UNSIGNED = 32768
 MY_PORT = 'localhost:8081'
 
 RETRY_COUNT = 8
-PACKET_SIZE = 17
+PACKET_SIZE = 16
 
 MAX_16_BIT_SIGNED = 32768
 MAX_16_BIT_UNSIGNED = 65535

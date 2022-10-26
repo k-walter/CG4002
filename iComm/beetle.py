@@ -23,19 +23,19 @@ class Beetle():
 
         while not self.is_connected and retries > 0:
             try:
-                logging.info(f"{retries} Attempts Left:")
+                print(f"{retries} Attempts Left:")
                 self.__connect()
             except btle.BTLEException as e:
                 logging.debug(e)
             retries -= 1
         if not self.is_connected:
             logging.critical(f"{self.name} could not connect!")
-            logging.info("Exiting Program...")
+            print("Exiting Program...")
             exit()
 
     # only call when we encounter BTLEDisconnectError
     def set_disconnected(self):
-        logging.warning(f"{self.name} disconnected. Attempting Reconnection...")
+        print(f"{self.name} disconnected. Attempting Reconnection...")
         self.is_connected = False
 
     def init_peripheral(self):
@@ -55,10 +55,10 @@ class Beetle():
 
     #Private Methods
     def __connect(self):
-        logging.info(f"Connecting to {self.address}...")
+        print(f"Connecting to {self.address}...")
         self.peripheral.connect(self.address)
         self.is_connected = True
-        logging.info("Connected.")
+        print("Connected.")
 
     def __try_init_handshake(self):
         self.has_handshake = False
@@ -70,31 +70,31 @@ class Beetle():
 
     # Sets serial characteristic in order to write to beetle
     def __set_serial_char(self):
-        logging.info(f"Setting serial characteristic for {self.name}...")
+        print(f"Setting serial characteristic for {self.name}...")
         chars = self.peripheral.getCharacteristics()
         serial_char = [c for c in chars if c.uuid == SERIAL_UUID][0]
         self.serial_char = serial_char
-        logging.info("Serial characteristic set.")
+        print("Serial characteristic set.")
 
     # Creates delegate object to receive notifications
     def __set_delegate(self):
-        logging.info(f"Setting Delegate for {self.name}...")
+        print(f"Setting Delegate for {self.name}...")
         self.delegate = Delegate(self.serial_char, self.header)
-        logging.info("Delegate set.")
+        print("Delegate set.")
 
     # Attaches delegate object to peripheral
     def __attach_delegate(self):
-        logging.info(f"Attaching {self.name} delegate to peripheral...")
+        print(f"Attaching {self.name} delegate to peripheral...")
         self.peripheral.withDelegate(self.delegate)
-        logging.info("Done.")
+        print("Done.")
 
     # Sends Handshake Packet
     def __send_handshake(self):
-        logging.info("Handshake in Progress...")
+        print("Handshake in Progress...")
         self.serial_char.write(b'H')
 
     def __receive_ack(self):
         if self.delegate.hand_ack:
-            logging.info(f"Handshake ACK received from {self.name}")
+            print(f"Handshake ACK received from {self.name}")
             self.has_handshake = True
             self.serial_char.write(b'A')

@@ -29,7 +29,7 @@ class SerialHandler(Thread):
                 self.beetle.set_disconnected()
                 while not self.beetle.is_connected:
                     self.beetle.connect_with_retries(RETRY_COUNT)
-                    logging.info(f"{self.beetle.name} reconnected. \
+                    print(f"{self.beetle.name} reconnected. \
                         Reinitialising handshake...")
                     self.beetle.init_handshake()
 
@@ -41,18 +41,18 @@ class GloveHandler(SerialHandler):
     def __init__(self, beetle, lock, stub):
         super().__init__(beetle, lock, stub)
         self.next_send = 0
+        self.rnd = 1
         self.send_buf = main_pb2.SensorData()
 
     def pass_params(self, packet):
-        glove_data = packet[4:16]
+        glove_data = packet[3:-1]
         data_obj = unpack_glove_data_into_dict(glove_data)
-        rnd = packet[1]
-        index = bytes_to_uint16_t(packet[2:3])
+        index = bytes_to_uint16_t(packet[1:3])
         now = time.monotonic_ns()
 
         data = self.send_buf.data.add()
         data.player = self.player_no
-        data.rnd = rnd
+        data.rnd = self.rnd
         data.index = index
         data.roll = data_obj["roll"]
         data.pitch = data_obj["pitch"]
@@ -65,7 +65,7 @@ class GloveHandler(SerialHandler):
             return
         
         self.next_send = now + int(20e6)
-        self.stub.Gesture(self.send_buf)
+        self.rnd = self.stub.Gesture(self.send_buf)
         self.send_buf = main_pb2.SensorData()
 
     
