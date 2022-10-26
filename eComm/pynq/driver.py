@@ -23,7 +23,7 @@ class CNNDriver(DefaultIP):
         
     bindto = ["xilinx.com:hls:cnn_action_detection:1.0"] 
     
-    def inference(self, data: List[int]):
+    def inference(self, data: List[int], user_number=0):
         """
         Feed data into the model and get the current prediction
         and confidence by the model.
@@ -69,6 +69,7 @@ class CNNDriver(DefaultIP):
         
         # start inferencing
         self.register_map.function_select=0
+        self.register_map.user_number = user_number
         start_time = time()
         self.register_map.CTRL.AP_START=1
         while(self.register_map.CTRL.AP_DONE == 0):pass # mostly immediate
@@ -84,11 +85,12 @@ class CNNDriver(DefaultIP):
         print(f"FPGA Prediction: {["Shield", "Reload", "Grenade", "Logout"][predicted_class]}({confidence}), took {(time()-start_time)*1000}ms")
         return predicted_class
     
-    def resetBuffer(self):
+    def resetBuffer(self, user_number=0):
         '''
         To reset the buffer in the network and get ready for new inference.
         '''
         self.register_map.function_select=1
+        self.register_map.user_number = user_number
         if self.debug:
             start_time = time()
         self.register_map.CTRL.AP_START=1

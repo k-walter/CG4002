@@ -15,6 +15,11 @@ class RelayStub(object):
         Args:
             channel: A grpc.Channel.
         """
+        self.GetRound = channel.unary_stream(
+                '/Relay/GetRound',
+                request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+                response_deserializer=main__pb2.RndResp.FromString,
+                )
         self.Gesture = channel.unary_unary(
                 '/Relay/Gesture',
                 request_serializer=main__pb2.SensorData.SerializeToString,
@@ -34,6 +39,12 @@ class RelayStub(object):
 
 class RelayServicer(object):
     """Missing associated documentation comment in .proto file."""
+
+    def GetRound(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
 
     def Gesture(self, request, context):
         """glove (MPU6050) data for AI
@@ -58,6 +69,11 @@ class RelayServicer(object):
 
 def add_RelayServicer_to_server(servicer, server):
     rpc_method_handlers = {
+            'GetRound': grpc.unary_stream_rpc_method_handler(
+                    servicer.GetRound,
+                    request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
+                    response_serializer=main__pb2.RndResp.SerializeToString,
+            ),
             'Gesture': grpc.unary_unary_rpc_method_handler(
                     servicer.Gesture,
                     request_deserializer=main__pb2.SensorData.FromString,
@@ -82,6 +98,23 @@ def add_RelayServicer_to_server(servicer, server):
  # This class is part of an EXPERIMENTAL API.
 class Relay(object):
     """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def GetRound(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(request, target, '/Relay/GetRound',
+            google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
+            main__pb2.RndResp.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
     def Gesture(request,

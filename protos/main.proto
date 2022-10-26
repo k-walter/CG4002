@@ -4,8 +4,9 @@ import "google/protobuf/empty.proto";
 option go_package = "./";
 
 service Relay {
+  rpc GetRound(google.protobuf.Empty) returns (stream RndResp) {}
   // glove (MPU6050) data for AI
-  rpc Gesture(SensorData) returns (RndResp) {}
+  rpc Gesture(SensorData) returns (RndResp) {} // OPTIMIZE client stream
   // detected by infrared (KY-022 rx, KY-005 tx)
   rpc Shoot(Event) returns (RndResp) {}
   rpc Shot(Event) returns (RndResp) {}
@@ -85,7 +86,8 @@ enum Action {
     logout = 4;
     shield = 5;
     // internal use
-    shot = 6; // damaged
-    shieldAvailable = 7;
-    // TODO grenadeHit, send shieldAvail + shot
+    shot = 6;
+    grenaded = 7;
+    shieldAvailable = 8;
+    checkFov = 9; // for viz to check only, grenade to throw (after cfm with eval), grenaded to be hit
 }
