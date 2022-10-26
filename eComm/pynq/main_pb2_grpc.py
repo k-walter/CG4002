@@ -20,7 +20,7 @@ class RelayStub(object):
                 request_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
                 response_deserializer=main__pb2.RndResp.FromString,
                 )
-        self.Gesture = channel.unary_unary(
+        self.Gesture = channel.stream_unary(
                 '/Relay/Gesture',
                 request_serializer=main__pb2.SensorData.SerializeToString,
                 response_deserializer=main__pb2.RndResp.FromString,
@@ -46,7 +46,7 @@ class RelayServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Gesture(self, request, context):
+    def Gesture(self, request_iterator, context):
         """glove (MPU6050) data for AI
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
@@ -74,7 +74,7 @@ def add_RelayServicer_to_server(servicer, server):
                     request_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                     response_serializer=main__pb2.RndResp.SerializeToString,
             ),
-            'Gesture': grpc.unary_unary_rpc_method_handler(
+            'Gesture': grpc.stream_unary_rpc_method_handler(
                     servicer.Gesture,
                     request_deserializer=main__pb2.SensorData.FromString,
                     response_serializer=main__pb2.RndResp.SerializeToString,
@@ -117,7 +117,7 @@ class Relay(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Gesture(request,
+    def Gesture(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -127,7 +127,7 @@ class Relay(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Relay/Gesture',
+        return grpc.experimental.stream_unary(request_iterator, target, '/Relay/Gesture',
             main__pb2.SensorData.SerializeToString,
             main__pb2.RndResp.FromString,
             options, channel_credentials,

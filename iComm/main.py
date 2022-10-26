@@ -1,6 +1,7 @@
 from beetle_manager import BeetleManager
 from serial_handler_factory import SerialHandlerFactory
 from constants import MY_PORT
+import ecomm
 
 import threading
 import time
@@ -14,13 +15,12 @@ if __name__ == "__main__":
     # Delay to read the initial print statements
     time.sleep(2)
 
-    channel = grpc.insecure_channel(MY_PORT)
-    stub = main_pb2_grpc.RelayStub(channel)
-    lock = threading.Lock()
+    ec = ecomm.EComm(MY_PORT)
+    ec.start()
 
     # Starts threads
     for beetle in beetle_manager.beetle_list:
-        handler = SerialHandlerFactory.get_serial_handler(beetle, lock, stub)
+        handler = SerialHandlerFactory.get_serial_handler(beetle, ec)
         handler.start()
 
     while True:

@@ -7,10 +7,9 @@ import main_pb2
 import logging
 
 class SerialHandler(Thread):
-    def __init__(self, beetle, lock, stub):
+    def __init__(self, beetle, stub):
         Thread.__init__(self)
         self.beetle = beetle
-        self.lock = lock
         self.stub = stub
         self.player_no = beetle.player_no
 
@@ -38,54 +37,42 @@ class SerialHandler(Thread):
      
 
 class GloveHandler(SerialHandler):
-    def __init__(self, beetle, lock, stub):
-        super().__init__(beetle, lock, stub)
-        self.next_send = 0
-        self.rnd = 1
-        self.send_buf = main_pb2.SensorData()
+    def __init__(self, beetle, stub):
+        super().__init__(beetle, stub)
 
     def pass_params(self, packet):
         glove_data = packet[3:-1]
         data_obj = unpack_glove_data_into_dict(glove_data)
         index = bytes_to_uint16_t(packet[1:3])
-        now = time.monotonic_ns()
 
-        data = self.send_buf.data.add()
-        data.player = self.player_no
-        data.rnd = self.rnd
-        data.index = index
-        data.roll = data_obj["roll"]
-        data.pitch = data_obj["pitch"]
-        data.yaw = data_obj["yaw"]
-        data.x = data_obj["x"]
-        data.y = data_obj["y"]
-        data.z = data_obj["z"]
+        msg = main_pb2.Data(
+            player=self.player_no,
+            index=index,
+            roll=data_obj["roll"],
+            pitch=data_obj["pitch"],
+            yaw=data_obj["yaw"],
+            x=data_obj["x"],
+            y=data_obj["y"],
+            z=data_obj["z"],
+        )
+        self.stub(msg)
 
-        if now < self.next_send:
-            return
-     
-        self.next_send = now + int(20e6)
-        self.rnd = self.stub.Gesture(self.send_buf)
-        self.send_buf = main_pb2.SensorData()
 
-    
 class VestHandler(SerialHandler):
-    def __init__(self, beetle, lock, stub):
-        super().__init__(beetle, lock, stub)
+    def __init__(self, beetle, stub):
+        super().__init__(beetle, stub)
 
     def pass_params(self, packet):
         shoot_id = packet[2]
         msg = main_pb2.Event(player=self.player_no, shootID=shoot_id, action=main_pb2.shot)
-        self.stub.Shot(msg)
+        self.stub(msg)
 
 
 class GunHandler(SerialHandler):
-    def __init__(self, beetle, lock, stub):
-        super().__init__(beetle, lock, stub)
+    def __init__(self, beetle, stub):
+        super().__init__(beetle, stub)
 
     def pass_params(self, packet):
         shoot_id = packet[2]
         msg = main_pb2.Event(player=self.player_no, shootID=shoot_id, action=main_pb2.shoot)
-        self.stub.Shoot(msg)
-
-
+        self.stub(msg)

@@ -25,7 +25,7 @@ const _ = grpc.SupportPackageIsVersion7
 type RelayClient interface {
 	GetRound(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (Relay_GetRoundClient, error)
 	// glove (MPU6050) data for AI
-	Gesture(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*RndResp, error)
+	Gesture(ctx context.Context, opts ...grpc.CallOption) (Relay_GestureClient, error)
 	// detected by infrared (KY-022 rx, KY-005 tx)
 	Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error)
 	Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error)
@@ -71,13 +71,38 @@ func (x *relayGetRoundClient) Recv() (*RndResp, error) {
 	return m, nil
 }
 
-func (c *relayClient) Gesture(ctx context.Context, in *SensorData, opts ...grpc.CallOption) (*RndResp, error) {
-	out := new(RndResp)
-	err := c.cc.Invoke(ctx, "/Relay/Gesture", in, out, opts...)
+func (c *relayClient) Gesture(ctx context.Context, opts ...grpc.CallOption) (Relay_GestureClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Relay_ServiceDesc.Streams[1], "/Relay/Gesture", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &relayGestureClient{stream}
+	return x, nil
+}
+
+type Relay_GestureClient interface {
+	Send(*SensorData) error
+	CloseAndRecv() (*RndResp, error)
+	grpc.ClientStream
+}
+
+type relayGestureClient struct {
+	grpc.ClientStream
+}
+
+func (x *relayGestureClient) Send(m *SensorData) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *relayGestureClient) CloseAndRecv() (*RndResp, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(RndResp)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *relayClient) Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*RndResp, error) {
@@ -104,7 +129,7 @@ func (c *relayClient) Shot(ctx context.Context, in *Event, opts ...grpc.CallOpti
 type RelayServer interface {
 	GetRound(*emptypb.Empty, Relay_GetRoundServer) error
 	// glove (MPU6050) data for AI
-	Gesture(context.Context, *SensorData) (*RndResp, error)
+	Gesture(Relay_GestureServer) error
 	// detected by infrared (KY-022 rx, KY-005 tx)
 	Shoot(context.Context, *Event) (*RndResp, error)
 	Shot(context.Context, *Event) (*RndResp, error)
@@ -118,8 +143,8 @@ type UnimplementedRelayServer struct {
 func (UnimplementedRelayServer) GetRound(*emptypb.Empty, Relay_GetRoundServer) error {
 	return status.Errorf(codes.Unimplemented, "method GetRound not implemented")
 }
-func (UnimplementedRelayServer) Gesture(context.Context, *SensorData) (*RndResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Gesture not implemented")
+func (UnimplementedRelayServer) Gesture(Relay_GestureServer) error {
+	return status.Errorf(codes.Unimplemented, "method Gesture not implemented")
 }
 func (UnimplementedRelayServer) Shoot(context.Context, *Event) (*RndResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Shoot not implemented")
@@ -161,22 +186,30 @@ func (x *relayGetRoundServer) Send(m *RndResp) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-func _Relay_Gesture_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(SensorData)
-	if err := dec(in); err != nil {
+func _Relay_Gesture_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RelayServer).Gesture(&relayGestureServer{stream})
+}
+
+type Relay_GestureServer interface {
+	SendAndClose(*RndResp) error
+	Recv() (*SensorData, error)
+	grpc.ServerStream
+}
+
+type relayGestureServer struct {
+	grpc.ServerStream
+}
+
+func (x *relayGestureServer) SendAndClose(m *RndResp) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *relayGestureServer) Recv() (*SensorData, error) {
+	m := new(SensorData)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(RelayServer).Gesture(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Relay/Gesture",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelayServer).Gesture(ctx, req.(*SensorData))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 func _Relay_Shoot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -223,10 +256,6 @@ var Relay_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*RelayServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "Gesture",
-			Handler:    _Relay_Gesture_Handler,
-		},
-		{
 			MethodName: "Shoot",
 			Handler:    _Relay_Shoot_Handler,
 		},
@@ -240,6 +269,11 @@ var Relay_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "GetRound",
 			Handler:       _Relay_GetRound_Handler,
 			ServerStreams: true,
+		},
+		{
+			StreamName:    "Gesture",
+			Handler:       _Relay_Gesture_Handler,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "protos/main.proto",

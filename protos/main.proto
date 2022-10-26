@@ -6,7 +6,7 @@ option go_package = "./";
 service Relay {
   rpc GetRound(google.protobuf.Empty) returns (stream RndResp) {}
   // glove (MPU6050) data for AI
-  rpc Gesture(SensorData) returns (RndResp) {} // OPTIMIZE client stream
+  rpc Gesture(stream SensorData) returns (RndResp) {} // OPTIMIZE client stream
   // detected by infrared (KY-022 rx, KY-005 tx)
   rpc Shoot(Event) returns (RndResp) {}
   rpc Shot(Event) returns (RndResp) {}
@@ -54,11 +54,12 @@ message InFovResp {
 message Event {
   uint32 player = 1;
   uint64 time = 2;
-  Action action = 3;
+  uint32 rnd = 3;
+  Action action = 4;
 
   // Action specific
   // OPTIMIZE oneof
-  uint32 shootID = 4;
+  uint32 shootID = 5;
 }
 
 message State {
