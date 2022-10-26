@@ -24,7 +24,7 @@ name_dict = {
 
 # header_list = [HEADER_GLOVE, HEADER_GUN, HEADER_VEST]
 
-address_list_2 = [ADDRESS_GLOVE_2]
+address_list_2 = [ADDRESS_GLOVE_1]
 header_list = [HEADER_GLOVE]
 
 MY_PORT = 'localhost:8081'

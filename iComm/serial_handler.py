@@ -63,7 +63,7 @@ class GloveHandler(SerialHandler):
 
         if now < self.next_send:
             return
-        
+     
         self.next_send = now + int(20e6)
         self.rnd = self.stub.Gesture(self.send_buf)
         self.send_buf = main_pb2.SensorData()
