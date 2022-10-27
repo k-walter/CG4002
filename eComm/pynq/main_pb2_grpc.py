@@ -25,12 +25,12 @@ class RelayStub(object):
                 request_serializer=main__pb2.Data.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
-        self.Shoot = channel.unary_unary(
+        self.Shoot = channel.stream_unary(
                 '/Relay/Shoot',
                 request_serializer=main__pb2.Event.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
                 )
-        self.Shot = channel.unary_unary(
+        self.Shot = channel.stream_unary(
                 '/Relay/Shot',
                 request_serializer=main__pb2.Event.SerializeToString,
                 response_deserializer=google_dot_protobuf_dot_empty__pb2.Empty.FromString,
@@ -53,14 +53,14 @@ class RelayServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Shoot(self, request, context):
+    def Shoot(self, request_iterator, context):
         """detected by infrared (KY-022 rx, KY-005 tx)
         """
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def Shot(self, request, context):
+    def Shot(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -79,12 +79,12 @@ def add_RelayServicer_to_server(servicer, server):
                     request_deserializer=main__pb2.Data.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
-            'Shoot': grpc.unary_unary_rpc_method_handler(
+            'Shoot': grpc.stream_unary_rpc_method_handler(
                     servicer.Shoot,
                     request_deserializer=main__pb2.Event.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
             ),
-            'Shot': grpc.unary_unary_rpc_method_handler(
+            'Shot': grpc.stream_unary_rpc_method_handler(
                     servicer.Shot,
                     request_deserializer=main__pb2.Event.FromString,
                     response_serializer=google_dot_protobuf_dot_empty__pb2.Empty.SerializeToString,
@@ -134,7 +134,7 @@ class Relay(object):
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Shoot(request,
+    def Shoot(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -144,14 +144,14 @@ class Relay(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Relay/Shoot',
+        return grpc.experimental.stream_unary(request_iterator, target, '/Relay/Shoot',
             main__pb2.Event.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def Shot(request,
+    def Shot(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -161,7 +161,7 @@ class Relay(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/Relay/Shot',
+        return grpc.experimental.stream_unary(request_iterator, target, '/Relay/Shot',
             main__pb2.Event.SerializeToString,
             google_dot_protobuf_dot_empty__pb2.Empty.FromString,
             options, channel_credentials,

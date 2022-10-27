@@ -27,8 +27,8 @@ type RelayClient interface {
 	// glove (MPU6050) data for AI
 	Gesture(ctx context.Context, opts ...grpc.CallOption) (Relay_GestureClient, error)
 	// detected by infrared (KY-022 rx, KY-005 tx)
-	Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Shoot(ctx context.Context, opts ...grpc.CallOption) (Relay_ShootClient, error)
+	Shot(ctx context.Context, opts ...grpc.CallOption) (Relay_ShotClient, error)
 }
 
 type relayClient struct {
@@ -105,22 +105,72 @@ func (x *relayGestureClient) CloseAndRecv() (*emptypb.Empty, error) {
 	return m, nil
 }
 
-func (c *relayClient) Shoot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/Relay/Shoot", in, out, opts...)
+func (c *relayClient) Shoot(ctx context.Context, opts ...grpc.CallOption) (Relay_ShootClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Relay_ServiceDesc.Streams[2], "/Relay/Shoot", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &relayShootClient{stream}
+	return x, nil
 }
 
-func (c *relayClient) Shot(ctx context.Context, in *Event, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/Relay/Shot", in, out, opts...)
+type Relay_ShootClient interface {
+	Send(*Event) error
+	CloseAndRecv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type relayShootClient struct {
+	grpc.ClientStream
+}
+
+func (x *relayShootClient) Send(m *Event) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *relayShootClient) CloseAndRecv() (*emptypb.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+func (c *relayClient) Shot(ctx context.Context, opts ...grpc.CallOption) (Relay_ShotClient, error) {
+	stream, err := c.cc.NewStream(ctx, &Relay_ServiceDesc.Streams[3], "/Relay/Shot", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &relayShotClient{stream}
+	return x, nil
+}
+
+type Relay_ShotClient interface {
+	Send(*Event) error
+	CloseAndRecv() (*emptypb.Empty, error)
+	grpc.ClientStream
+}
+
+type relayShotClient struct {
+	grpc.ClientStream
+}
+
+func (x *relayShotClient) Send(m *Event) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *relayShotClient) CloseAndRecv() (*emptypb.Empty, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	m := new(emptypb.Empty)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 // RelayServer is the server API for Relay service.
@@ -131,8 +181,8 @@ type RelayServer interface {
 	// glove (MPU6050) data for AI
 	Gesture(Relay_GestureServer) error
 	// detected by infrared (KY-022 rx, KY-005 tx)
-	Shoot(context.Context, *Event) (*emptypb.Empty, error)
-	Shot(context.Context, *Event) (*emptypb.Empty, error)
+	Shoot(Relay_ShootServer) error
+	Shot(Relay_ShotServer) error
 	mustEmbedUnimplementedRelayServer()
 }
 
@@ -146,11 +196,11 @@ func (UnimplementedRelayServer) GetRound(*emptypb.Empty, Relay_GetRoundServer) e
 func (UnimplementedRelayServer) Gesture(Relay_GestureServer) error {
 	return status.Errorf(codes.Unimplemented, "method Gesture not implemented")
 }
-func (UnimplementedRelayServer) Shoot(context.Context, *Event) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Shoot not implemented")
+func (UnimplementedRelayServer) Shoot(Relay_ShootServer) error {
+	return status.Errorf(codes.Unimplemented, "method Shoot not implemented")
 }
-func (UnimplementedRelayServer) Shot(context.Context, *Event) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Shot not implemented")
+func (UnimplementedRelayServer) Shot(Relay_ShotServer) error {
+	return status.Errorf(codes.Unimplemented, "method Shot not implemented")
 }
 func (UnimplementedRelayServer) mustEmbedUnimplementedRelayServer() {}
 
@@ -212,40 +262,56 @@ func (x *relayGestureServer) Recv() (*Data, error) {
 	return m, nil
 }
 
-func _Relay_Shoot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Event)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(RelayServer).Shoot(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Relay/Shoot",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelayServer).Shoot(ctx, req.(*Event))
-	}
-	return interceptor(ctx, in, info, handler)
+func _Relay_Shoot_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RelayServer).Shoot(&relayShootServer{stream})
 }
 
-func _Relay_Shot_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Event)
-	if err := dec(in); err != nil {
+type Relay_ShootServer interface {
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*Event, error)
+	grpc.ServerStream
+}
+
+type relayShootServer struct {
+	grpc.ServerStream
+}
+
+func (x *relayShootServer) SendAndClose(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *relayShootServer) Recv() (*Event, error) {
+	m := new(Event)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	if interceptor == nil {
-		return srv.(RelayServer).Shot(ctx, in)
+	return m, nil
+}
+
+func _Relay_Shot_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(RelayServer).Shot(&relayShotServer{stream})
+}
+
+type Relay_ShotServer interface {
+	SendAndClose(*emptypb.Empty) error
+	Recv() (*Event, error)
+	grpc.ServerStream
+}
+
+type relayShotServer struct {
+	grpc.ServerStream
+}
+
+func (x *relayShotServer) SendAndClose(m *emptypb.Empty) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+func (x *relayShotServer) Recv() (*Event, error) {
+	m := new(Event)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
 	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/Relay/Shot",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RelayServer).Shot(ctx, req.(*Event))
-	}
-	return interceptor(ctx, in, info, handler)
+	return m, nil
 }
 
 // Relay_ServiceDesc is the grpc.ServiceDesc for Relay service.
@@ -254,16 +320,7 @@ func _Relay_Shot_Handler(srv interface{}, ctx context.Context, dec func(interfac
 var Relay_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "Relay",
 	HandlerType: (*RelayServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "Shoot",
-			Handler:    _Relay_Shoot_Handler,
-		},
-		{
-			MethodName: "Shot",
-			Handler:    _Relay_Shot_Handler,
-		},
-	},
+	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "GetRound",
@@ -273,6 +330,16 @@ var Relay_ServiceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "Gesture",
 			Handler:       _Relay_Gesture_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "Shoot",
+			Handler:       _Relay_Shoot_Handler,
+			ClientStreams: true,
+		},
+		{
+			StreamName:    "Shot",
+			Handler:       _Relay_Shot_Handler,
 			ClientStreams: true,
 		},
 	},

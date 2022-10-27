@@ -3,7 +3,6 @@ package relay
 import (
 	"cg4002/eComm/common"
 	pb "cg4002/protos"
-	"context"
 	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -17,19 +16,30 @@ import (
 type Server struct {
 	// From Relay
 	pb.UnimplementedRelayServer
-	lis     net.Listener
-	currSec int
-	hz      int
+	lis net.Listener
+	// From engine
+	chRnd chan uint32
+	// Metrics
+	nextMetric time.Time
+	hz         int
 }
 
 func Make(a *common.Arg) *Server {
+	s := Server{
+		lis:        nil,
+		chRnd:      make(chan uint32, common.ChSz),
+		nextMetric: time.Now(),
+		hz:         0,
+	}
+
 	// From relay
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%v", a.RelayPort))
 	if err != nil {
 		log.Fatal(err)
 	}
+	s.lis = lis
 
-	return &Server{lis: lis}
+	return &s
 }
 
 func (s *Server) Run() {
@@ -39,64 +49,98 @@ func (s *Server) Run() {
 		log.Fatal(err)
 	}
 	log.Println("running relay")
-
 }
 
 func (s *Server) Close() {
 	_ = s.lis.Close()
 }
 
-func (s *Server) Gesture(c context.Context, d *pb.SensorData) (*emptypb.Empty, error) {
-	// measure data rate using tumbling window
-	s.hz += len(d.Data)
-	if now := time.Now().Second(); s.currSec != now {
-		log.Println("data rate = ", s.hz)
-		s.hz = 0
-		s.currSec = now
+func (s *Server) GetRound(_ *emptypb.Empty, stream pb.Relay_GetRoundServer) error {
+	for rnd := range s.chRnd {
+		err := stream.Send(&pb.RndResp{
+			Rnd: rnd,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
-
-	// Send each data separately
-	// OPTIMIZE send all together and change py logic
-	for i := range d.Data {
-		d.Data[i].Time = uint64(time.Now().UnixNano())
-		common.PubFull(common.Data2Pynq, d.Data[i], false)
-	}
-
-	return &emptypb.Empty{}, nil
+	return nil
 }
 
-func (s *Server) Shoot(c context.Context, e *pb.Event) (*emptypb.Empty, error) {
-	log.Println("relay|Received shoot")
+func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
+	defer stream.SendAndClose(&emptypb.Empty{})
+	for {
+		d, err := stream.Recv()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	// Verification
-	if !(1 <= e.Player && e.Player <= 2) {
-		return nil, status.Error(codes.Unknown, "Player must be 1/2")
+		// measure data rate using tumbling window
+		s.hz += 1
+		if now := time.Now(); !s.nextMetric.Before(now) {
+			log.Println("Relay|Gesture rate = ", s.hz)
+			s.hz = 0
+			s.nextMetric = now.Add(time.Second)
+		}
+
+		// Send each data separately
+		// OPTIMIZE stream pynq
+		d.Time = uint64(time.Now().UnixNano())
+		common.PubFull(common.Data2Pynq, d, false)
 	}
-	if e.Action != pb.Action_shoot {
-		return nil, status.Error(codes.Unknown, "Shoot() called with non-shoot action")
-	}
 
-	// Forward to engine
-	e.Time = uint64(time.Now().UnixNano())
-	common.Pub(common.Event2Eng, e)
-
-	return &emptypb.Empty{}, nil
+	log.Println("relay|Closed gesture")
+	return nil
 }
 
-func (s *Server) Shot(c context.Context, e *pb.Event) (*emptypb.Empty, error) {
-	log.Println("relay|Received shot")
+func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
+	defer stream.SendAndClose(&emptypb.Empty{})
+	for {
+		e, err := stream.Recv()
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("relay|Received shoot", e.ShootID)
 
-	// Verification
-	if !(e.Player == 1 || e.Player == 2) {
-		return nil, status.Error(codes.Unknown, "Player must be 1/2")
+		// Verification
+		if !(1 <= e.Player && e.Player <= 2) {
+			return status.Error(codes.Unknown, "Player must be 1/2")
+		}
+		if e.Action != pb.Action_shoot {
+			return status.Error(codes.Unknown, "Shoot() called with non-shoot action")
+		}
+
+		// Forward to engine
+		e.Time = uint64(time.Now().UnixNano())
+		common.Pub(common.Event2Eng, e)
 	}
-	if e.Action != pb.Action_shot {
-		return nil, status.Error(codes.Unknown, "Shot() called with non-shot action")
+
+	log.Println("relay|Closed shoot")
+	return nil
+}
+
+func (s *Server) Shot(stream pb.Relay_ShotServer) error {
+	defer stream.SendAndClose(&emptypb.Empty{})
+	for {
+		e, err := stream.Recv()
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println("relay|Received shot")
+
+		// Verification
+		if !(1 <= e.Player && e.Player <= 2) {
+			return status.Error(codes.Unknown, "Player must be 1/2")
+		}
+		if e.Action != pb.Action_shoot {
+			return status.Error(codes.Unknown, "Shot() called with non-shot action")
+		}
+
+		// Forward to engine
+		e.Time = uint64(time.Now().UnixNano())
+		common.Pub(common.Event2Eng, e)
 	}
 
-	// Forward to engine
-	e.Time = uint64(time.Now().UnixNano())
-	common.Pub(common.Event2Eng, e)
-
-	return &emptypb.Empty{}, nil
+	log.Println("relay|Closed shoot")
+	return nil
 }
