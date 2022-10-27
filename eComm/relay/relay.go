@@ -17,9 +17,11 @@ type Server struct {
 	// From Relay
 	pb.UnimplementedRelayServer
 	lis net.Listener
+
 	// From engine
 	chRnd chan uint32
-	// Metrics
+
+	// Bookeeping
 	nextMetric time.Time
 	hz         int
 }
@@ -85,7 +87,7 @@ func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
 
 		// Send each data separately
 		// OPTIMIZE stream pynq
-		d.Time = uint64(time.Now().UnixNano())
+		d.Time = common.TimeToNs(time.Now())
 		common.PubFull(common.Data2Pynq, d, false)
 	}
 
@@ -111,7 +113,7 @@ func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
 		}
 
 		// Forward to engine
-		e.Time = uint64(time.Now().UnixNano())
+		e.Time = common.TimeToNs(time.Now())
 		common.Pub(common.Event2Eng, e)
 	}
 
@@ -137,7 +139,7 @@ func (s *Server) Shot(stream pb.Relay_ShotServer) error {
 		}
 
 		// Forward to engine
-		e.Time = uint64(time.Now().UnixNano())
+		e.Time = common.TimeToNs(time.Now())
 		common.Pub(common.Event2Eng, e)
 	}
 

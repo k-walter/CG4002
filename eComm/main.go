@@ -7,6 +7,7 @@ import (
 	"cg4002/eComm/pynq"
 	"cg4002/eComm/relay"
 	"cg4002/eComm/viz"
+	"log"
 	"sync"
 )
 
@@ -19,8 +20,9 @@ func main() {
 	// Read args, else panic
 	args := common.ParseArgs()
 
-	// Setup pub sub observer pattern
+	// Setup pub sub observer pattern, monotonic+logical clock
 	common.MakeObserver()
+	common.MakeClock()
 
 	// Setup all Proc, else panic
 	proc := []Proc{
