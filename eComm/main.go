@@ -17,6 +17,9 @@ type Proc interface {
 }
 
 func main() {
+	// Log us
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+
 	// Read args, else panic
 	args := common.ParseArgs()
 
