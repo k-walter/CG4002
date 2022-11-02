@@ -15,7 +15,7 @@ type Engine struct {
 	state   [2]PlayerImpl
 	running bool
 	rnd     cmn.RoundT
-	eval    *eval.Client
+	eval    eval.IEval
 	rtt     time.Duration
 
 	// Channels
@@ -58,7 +58,7 @@ func Make(a *cmn.Arg) *Engine {
 		state:   [2]PlayerImpl{NewPlayer(), NewPlayer()},
 		running: true,
 		rnd:     1,
-		eval:    eval.Make(a),
+		eval:    eval.MakeMock(a), // eval.Make(a)
 		rtt:     10 * time.Millisecond,
 
 		chEvent:   cmn.Sub[*pb.Event](cmn.EEvent),
@@ -298,6 +298,13 @@ func (e *Engine) GetPlayers(i uint32) (*PlayerImpl, *PlayerImpl) {
 }
 
 func (e *Engine) sendEval() {
+	// All done?
+	for _, s := range e.state {
+		if s.fsm != done {
+			return
+		}
+	}
+
 	// Snapshot state
 	st := time.Now()
 	s := pb.State{

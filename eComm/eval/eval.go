@@ -15,6 +15,12 @@ import (
 	"sync"
 )
 
+type IEval interface {
+	Close()
+	BlockingSend(*pb.State)
+	BlockingRecv() *pb.State
+}
+
 type Client struct {
 	// OPTIMIZATION reserve mem for reader, data
 	conn     net.Conn
