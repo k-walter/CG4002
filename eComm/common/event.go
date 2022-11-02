@@ -72,7 +72,7 @@ func Pub[T EventT](e EventE, v T) {
 func shouldLog(e EventE) bool {
 	switch e {
 	case EEvent:
-		return true
+		return false
 	case EData:
 		return false
 	case ERound:

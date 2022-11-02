@@ -6,7 +6,6 @@ import (
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"google.golang.org/protobuf/encoding/protojson"
 	"log"
-	"sync"
 	"time"
 )
 
@@ -27,6 +26,7 @@ type Visualizer struct {
 	chEvent       chan *pb.Event
 	state         *pb.State
 	shieldTimeout [2]*time.Timer
+	done          [2]bool
 }
 
 func Make(*common.Arg) *Visualizer {
@@ -39,6 +39,7 @@ func Make(*common.Arg) *Visualizer {
 		chEvent:       common.Sub[*pb.Event](common.EEvent),
 		state:         common.NewState(),
 		shieldTimeout: [2]*time.Timer{time.NewTimer(0), time.NewTimer(0)}, // must be created with NewTimer
+		done:          [2]bool{false, false},
 	}
 
 	// Connect to mqtt broker
@@ -69,6 +70,7 @@ func (v *Visualizer) Run() {
 			v.updateState(state) // serialize updates
 		case event := <-v.chEvent:
 			// TODO unrestricted mode
+			go v.checkDone(event)
 			go v.checkFov(event) // async send
 		case <-v.shieldTimeout[0].C:
 			go v.pubShieldAvail(1)
@@ -80,26 +82,24 @@ func (v *Visualizer) Run() {
 
 func (v *Visualizer) updateState(s *common.EvalResp) {
 	// TODO unrestricted mode
-	var wg sync.WaitGroup
 
 	// Publish events
 	evs := append(
 		v.diffPlayer(1, v.state, s),
 		v.diffPlayer(2, v.state, s)...)
 	for _, e := range evs {
-		wg.Add(1)
 		data := common.PbToJson(e.ProtoReflect())
-		go common.Do(&wg, func() { v.pub(eventTopic, data) })
+		v.pub(eventTopic, data)
 	}
 
 	// Publish state
 	v.state = s.State
-	wg.Add(1)
 	data := common.PbToJson(v.state.ProtoReflect())
-	go common.Do(&wg, func() { v.pub(stateTopic, data) })
+	v.pub(stateTopic, data)
 
-	// Publish all before return
-	wg.Wait()
+	// Reset done flag
+	v.done[0] = false
+	v.done[1] = false
 }
 
 func (v *Visualizer) checkFov(e *pb.Event) {
@@ -113,6 +113,7 @@ func (v *Visualizer) checkFov(e *pb.Event) {
 func (v *Visualizer) pub(t string, data []byte) {
 	// From https://www.hivemq.com/docs/hivemq/4.8/control-center/information.html#retained
 	// QOS = 0 (<=1), 1 (>=1), 2 (1) semantics
+	log.Println("Viz|Pub to MQTT|", string(data))
 	if t := v.clnt.Publish(t, 1, false, data); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
 		log.Fatal(t.Error())
 	}
@@ -125,6 +126,38 @@ func (v *Visualizer) pubShieldAvail(i int) {
 	}
 	data := common.PbToJson(e.ProtoReflect())
 	v.pub(eventTopic, data)
+}
+
+func (v *Visualizer) checkDone(e *pb.Event) {
+	if v.done[e.Player-1] {
+		return
+	}
+	switch e.Action {
+	case pb.Action_grenade:
+		fallthrough
+	case pb.Action_reload:
+		fallthrough
+	case pb.Action_shoot:
+		fallthrough
+	case pb.Action_logout:
+		fallthrough
+	case pb.Action_shield:
+		v.done[e.Player-1] = true
+		ev := pb.Event{
+			Player: e.Player,
+			Time:   e.Time,
+			Rnd:    e.Rnd,
+			Action: pb.Action_done,
+		}
+		data := common.PbToJson(ev.ProtoReflect())
+		v.pub(eventTopic, data)
+
+	case pb.Action_none:
+	case pb.Action_shot:
+	case pb.Action_grenaded:
+	case pb.Action_shieldAvailable:
+	case pb.Action_checkFov:
+	}
 }
 
 func fovRespHandler(c mqtt.Client, m mqtt.Message) {

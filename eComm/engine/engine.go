@@ -114,7 +114,6 @@ func (e *Engine) Close() {
 	// TODO Close channels
 }
 
-// Returns if event modified state
 func (e *Engine) handleEvent(ev *pb.Event) {
 	// previous round?
 	if cmn.RoundT(ev.Rnd) < e.rnd {
@@ -122,9 +121,11 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 	}
 
 	u, v := e.GetPlayers(ev.Player)
+	log.Printf("Handling %v, state=%v\n", ev, u.fsm)
 	doneWithAction := func() {
 		u.Action = ev.Action
 		u.fsm = done
+		log.Printf("Player %v done\n", ev.Player)
 	}
 
 	// change tmp state
@@ -133,45 +134,48 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 		if u.fsm != waiting {
 			return
 		}
+		doneWithAction()
+		if u.Grenades == 0 {
+			return
+		}
+		u.Grenades--
+
 		cmn.Pub(cmn.EEvent, &pb.Event{
-			Player: ev.Player ^ 0b11,
+			Player: ev.Player,
 			Time:   ev.Time,
 			Rnd:    ev.Rnd,
 			Action: pb.Action_checkFov,
 		})
 		u.fsm = threwGrenade
-		return
 
 	case pb.Action_checkFov: // from eng to viz
-		return
 
 	case pb.Action_reload:
 		if u.fsm != waiting {
 			return
 		}
 		doneWithAction()
-		if u.Bullets > 0 {
+		if u.Bullets == 0 {
 			u.Bullets = cmn.BulletMax
 		}
-		return
 
 	case pb.Action_logout:
 		if u.fsm != waiting {
 			return
 		}
 		doneWithAction()
-		return
 
 	case pb.Action_shield:
 		if u.fsm != waiting {
 			return
 		}
 		doneWithAction()
-		// Shield running?
-		if u.shieldExpiry.After(cmn.GameTime) {
+		// No shield or shield cooling down?
+		if u.NumShield == 0 || u.shieldExpiry.After(cmn.GameTime) {
 			return
 		}
 		// Set state only, set timeout after eval resp
+		u.NumShield -= 1
 		u.ShieldHealth = cmn.ShieldHpMax
 		u.ShieldTime = cmn.ShieldTime.Seconds()
 
@@ -348,13 +352,10 @@ func (e *Engine) diffPlayer(u *PlayerImpl, v *pb.PlayerState, now time.Time) {
 		}
 
 	case pb.Action_grenade:
-		return
 	case pb.Action_none:
-		return
 	case pb.Action_reload:
-		return
-	case pb.Action_shoot:
-		return // OPTIMIZE clear opp's shoot/shot
+	case pb.Action_shoot: // OPTIMIZE clear opp's shoot/shot
+
 	case pb.Action_logout:
 		e.running = false
 

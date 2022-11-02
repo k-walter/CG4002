@@ -1,4 +1,5 @@
 from concurrent import futures
+import threading
 import logging
 
 from google.protobuf import empty_pb2
@@ -29,16 +30,19 @@ class Pynq(main_pb2_grpc.PynqServicer):
         self.myip.setDenseBias(np.load("dense_bias.npy"))
 
         self.myip.debug = False
-        self.debounce = False
+        self.debounce = [False, False]
+        self.mu = threading.Lock()
 
     def Emit(self, req: main_pb2.Data, context):
+        self.mu.acquire()
+        p = req.player - 1
         # Reset actions
         if req.index == 0:
-            self.myip.resetBuffer()
-            self.debounce = False
+            self.debounce[p] = False
 
         # Debounce inference until next glove action
-        if self.debounce:
+        if self.debounce[p]:
+            self.mu.release()
             return main_pb2.Event(
                 player=req.player,
                 time=req.time,
@@ -46,23 +50,26 @@ class Pynq(main_pb2_grpc.PynqServicer):
             )
 
         # Blocking inference
-        axn = self.myip.inference([
+        axn = self.myip.inference(data = [
             req.roll,
             req.pitch,
             req.yaw,
             req.x,
             req.y,
             req.z
-        ])
+        ], user_number = p)
 
         # Inferred something?
         if axn != -1:
-            self.debounce = True
+            self.myip.resetBuffer(p)
+            self.debounce[p] = True
 
         # Resp
+        self.mu.release()
         return main_pb2.Event(
             player=req.player,
             time=req.time,
+            rnd=req.rnd,
             action=predToAction[axn]
         )
 
@@ -75,6 +82,8 @@ def run():
     main_pb2_grpc.add_PynqServicer_to_server(Pynq(), server)
     server.add_insecure_port('localhost:8082')
     server.start()
+
+    print("running")
 
     # Blocking
     server.wait_for_termination()

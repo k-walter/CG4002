@@ -18,10 +18,6 @@ type Client struct {
 	pyConn *grpc.ClientConn
 }
 
-const (
-	pollIntervalMs = 10
-)
-
 func Make(a *common.Arg) *Client {
 	// To pynq
 	pyConn, err := grpc.Dial(fmt.Sprintf(":%v", a.PynqPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -31,7 +27,7 @@ func Make(a *common.Arg) *Client {
 
 	// Init client
 	c := Client{
-		chData: common.Sub[*pb.Data](common.EData),
+		chData: common.SubCap[*pb.Data](common.EData, 2*3*50),
 		py:     pb.NewPynqClient(pyConn),
 		pyConn: pyConn,
 	}

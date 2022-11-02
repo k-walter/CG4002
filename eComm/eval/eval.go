@@ -12,7 +12,6 @@ import (
 	"log"
 	"net"
 	"strconv"
-	"sync"
 )
 
 type IEval interface {
@@ -25,14 +24,12 @@ type Client struct {
 	// OPTIMIZATION reserve mem for reader, data
 	conn net.Conn
 	key  string
-	mu   sync.Mutex
 }
 
 func Make(args *common.Arg) *Client {
 	e := Client{
 		conn: nil,
 		key:  args.EvalKey,
-		mu:   sync.Mutex{},
 	}
 
 	// Connect to eval server
@@ -53,9 +50,6 @@ func (c *Client) Close() {
 }
 
 func (c *Client) BlockingSend(s *pb.State) {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
 	// Get json
 	msg := common.PbToJson(s.ProtoReflect())
 	log.Println("eval|Send", string(msg))
@@ -79,9 +73,6 @@ func (c *Client) BlockingSend(s *pb.State) {
 }
 
 func (c *Client) BlockingRecv() *pb.State {
-	c.mu.Lock()
-	defer c.mu.Unlock()
-
 	// Get length
 	r := bufio.NewReader(c.conn)
 	lenStr, err := r.ReadString('_')

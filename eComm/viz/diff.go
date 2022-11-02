@@ -32,8 +32,8 @@ func (viz *Visualizer) diffPlayer(i int, s *pb.State, t *cmn.EvalResp) (evs []*p
 		appendAction()
 
 		// Check missed
-		if !missed(1-i, s, t.State) {
-			evs = append(evs, &pb.Event{Player: uint32(1 - i), Action: pb.Action_grenaded})
+		if !missed(0b11^i, s, t.State) {
+			evs = append(evs, &pb.Event{Player: uint32(0b11 ^ i), Action: pb.Action_grenaded})
 		}
 
 	case pb.Action_shoot:
@@ -47,8 +47,8 @@ func (viz *Visualizer) diffPlayer(i int, s *pb.State, t *cmn.EvalResp) (evs []*p
 		appendAction()
 
 		// Check missed
-		if !missed(1-i, s, t.State) {
-			evs = append(evs, &pb.Event{Player: uint32(1 - i), Action: pb.Action_shot})
+		if !missed(0b11^i, s, t.State) {
+			evs = append(evs, &pb.Event{Player: uint32(0b11 ^ i), Action: pb.Action_shot})
 		}
 
 	case pb.Action_reload:
@@ -94,7 +94,7 @@ func (viz *Visualizer) diffPlayer(i int, s *pb.State, t *cmn.EvalResp) (evs []*p
 func missed(i int, s *pb.State, t *pb.State) bool {
 	u, v := getPlayer(s, i), getPlayer(t, i)
 	if u.NumDeaths != v.NumDeaths {
-		cmn.EXIT_UNLESS(u.NumDeaths > v.NumDeaths)
+		cmn.EXIT_UNLESS(u.NumDeaths < v.NumDeaths)
 		return false
 	}
 	return u.Hp == v.Hp

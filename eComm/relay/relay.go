@@ -23,7 +23,6 @@ type Server struct {
 
 	// Bookeeping
 	nextMetric time.Time
-	hz         int
 }
 
 func Make(a *common.Arg) *Server {
@@ -31,7 +30,6 @@ func Make(a *common.Arg) *Server {
 		lis:        nil,
 		chRnd:      common.Sub[common.RoundT](common.ERound),
 		nextMetric: time.Now(),
-		hz:         0,
 	}
 
 	// From relay
@@ -74,6 +72,7 @@ func (s *Server) GetRound(_ *emptypb.Empty, stream pb.Relay_GetRoundServer) erro
 func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
 	log.Println("Relay|gesture started")
 	defer stream.SendAndClose(&emptypb.Empty{})
+	p1, p2 := 0, 0
 	for {
 		d, err := stream.Recv()
 		if err != nil {
@@ -81,10 +80,14 @@ func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
 		}
 
 		// measure data rate using tumbling window
-		s.hz += 1
-		if now := time.Now(); !s.nextMetric.Before(now) {
-			log.Println("Relay|Gesture rate = ", s.hz)
-			s.hz = 0
+		if d.Player == 1 {
+			p1 += 1
+		} else {
+			p2 += 1
+		}
+		if now := time.Now(); !s.nextMetric.After(now) {
+			log.Printf("Relay|Gesture rate=%v, p1=%v, p2=%v\n", p1+p2, p1, p2)
+			p1, p2 = 0, 0
 			s.nextMetric = now.Add(time.Second)
 		}
 
@@ -106,7 +109,6 @@ func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println("relay|Received shoot", e.ShootID)
 
 		// Verification
 		if !(1 <= e.Player && e.Player <= 2) {
@@ -133,13 +135,12 @@ func (s *Server) Shot(stream pb.Relay_ShotServer) error {
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println("relay|Received shot")
 
 		// Verification
 		if !(1 <= e.Player && e.Player <= 2) {
 			return status.Error(codes.Unknown, "Player must be 1/2")
 		}
-		if e.Action != pb.Action_shoot {
+		if e.Action != pb.Action_shot {
 			return status.Error(codes.Unknown, "Shot() called with non-shot action")
 		}
 
@@ -148,6 +149,6 @@ func (s *Server) Shot(stream pb.Relay_ShotServer) error {
 		common.Pub(common.EEvent, e)
 	}
 
-	log.Println("relay|Closed shoot")
+	log.Println("relay|Closed shot")
 	return nil
 }
