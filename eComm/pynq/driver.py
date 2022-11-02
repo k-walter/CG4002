@@ -17,7 +17,7 @@ class CNNDriver(DefaultIP):
         self.input = pynq.allocate(shape=(6,), dtype=np.float32)
         self.register_map.data = self.input.device_address
         
-        self.raw_outputs = pynq.allocate(shape=(4,), dtype=np.float32)
+        self.raw_outputs = pynq.allocate(shape=(5,), dtype=np.float32)
         self.register_map.raw_output=self.raw_outputs.device_address
         self.threshold = PRESET_THRESH
         
