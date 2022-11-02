@@ -2,7 +2,6 @@ package viz
 
 import (
 	"cg4002/eComm/common"
-	"cg4002/eComm/eval"
 	pb "cg4002/protos"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -24,7 +23,7 @@ type Visualizer struct {
 	// mqtt
 	clnt mqtt.Client
 
-	chState       chan *eval.EEvalResp
+	chState       chan *common.EvalResp
 	chEvent       chan *pb.Event
 	state         *pb.State
 	shieldTimeout [2]*time.Timer
@@ -36,7 +35,7 @@ func Make(*common.Arg) *Visualizer {
 		SetClientID("sample")
 	v := Visualizer{
 		clnt:          mqtt.NewClient(opts),
-		chState:       common.Sub[*eval.EEvalResp](common.EEvalResp),
+		chState:       common.Sub[*common.EvalResp](common.EEvalResp),
 		chEvent:       common.Sub[*pb.Event](common.EEvent),
 		state:         common.NewState(),
 		shieldTimeout: [2]*time.Timer{time.NewTimer(0), time.NewTimer(0)}, // must be created with NewTimer
@@ -79,7 +78,7 @@ func (v *Visualizer) Run() {
 	}
 }
 
-func (v *Visualizer) updateState(s *eval.EEvalResp) {
+func (v *Visualizer) updateState(s *common.EvalResp) {
 	// TODO unrestricted mode
 	var wg sync.WaitGroup
 

@@ -320,7 +320,7 @@ func (e *Engine) sendEval() {
 
 	// Publish events
 	e.rnd += 1
-	cmn.Pub(cmn.EEvalResp, &eval.EEvalResp{State: t, Time: st})
+	cmn.Pub(cmn.EEvalResp, &cmn.EvalResp{State: t, Time: st})
 	cmn.Pub(cmn.ERound, e.rnd)
 }
 

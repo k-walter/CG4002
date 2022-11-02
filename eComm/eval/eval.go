@@ -7,20 +7,13 @@ import (
 	"crypto/aes"
 	"encoding/base64"
 	"fmt"
+	"google.golang.org/protobuf/encoding/protojson"
 	"io"
 	"log"
 	"net"
 	"strconv"
 	"sync"
-	"time"
-
-	"google.golang.org/protobuf/encoding/protojson"
 )
-
-type EEvalResp struct {
-	*pb.State
-	Time time.Time
-}
 
 type Client struct {
 	// OPTIMIZATION reserve mem for reader, data

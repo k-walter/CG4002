@@ -2,13 +2,12 @@ package viz
 
 import (
 	cmn "cg4002/eComm/common"
-	"cg4002/eComm/eval"
 	pb "cg4002/protos"
 	"log"
 	"time"
 )
 
-func (viz *Visualizer) diffPlayer(i int, s *pb.State, t *eval.EEvalResp) (evs []*pb.Event) {
+func (viz *Visualizer) diffPlayer(i int, s *pb.State, t *cmn.EvalResp) (evs []*pb.Event) {
 	u, v := getPlayer(s, i), getPlayer(t.State, i)
 	appendAction := func() {
 		evs = append(evs, &pb.Event{Player: uint32(i), Action: v.Action})

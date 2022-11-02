@@ -1,7 +1,6 @@
 package common
 
 import (
-	"cg4002/eComm/eval"
 	pb "cg4002/protos"
 	"log"
 	"math/rand"
@@ -32,7 +31,7 @@ func (t EventE) String() string {
 	case EInFov:
 		return "pb.InFovResp"
 	case EEvalResp:
-		return "EEvalResp"
+		return "EvalResp"
 	default:
 		log.Fatalf("unknown enum %d\n", t)
 	}
@@ -41,7 +40,7 @@ func (t EventE) String() string {
 
 type EventT interface {
 	*pb.Event | *pb.Data | *pb.InFovResp |
-		RoundT | *eval.EEvalResp
+		RoundT | *EvalResp
 }
 
 var events = make([][]interface{}, nEvents)
@@ -73,4 +72,9 @@ func pubOne[T EventT](ch chan T, v T) bool {
 	default:
 		return false
 	}
+}
+
+type EvalResp struct {
+	*pb.State
+	Time time.Time
 }
