@@ -1,7 +1,6 @@
 package common
 
 import (
-	pb "cg4002/protos"
 	"github.com/go-playground/assert/v2"
 	"sync"
 	"testing"
@@ -10,7 +9,7 @@ import (
 
 func TestPubSub(t *testing.T) {
 	// Init
-	ch := Sub[*pb.Event](EEvent)
+	ch := Sub[RoundT](ERound)
 	assert.NotEqual(t, ch, nil)
 
 	// Pub
@@ -19,7 +18,7 @@ func TestPubSub(t *testing.T) {
 	for i := 0; i < n; i++ {
 		wg.Add(1)
 		go func() {
-			Pub(EEvent, &pb.Event{})
+			Pub(ERound, RoundT(1))
 			wg.Done()
 		}()
 	}
@@ -32,10 +31,11 @@ func TestPubSub(t *testing.T) {
 	timeout := time.NewTimer(time.Second)
 	m := 0
 	for ok := true; ok; {
+		v := RoundT(0)
 		select {
-		case _, ok = <-ch:
+		case v, ok = <-ch:
 			if ok {
-				m++
+				m += int(v)
 			}
 		case <-timeout.C:
 			t.Fatalf("Timeout after getting %v values", m)
