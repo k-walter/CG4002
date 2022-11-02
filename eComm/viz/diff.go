@@ -65,7 +65,7 @@ func (viz *Visualizer) diffPlayer(i int, s *pb.State, t *eval.EEvalResp) (evs []
 			return
 		}
 		appendAction()
-		shTimer.Reset(t.Time.Add(cmn.ShieldNs).Sub(time.Now()))
+		shTimer.Reset(t.Time.Add(cmn.ShieldTime).Sub(time.Now()))
 
 	case pb.Action_logout:
 		evs = append(evs, &pb.Event{

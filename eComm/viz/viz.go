@@ -72,8 +72,9 @@ func (v *Visualizer) Run() {
 			// TODO unrestricted mode
 			go v.checkFov(event) // async send
 		case <-v.shieldTimeout[0].C:
+			go v.pubShieldAvail(1)
 		case <-v.shieldTimeout[1].C:
-			// TODO go shield avail
+			go v.pubShieldAvail(2)
 		}
 	}
 }
@@ -103,18 +104,10 @@ func (v *Visualizer) updateState(s *eval.EEvalResp) {
 }
 
 func (v *Visualizer) checkFov(e *pb.Event) {
-	if e.Action != pb.Action_grenade {
+	if e.Action != pb.Action_checkFov {
 		return
 	}
-
-	// Make request
-	req := pb.Event{
-		Player: e.Player,
-		Time:   e.Time,
-		Rnd:    e.Rnd,
-		Action: pb.Action_checkFov, // WARNING does not imply there are enough grenades
-	}
-	data := common.PbToJson(req.ProtoReflect())
+	data := common.PbToJson(e.ProtoReflect())
 	v.pub(eventTopic, data)
 }
 
@@ -124,6 +117,15 @@ func (v *Visualizer) pub(t string, data []byte) {
 	if t := v.clnt.Publish(t, 1, false, data); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
 		log.Fatal(t.Error())
 	}
+}
+
+func (v *Visualizer) pubShieldAvail(i int) {
+	e := pb.Event{
+		Player: uint32(i),
+		Action: pb.Action_shieldAvailable,
+	}
+	data := common.PbToJson(e.ProtoReflect())
+	v.pub(eventTopic, data)
 }
 
 func fovRespHandler(c mqtt.Client, m mqtt.Message) {

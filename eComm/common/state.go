@@ -12,7 +12,7 @@ const (
 	HpMax       = 100 // instant rebirth
 	ShieldMax   = 3   // per life
 	ShieldHpMax = 30
-	ShieldNs    = 10 * time.Second // reset in next life
+	ShieldTime  = 10 * time.Second // reset in next life
 
 	// Damage
 	BulletMax   = 6 // unlimited mags, reload only if mag=0
