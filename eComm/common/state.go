@@ -12,7 +12,7 @@ const (
 	HpMax       = 100 // instant rebirth
 	ShieldMax   = 3   // per life
 	ShieldHpMax = 30
-	ShieldNs    = uint64(10_000_000_000) // 10s, carry over to next life
+	ShieldNs    = 10 * time.Second // reset in next life
 
 	// Damage
 	BulletMax   = 6 // unlimited mags, reload only if mag=0
@@ -35,22 +35,22 @@ type PlayerState struct {
 	PlayerImpl
 }
 
-func NewState() PlayerState {
-	return PlayerState{
-		PlayerState: &pb.PlayerState{
-			Hp:           HpMax,
-			Action:       pb.Action_none,
-			Bullets:      BulletMax,
-			Grenades:     GrenadeMax,
-			ShieldTime:   0,
-			ShieldHealth: 0,
-			NumDeaths:    0,
-			NumShield:    ShieldMax,
-		},
-		PlayerImpl: PlayerImpl{
-			ShieldExpireNs: ShieldRst,
-			Shoot:          make(map[uint32]struct{}),
-			Shot:           make(map[uint32]struct{}),
-		},
+func NewState() *pb.State {
+	return &pb.State{
+		P1: NewPlayerState(),
+		P2: NewPlayerState(),
+	}
+}
+
+func NewPlayerState() *pb.PlayerState {
+	return &pb.PlayerState{
+		Hp:           HpMax,
+		Action:       pb.Action_none,
+		Bullets:      BulletMax,
+		Grenades:     GrenadeMax,
+		ShieldTime:   0,
+		ShieldHealth: 0,
+		NumDeaths:    0,
+		NumShield:    ShieldMax,
 	}
 }
