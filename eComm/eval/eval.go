@@ -11,6 +11,7 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"sync"
 	"time"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -26,12 +27,15 @@ type Client struct {
 	conn     net.Conn
 	key      string
 	chEngine chan *pb.State
+	mu       sync.Mutex
 }
 
 func Make(args *common.Arg) *Client {
 	e := Client{
+		conn:     nil,
 		key:      args.EvalKey,
 		chEngine: make(chan *pb.State, common.ChSz),
+		mu:       sync.Mutex{},
 	}
 
 	// Connect to eval server
@@ -41,28 +45,20 @@ func Make(args *common.Arg) *Client {
 		log.Fatal(err)
 	}
 
-	// Subscribe to state updates
-	common.SubOld(common.State2Eval, func(i interface{}) {
-		go func(i *pb.State) { e.chEngine <- i }(i.(*pb.State))
-	})
-
 	return &e
+}
+
+func (c *Client) Run() {
 }
 
 func (c *Client) Close() {
 	_ = c.conn.Close()
 }
 
-func (c *Client) Run() {
-	for curState := range c.chEngine {
-		c.send(curState)
-		trueState := c.receive()
-		// OPTIMIZE add RTT/2 to shield time left?
-		common.PubOld(common.State2Eng, trueState)
-	}
-}
+func (c *Client) BlockingSend(s *pb.State) {
+	c.mu.Lock()
+	defer c.mu.Unlock()
 
-func (c *Client) send(s *pb.State) {
 	// Get json
 	msg := common.PbToJson(s.ProtoReflect())
 	log.Println("eval|Send", string(msg))
@@ -85,7 +81,10 @@ func (c *Client) send(s *pb.State) {
 	}
 }
 
-func (c *Client) receive() *pb.State {
+func (c *Client) BlockingRecv() *pb.State {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
 	// Get length
 	r := bufio.NewReader(c.conn)
 	lenStr, err := r.ReadString('_')

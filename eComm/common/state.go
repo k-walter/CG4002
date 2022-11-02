@@ -19,15 +19,16 @@ const (
 	BulletDmg   = 10
 	GrenadeDmg  = 30
 	GrenadeMax  = 2               // per life
-	GrenadeSecs = 2 * time.Second // to display
+	GrenadeTime = 2 * time.Second // to display
 
-	ShieldRst = 0
+	ShootErr = 300 * time.Millisecond
+	LPF      = float64(.5)
 )
 
 type PlayerImpl struct {
 	ShieldExpireNs uint64
-	Shoot          map[uint32]struct{}
-	Shot           map[uint32]struct{}
+	Shoot          map[uint32]time.Time
+	Shot           map[uint32]time.Time
 }
 
 type PlayerState struct {

@@ -4,13 +4,7 @@ import "time"
 
 type RoundT uint32
 
-var GameTime time.Time
-var RndNum RoundT
-
-func MakeClock() {
-	RndNum = 1
-	GameTime = time.Now()
-}
+var GameTime time.Time = time.Now()
 
 // TimeToNs converts monotonic clk --> duration --(NsToTime)--> monotonic clk
 func TimeToNs(t time.Time) uint64 {

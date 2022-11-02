@@ -3,7 +3,6 @@ package main
 import (
 	"cg4002/eComm/common"
 	"cg4002/eComm/engine"
-	"cg4002/eComm/eval"
 	"cg4002/eComm/pynq"
 	"cg4002/eComm/relay"
 	"cg4002/eComm/viz"
@@ -25,7 +24,6 @@ func main() {
 
 	// Setup pub sub observer pattern, monotonic+logical clock
 	common.MakeObserver()
-	common.MakeClock()
 
 	// Setup all Proc, else panic
 	proc := []Proc{
@@ -33,7 +31,6 @@ func main() {
 		relay.Make(&args),
 		pynq.Make(&args),
 		viz.Make(&args),
-		eval.Make(&args),
 	}
 	defer func() { // RAII
 		for _, p := range proc {
