@@ -11,9 +11,15 @@ import (
 	"log"
 	"net"
 	"strconv"
+	"time"
 
 	"google.golang.org/protobuf/encoding/protojson"
 )
+
+type EEvalResp struct {
+	*pb.State
+	Time time.Time
+}
 
 type Client struct {
 	// OPTIMIZATION reserve mem for reader, data

@@ -9,7 +9,6 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
 	"log"
-	"sync/atomic"
 	"time"
 )
 
@@ -17,9 +16,6 @@ type Client struct {
 	chData chan *pb.Data
 	py     pb.PynqClient
 	pyConn *grpc.ClientConn
-
-	// Metrics
-	qSz atomic.Int32
 }
 
 const (
@@ -35,26 +31,10 @@ func Make(a *common.Arg) *Client {
 
 	// Init client
 	c := Client{
-		chData: make(chan *pb.Data, common.ChSz),
+		chData: common.Sub[*pb.Data](common.EData),
 		py:     pb.NewPynqClient(pyConn),
 		pyConn: pyConn,
-		qSz:    atomic.Int32{},
 	}
-	c.qSz.Store(0)
-
-	// Subscribe to data
-	common.SubOld(common.Data2Pynq, func(i interface{}) {
-		go func(d *pb.Data) {
-			// Warn if buffer growing
-			c.qSz.Add(1)
-			if sz := c.qSz.Load(); sz > 50 { // 50hz
-				log.Printf("Warning: relay->fpga buffer size = %v", sz)
-			}
-
-			// Push to buffer
-			c.chData <- d
-		}(i.(*pb.Data))
-	})
 
 	return &c
 }
@@ -69,11 +49,9 @@ func (c *Client) Run() {
 		select {
 		// Send to pynq
 		case sensorData := <-c.chData:
-			c.qSz.Add(-1)
-
 			// Forward synchronously
 			if event := c.forward(sensorData); event != nil {
-				common.PubOld(common.Event2Eng, event)
+				common.Pub(common.EEvent, event)
 			}
 
 			// Poll pynq

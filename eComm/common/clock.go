@@ -2,8 +2,10 @@ package common
 
 import "time"
 
+type RoundT uint32
+
 var GameTime time.Time
-var RndNum uint32
+var RndNum RoundT
 
 func MakeClock() {
 	RndNum = 1

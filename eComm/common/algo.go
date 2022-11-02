@@ -1,6 +1,10 @@
 package common
 
-import "log"
+import (
+	"log"
+	"sync"
+	"time"
+)
 
 type Number interface {
 	uint64
@@ -44,4 +48,19 @@ func BinarySearch[T Number](a []T, v T) int {
 		}
 	}
 	return -1
+}
+
+func Do(wg *sync.WaitGroup, f func()) {
+	f()
+	wg.Done()
+}
+
+func Drain(c <-chan time.Time) {
+	for ok := true; ok; {
+		select {
+		case _, ok = <-c:
+		default:
+			return
+		}
+	}
 }

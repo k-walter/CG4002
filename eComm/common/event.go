@@ -1,6 +1,7 @@
 package common
 
 import (
+	"cg4002/eComm/eval"
 	pb "cg4002/protos"
 	"log"
 	"math/rand"
@@ -13,9 +14,11 @@ const (
 	EEvent EventE = iota
 	EData
 	ERound
+	EInFov
+	EEvalResp
 
 	nEvents
-	chSz = 1000
+	chSz = 100
 )
 
 func (t EventE) String() string {
@@ -26,6 +29,10 @@ func (t EventE) String() string {
 		return "pb.Data"
 	case ERound:
 		return "Round(RoundT)"
+	case EInFov:
+		return "pb.InFovResp"
+	case EEvalResp:
+		return "EEvalResp"
 	default:
 		log.Fatalf("unknown enum %d\n", t)
 	}
@@ -33,14 +40,18 @@ func (t EventE) String() string {
 }
 
 type EventT interface {
-	*pb.Event | *pb.Data |
-		RoundT
+	*pb.Event | *pb.Data | *pb.InFovResp |
+		RoundT | *eval.EEvalResp
 }
 
 var events = make([][]interface{}, nEvents)
 
 func Sub[T EventT](e EventE) chan T {
-	ch := make(chan T, chSz)
+	return SubCap[T](e, chSz)
+}
+
+func SubCap[T EventT](e EventE, cap int) chan T {
+	ch := make(chan T, cap)
 	events[e] = append(events[e], ch)
 	return ch
 }
