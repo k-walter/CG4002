@@ -44,7 +44,7 @@ func waitUnshield(end uint64, event *pb.Event) {
 	t := time.Unix(0, int64(end))
 	time.Sleep(time.Until(t))
 	log.Println("Trying to unshield")
-	cmn.Pub(cmn.Event2Eng, event)
+	cmn.PubOld(cmn.Event2Eng, event)
 }
 
 func (e *eShield) alertVizEvent() *pb.Event {

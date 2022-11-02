@@ -114,7 +114,7 @@ func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
 
 		// Forward to engine
 		e.Time = common.TimeToNs(time.Now())
-		common.Pub(common.Event2Eng, e)
+		common.PubOld(common.Event2Eng, e)
 	}
 
 	log.Println("relay|Closed shoot")
@@ -140,7 +140,7 @@ func (s *Server) Shot(stream pb.Relay_ShotServer) error {
 
 		// Forward to engine
 		e.Time = common.TimeToNs(time.Now())
-		common.Pub(common.Event2Eng, e)
+		common.PubOld(common.Event2Eng, e)
 	}
 
 	log.Println("relay|Closed shoot")

@@ -44,13 +44,13 @@ func Make(a *cmn.Arg) *Engine {
 	}
 
 	// Subscribe to channels
-	cmn.Sub(cmn.Event2Eng, func(i interface{}) {
+	cmn.SubOld(cmn.Event2Eng, func(i interface{}) {
 		go func(i *pb.Event) { e.chEvent <- i }(i.(*pb.Event))
 	})
-	cmn.Sub(cmn.State2Eng, func(i interface{}) {
+	cmn.SubOld(cmn.State2Eng, func(i interface{}) {
 		go func(i *pb.State) { e.chEval <- i }(i.(*pb.State))
 	})
-	cmn.Sub(cmn.Grenade2Eng, func(i interface{}) {
+	cmn.SubOld(cmn.Grenade2Eng, func(i interface{}) {
 		go func(i *EGrenaded) { e.chGrenade <- i }(i.(*EGrenaded))
 	})
 
@@ -69,13 +69,13 @@ func (e *Engine) Run() {
 		}
 
 		if event2Viz := ev.alertVizEvent(); event2Viz != nil {
-			cmn.Pub(cmn.Event2Viz, event2Viz)
+			cmn.PubOld(cmn.Event2Viz, event2Viz)
 		}
 		if ev.updateVizState() {
-			cmn.Pub(cmn.State2Viz, snapshot(e.state))
+			cmn.PubOld(cmn.State2Viz, snapshot(e.state))
 		}
 		if ev.updateEvalState() {
-			cmn.Pub(cmn.State2Eval, snapshot(e.state))
+			cmn.PubOld(cmn.State2Eval, snapshot(e.state))
 		}
 
 		// Set back to none if sent state
@@ -156,7 +156,7 @@ func inflict(u uint32, player *cmn.PlayerState, dmg uint32) {
 		// RULE shield cooldown rest
 		if player.ShieldExpireNs != cmn.ShieldRst {
 			// Why async? Current event can be sent < sending unshield event to viz
-			cmn.Pub(cmn.Event2Eng, &pb.Event{
+			cmn.PubOld(cmn.Event2Eng, &pb.Event{
 				Player: u,
 				Time:   player.ShieldExpireNs,
 				Action: pb.Action_shieldAvailable,

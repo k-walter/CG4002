@@ -36,7 +36,7 @@ func Make(args *common.Arg) *Client {
 	}
 
 	// Subscribe to state updates
-	common.Sub(common.State2Eval, func(i interface{}) {
+	common.SubOld(common.State2Eval, func(i interface{}) {
 		go func(i *pb.State) { e.chEngine <- i }(i.(*pb.State))
 	})
 
@@ -52,7 +52,7 @@ func (c *Client) Run() {
 		c.send(curState)
 		trueState := c.receive()
 		// OPTIMIZE add RTT/2 to shield time left?
-		common.Pub(common.State2Eng, trueState)
+		common.PubOld(common.State2Eng, trueState)
 	}
 }
 

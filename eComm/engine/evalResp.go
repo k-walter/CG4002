@@ -29,7 +29,7 @@ func (e *eEvalResp) updateEngine(engine *Engine) bool {
 		// if eval time not zero, must have exactly 1 previous shield --> didnt semd new shield event
 		if old.Action == pb.Action_shield && new.Action != pb.Action_shield && new.ShieldTime == 0 {
 			old.ShieldExpireNs = cmn.ShieldRst
-			cmn.Pub(cmn.Event2Viz, &pb.Event{
+			cmn.PubOld(cmn.Event2Viz, &pb.Event{
 				Player: p,
 				Time:   now,
 				Action: pb.Action_shieldAvailable,

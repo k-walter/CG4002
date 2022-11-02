@@ -43,7 +43,7 @@ func Make(a *common.Arg) *Client {
 	c.qSz.Store(0)
 
 	// Subscribe to data
-	common.Sub(common.Data2Pynq, func(i interface{}) {
+	common.SubOld(common.Data2Pynq, func(i interface{}) {
 		go func(d *pb.Data) {
 			// Warn if buffer growing
 			c.qSz.Add(1)
@@ -73,7 +73,7 @@ func (c *Client) Run() {
 
 			// Forward synchronously
 			if event := c.forward(sensorData); event != nil {
-				common.Pub(common.Event2Eng, event)
+				common.PubOld(common.Event2Eng, event)
 			}
 
 			// Poll pynq

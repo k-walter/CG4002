@@ -39,13 +39,13 @@ func Make(*common.Arg) *Visualizer {
 
 	// Subscribe to state updates
 	chState := make(chan *pb.State, common.ChSz)
-	common.Sub(common.State2Viz, func(i interface{}) {
+	common.SubOld(common.State2Viz, func(i interface{}) {
 		go func(s *pb.State) { chState <- s }(i.(*pb.State))
 	})
 
 	// Subscribe to mqtt grenade inFov req
 	chEvent := make(chan *pb.Event, common.ChSz)
-	common.Sub(common.Event2Viz, func(i interface{}) {
+	common.SubOld(common.Event2Viz, func(i interface{}) {
 		go func(i *pb.Event) { chEvent <- i }(i.(*pb.Event))
 	})
 
@@ -100,7 +100,7 @@ func (v *Visualizer) publishEvent(e *pb.Event) {
 	//		Time:   e.Time,
 	//		InFov:  true,
 	//	}
-	//	common.Pub(common.Grenade2Eng, &engine.EGrenaded{InFovResp: &msg})
+	//	common.PubOld(common.Grenade2Eng, &engine.EGrenaded{InFovResp: &msg})
 	//}
 }
 
@@ -111,5 +111,5 @@ func inFovRespHandler(c mqtt.Client, m mqtt.Message) {
 		log.Fatal(err)
 	}
 
-	common.Pub(common.Grenade2Eng, &engine.EGrenaded{InFovResp: &msg})
+	common.PubOld(common.Grenade2Eng, &engine.EGrenaded{InFovResp: &msg})
 }
