@@ -2,11 +2,11 @@ package viz
 
 import (
 	"cg4002/eComm/common"
-	"cg4002/eComm/engine"
 	pb "cg4002/protos"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"google.golang.org/protobuf/encoding/protojson"
 	"log"
+	"sync"
 	"time"
 )
 
@@ -16,49 +16,42 @@ const (
 
 	eventTopic     = "cg4002/b7/event"
 	inFovRespTopic = "cg4002/b7/inFovResp"
-	updateTopic    = "cg4002/b7/state"
+	stateTopic     = "cg4002/b7/state"
 )
 
 type Visualizer struct {
 	// mqtt
 	clnt mqtt.Client
 
-	chState chan *pb.State
-	chEvent chan *pb.Event
+	chState       chan *common.EvalResp
+	chEvent       chan *pb.Event
+	state         *pb.State
+	shieldTimeout [2]*time.Timer
 }
 
 func Make(*common.Arg) *Visualizer {
-	// Connect to mqtt broker
 	opts := mqtt.NewClientOptions().
 		AddBroker(broker).
 		SetClientID("sample")
-	c := mqtt.NewClient(opts)
-	if t := c.Connect(); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
-		log.Fatal(t.Error())
+	v := Visualizer{
+		clnt:          mqtt.NewClient(opts),
+		chState:       common.Sub[*common.EvalResp](common.EEvalResp),
+		chEvent:       common.Sub[*pb.Event](common.EEvent),
+		state:         common.NewState(),
+		shieldTimeout: [2]*time.Timer{time.NewTimer(0), time.NewTimer(0)}, // must be created with NewTimer
 	}
 
-	// Subscribe to state updates
-	chState := make(chan *pb.State, common.ChSz)
-	common.Sub(common.State2Viz, func(i interface{}) {
-		go func(s *pb.State) { chState <- s }(i.(*pb.State))
-	})
-
-	// Subscribe to mqtt grenade inFov req
-	chEvent := make(chan *pb.Event, common.ChSz)
-	common.Sub(common.Event2Viz, func(i interface{}) {
-		go func(i *pb.Event) { chEvent <- i }(i.(*pb.Event))
-	})
+	// Connect to mqtt broker
+	if t := v.clnt.Connect(); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
+		log.Fatal(t.Error())
+	}
 
 	// Subscribe to mqtt grenade inFov resp
-	if t := c.Subscribe(inFovRespTopic, 0, inFovRespHandler); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
+	if t := v.clnt.Subscribe(inFovRespTopic, 0, fovRespHandler); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
 		log.Fatal(t.Error())
 	}
 
-	return &Visualizer{
-		clnt:    c,
-		chState: chState,
-		chEvent: chEvent,
-	}
+	return &v
 }
 
 func (v *Visualizer) Close() {
@@ -66,50 +59,80 @@ func (v *Visualizer) Close() {
 }
 
 func (v *Visualizer) Run() {
+	// Drain timers
+	common.Drain(v.shieldTimeout[0].C)
+	common.Drain(v.shieldTimeout[1].C)
+
 	for {
-		select { // Async send
+		select {
 		case state := <-v.chState:
-			go v.publishState(state)
+			v.updateState(state) // serialize updates
 		case event := <-v.chEvent:
-			go v.publishEvent(event)
+			// TODO unrestricted mode
+			go v.checkFov(event) // async send
+		case <-v.shieldTimeout[0].C:
+			go v.pubShieldAvail(1)
+		case <-v.shieldTimeout[1].C:
+			go v.pubShieldAvail(2)
 		}
 	}
 }
 
-func (v *Visualizer) publishState(s *pb.State) {
-	data := common.PbToJson(s.ProtoReflect())
+func (v *Visualizer) updateState(s *common.EvalResp) {
+	// TODO unrestricted mode
+	var wg sync.WaitGroup
 
+	// Publish events
+	evs := append(
+		v.diffPlayer(1, v.state, s),
+		v.diffPlayer(2, v.state, s)...)
+	for _, e := range evs {
+		wg.Add(1)
+		data := common.PbToJson(e.ProtoReflect())
+		go common.Do(&wg, func() { v.pub(eventTopic, data) })
+	}
+
+	// Publish state
+	v.state = s.State
+	wg.Add(1)
+	data := common.PbToJson(v.state.ProtoReflect())
+	go common.Do(&wg, func() { v.pub(stateTopic, data) })
+
+	// Publish all before return
+	wg.Done()
+}
+
+func (v *Visualizer) checkFov(e *pb.Event) {
+	if e.Action != pb.Action_checkFov {
+		return
+	}
+	data := common.PbToJson(e.ProtoReflect())
+	v.pub(eventTopic, data)
+}
+
+func (v *Visualizer) pub(t string, data []byte) {
 	// From https://www.hivemq.com/docs/hivemq/4.8/control-center/information.html#retained
 	// QOS = 0 (<=1), 1 (>=1), 2 (1) semantics
-	if t := v.clnt.Publish(updateTopic, 1, false, data); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
+	if t := v.clnt.Publish(t, 1, false, data); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
 		log.Fatal(t.Error())
 	}
 }
 
-func (v *Visualizer) publishEvent(e *pb.Event) {
-	// NOTE Grenade event doubles as InFovRequest
+func (v *Visualizer) pubShieldAvail(i int) {
+	e := pb.Event{
+		Player: uint32(i),
+		Action: pb.Action_shieldAvailable,
+	}
 	data := common.PbToJson(e.ProtoReflect())
-	if t := v.clnt.Publish(eventTopic, 1, false, data); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
-		log.Fatal(t.Error())
-	}
-
-	// Mock visualizer
-	//if e.Action == pb.Action_grenade {
-	//	msg := pb.InFovResp{
-	//		Player: 0b11 ^ e.Player,
-	//		Time:   e.Time,
-	//		InFov:  true,
-	//	}
-	//	common.Pub(common.Grenade2Eng, &engine.EGrenaded{InFovResp: &msg})
-	//}
+	v.pub(eventTopic, data)
 }
 
-func inFovRespHandler(c mqtt.Client, m mqtt.Message) {
+func fovRespHandler(c mqtt.Client, m mqtt.Message) {
 	data := m.Payload()
 	msg := pb.InFovResp{}
 	if err := protojson.Unmarshal(data, &msg); err != nil {
 		log.Fatal(err)
 	}
 
-	common.Pub(common.Grenade2Eng, &engine.EGrenaded{InFovResp: &msg})
+	common.Pub(common.EInFov, &msg)
 }

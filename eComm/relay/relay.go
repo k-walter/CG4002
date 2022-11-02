@@ -19,7 +19,7 @@ type Server struct {
 	lis net.Listener
 
 	// From engine
-	chRnd chan uint32
+	chRnd chan common.RoundT
 
 	// Bookeeping
 	nextMetric time.Time
@@ -29,7 +29,7 @@ type Server struct {
 func Make(a *common.Arg) *Server {
 	s := Server{
 		lis:        nil,
-		chRnd:      make(chan uint32, common.ChSz),
+		chRnd:      common.Sub[common.RoundT](common.ERound),
 		nextMetric: time.Now(),
 		hz:         0,
 	}
@@ -60,7 +60,7 @@ func (s *Server) Close() {
 func (s *Server) GetRound(_ *emptypb.Empty, stream pb.Relay_GetRoundServer) error {
 	for rnd := range s.chRnd {
 		err := stream.Send(&pb.RndResp{
-			Rnd: rnd,
+			Rnd: uint32(rnd),
 		})
 		if err != nil {
 			log.Fatal(err)
@@ -88,7 +88,7 @@ func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
 		// Send each data separately
 		// OPTIMIZE stream pynq
 		d.Time = common.TimeToNs(time.Now())
-		common.PubFull(common.Data2Pynq, d, false)
+		common.Pub(common.EData, d)
 	}
 
 	log.Println("relay|Closed gesture")
@@ -114,7 +114,7 @@ func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
 
 		// Forward to engine
 		e.Time = common.TimeToNs(time.Now())
-		common.Pub(common.Event2Eng, e)
+		common.Pub(common.EEvent, e)
 	}
 
 	log.Println("relay|Closed shoot")
@@ -140,7 +140,7 @@ func (s *Server) Shot(stream pb.Relay_ShotServer) error {
 
 		// Forward to engine
 		e.Time = common.TimeToNs(time.Now())
-		common.Pub(common.Event2Eng, e)
+		common.Pub(common.EEvent, e)
 	}
 
 	log.Println("relay|Closed shoot")

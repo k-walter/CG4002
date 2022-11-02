@@ -56,13 +56,13 @@ func MakeObserver() {
 }
 
 // Sub is not thread safe. To be setup at the beginning
-func Sub(t Topic, f func(interface{})) {
+func SubOld(t Topic, f func(interface{})) {
 	log.Printf("init|Subscribe to %s %d\n", t, t)
 	observer[t] = append(observer[t], f)
 }
 
-// Pub is thread safe and blocking. To publish asynchronously, subscriber should pass a goroutine closure
-func Pub(t Topic, i interface{}) {
+// PubOld is thread safe and blocking. To publish asynchronously, subscriber should pass a goroutine closure
+func PubOld(t Topic, i interface{}) {
 	PubFull(t, i, true)
 }
 

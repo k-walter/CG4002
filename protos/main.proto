@@ -48,7 +48,8 @@ message RndResp {
 message InFovResp {
   uint32 player = 1;
   uint64 time = 2;
-  bool inFov = 3;
+  uint32 rnd = 3;
+  bool inFov = 4;
 }
 
 message Event {
