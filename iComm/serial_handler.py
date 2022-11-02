@@ -21,8 +21,7 @@ class SerialHandler(Thread):
                     self.beetle.delegate.handle_data()
                     if not self.beetle.delegate.is_valid_data:
                         continue
-                    with self.lock:
-                        self.pass_params(self.beetle.delegate.packet)
+                    self.pass_params(self.beetle.delegate.packet)
                     
             except BTLEDisconnectError:
                 self.beetle.set_disconnected()

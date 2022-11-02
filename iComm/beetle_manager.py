@@ -28,7 +28,13 @@ class BeetleManager():
 
     def init_peripheral_beetle_list(self):
         for beetle in self.beetle_list:
-            beetle.init_peripheral()
+            while not beetle.has_set_peripheral and beetle.is_connected:
+                beetle.init_peripheral()
+                 # If beetle disconnects during setting peripherals, will attempt
+                # reconnection and handshaking
+                
+                if not beetle.is_connected:
+                    beetle.connect_with_retries(RETRY_COUNT)
 
 
     def init_handshake_beetle_list(self):

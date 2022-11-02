@@ -12,6 +12,7 @@ class Beetle():
         self.player_no = player_no
         self.header = header
         self.is_connected = False
+        self.has_set_peripheral = False
         self.has_handshake = False
         self.serial_char = None
         self.delegate = None
@@ -38,10 +39,17 @@ class Beetle():
         print(f"{self.name} disconnected. Attempting Reconnection...")
         self.is_connected = False
 
-    def init_peripheral(self):
+    def try_init_peripheral(self):
+        self.has_set_peripheral = False
         self.__set_serial_char()
         self.__set_delegate()
         self.__attach_delegate()
+
+    def init_peripheral(self):
+        try:
+            self.try_init_peripheral()
+        except btle.BTLEDisconnectError:
+            self.set_disconnected()
 
     def init_handshake(self):
         try:
@@ -51,7 +59,6 @@ class Beetle():
         # Callers of init_handshake will handle reconnection process
         except btle.BTLEDisconnectError:
             self.set_disconnected()
-
 
     #Private Methods
     def __connect(self):
@@ -69,11 +76,12 @@ class Beetle():
                 self.__receive_ack()
 
     # Sets serial characteristic in order to write to beetle
-    def __set_serial_char(self):
+    def set_serial_char(self):
         print(f"Setting serial characteristic for {self.name}...")
         chars = self.peripheral.getCharacteristics()
         serial_char = [c for c in chars if c.uuid == SERIAL_UUID][0]
         self.serial_char = serial_char
+        self.has_set_serial_char = True
         print("Serial characteristic set.")
 
     # Creates delegate object to receive notifications
@@ -86,6 +94,7 @@ class Beetle():
     def __attach_delegate(self):
         print(f"Attaching {self.name} delegate to peripheral...")
         self.peripheral.withDelegate(self.delegate)
+        self.has_set_peripheral = True
         print("Done.")
 
     # Sends Handshake Packet
