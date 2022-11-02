@@ -50,12 +50,16 @@ func Sub[T EventT](e EventE) chan T {
 }
 
 func SubCap[T EventT](e EventE, cap int) chan T {
+	log.Printf("Subscribe %s\n", e)
 	ch := make(chan T, cap)
 	events[e] = append(events[e], ch)
 	return ch
 }
 
 func Pub[T EventT](e EventE, v T) {
+	if shouldLog(e) {
+		log.Printf("Publish %s, val=%v\n", e, v)
+	}
 	for _, ch := range events[e] {
 		for i := 1; !pubOne(ch.(chan T), v); i++ {
 			log.Printf("%s channel blocked %v times. Backpressure\n", e, i)
@@ -63,6 +67,24 @@ func Pub[T EventT](e EventE, v T) {
 			time.Sleep(oneToTenMs)
 		}
 	}
+}
+
+func shouldLog(e EventE) bool {
+	switch e {
+	case EEvent:
+		return true
+	case EData:
+		return false
+	case ERound:
+		return true
+	case EInFov:
+		return true
+	case EEvalResp:
+		return true
+	default:
+		log.Fatal("Unhandled event type")
+	}
+	return false
 }
 
 func pubOne[T EventT](ch chan T, v T) bool {

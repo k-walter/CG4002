@@ -99,7 +99,7 @@ func (v *Visualizer) updateState(s *common.EvalResp) {
 	go common.Do(&wg, func() { v.pub(stateTopic, data) })
 
 	// Publish all before return
-	wg.Done()
+	wg.Wait()
 }
 
 func (v *Visualizer) checkFov(e *pb.Event) {

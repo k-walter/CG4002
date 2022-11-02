@@ -741,16 +741,16 @@ var file_protos_main_proto_depIdxs = []int32{
 	0,  // 4: PlayerState.action:type_name -> Action
 	8,  // 5: Relay.GetRound:input_type -> google.protobuf.Empty
 	1,  // 6: Relay.Gesture:input_type -> Data
-	5,  // 7: Relay.shoot:input_type -> Event
-	5,  // 8: Relay.shot:input_type -> Event
+	5,  // 7: Relay.Shoot:input_type -> Event
+	5,  // 8: Relay.Shot:input_type -> Event
 	6,  // 9: Viz.Update:input_type -> State
 	5,  // 10: Viz.InFov:input_type -> Event
 	1,  // 11: Pynq.Emit:input_type -> Data
 	8,  // 12: Pynq.Poll:input_type -> google.protobuf.Empty
 	3,  // 13: Relay.GetRound:output_type -> RndResp
 	8,  // 14: Relay.Gesture:output_type -> google.protobuf.Empty
-	8,  // 15: Relay.shoot:output_type -> google.protobuf.Empty
-	8,  // 16: Relay.shot:output_type -> google.protobuf.Empty
+	8,  // 15: Relay.Shoot:output_type -> google.protobuf.Empty
+	8,  // 16: Relay.Shot:output_type -> google.protobuf.Empty
 	8,  // 17: Viz.Update:output_type -> google.protobuf.Empty
 	4,  // 18: Viz.InFov:output_type -> InFovResp
 	5,  // 19: Pynq.Emit:output_type -> Event

@@ -106,7 +106,7 @@ func (x *relayGestureClient) CloseAndRecv() (*emptypb.Empty, error) {
 }
 
 func (c *relayClient) Shoot(ctx context.Context, opts ...grpc.CallOption) (Relay_ShootClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Relay_ServiceDesc.Streams[2], "/Relay/shoot", opts...)
+	stream, err := c.cc.NewStream(ctx, &Relay_ServiceDesc.Streams[2], "/Relay/Shoot", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -140,7 +140,7 @@ func (x *relayShootClient) CloseAndRecv() (*emptypb.Empty, error) {
 }
 
 func (c *relayClient) Shot(ctx context.Context, opts ...grpc.CallOption) (Relay_ShotClient, error) {
-	stream, err := c.cc.NewStream(ctx, &Relay_ServiceDesc.Streams[3], "/Relay/shot", opts...)
+	stream, err := c.cc.NewStream(ctx, &Relay_ServiceDesc.Streams[3], "/Relay/Shot", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -197,10 +197,10 @@ func (UnimplementedRelayServer) Gesture(Relay_GestureServer) error {
 	return status.Errorf(codes.Unimplemented, "method Gesture not implemented")
 }
 func (UnimplementedRelayServer) Shoot(Relay_ShootServer) error {
-	return status.Errorf(codes.Unimplemented, "method shoot not implemented")
+	return status.Errorf(codes.Unimplemented, "method Shoot not implemented")
 }
 func (UnimplementedRelayServer) Shot(Relay_ShotServer) error {
-	return status.Errorf(codes.Unimplemented, "method shot not implemented")
+	return status.Errorf(codes.Unimplemented, "method Shot not implemented")
 }
 func (UnimplementedRelayServer) mustEmbedUnimplementedRelayServer() {}
 
@@ -333,12 +333,12 @@ var Relay_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 		{
-			StreamName:    "shoot",
+			StreamName:    "Shoot",
 			Handler:       _Relay_Shoot_Handler,
 			ClientStreams: true,
 		},
 		{
-			StreamName:    "shot",
+			StreamName:    "Shot",
 			Handler:       _Relay_Shot_Handler,
 			ClientStreams: true,
 		},

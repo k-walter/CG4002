@@ -41,6 +41,9 @@ func NewPlayer() PlayerImpl {
 		fsm:           waiting,
 		shieldExpiry:  cmn.GameTime,
 		shieldTimeout: time.NewTimer(0),
+		shoot:         make(map[uint32]time.Time),
+		shot:          make(map[uint32]time.Time),
+		shootTimeout:  time.NewTimer(0),
 	}
 }
 
@@ -70,8 +73,10 @@ func Make(a *cmn.Arg) *Engine {
 
 func (e *Engine) Run() {
 	// Drain timers
-	cmn.Drain(e.state[0].shieldTimeout.C)
-	cmn.Drain(e.state[1].shieldTimeout.C)
+	for _, s := range e.state {
+		cmn.Drain(s.shieldTimeout.C)
+		cmn.Drain(s.shootTimeout.C)
+	}
 
 	for e.running {
 		select {

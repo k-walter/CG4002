@@ -23,18 +23,16 @@ type IEval interface {
 
 type Client struct {
 	// OPTIMIZATION reserve mem for reader, data
-	conn     net.Conn
-	key      string
-	chEngine chan *pb.State
-	mu       sync.Mutex
+	conn net.Conn
+	key  string
+	mu   sync.Mutex
 }
 
 func Make(args *common.Arg) *Client {
 	e := Client{
-		conn:     nil,
-		key:      args.EvalKey,
-		chEngine: make(chan *pb.State, common.ChSz),
-		mu:       sync.Mutex{},
+		conn: nil,
+		key:  args.EvalKey,
+		mu:   sync.Mutex{},
 	}
 
 	// Connect to eval server

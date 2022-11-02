@@ -47,10 +47,11 @@ func Make(a *common.Arg) *Server {
 func (s *Server) Run() {
 	g := grpc.NewServer()
 	pb.RegisterRelayServer(g, s)
+	log.Println("Relay|running")
 	if err := g.Serve(s.lis); err != nil {
 		log.Fatal(err)
 	}
-	log.Println("running relay")
+	log.Println("Relay|stopped")
 }
 
 func (s *Server) Close() {
@@ -58,6 +59,7 @@ func (s *Server) Close() {
 }
 
 func (s *Server) GetRound(_ *emptypb.Empty, stream pb.Relay_GetRoundServer) error {
+	log.Println("Relay|getRound started")
 	for rnd := range s.chRnd {
 		err := stream.Send(&pb.RndResp{
 			Rnd: uint32(rnd),
@@ -70,6 +72,7 @@ func (s *Server) GetRound(_ *emptypb.Empty, stream pb.Relay_GetRoundServer) erro
 }
 
 func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
+	log.Println("Relay|gesture started")
 	defer stream.SendAndClose(&emptypb.Empty{})
 	for {
 		d, err := stream.Recv()
@@ -96,6 +99,7 @@ func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
 }
 
 func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
+	log.Println("Relay|shoot started")
 	defer stream.SendAndClose(&emptypb.Empty{})
 	for {
 		e, err := stream.Recv()
@@ -122,6 +126,7 @@ func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
 }
 
 func (s *Server) Shot(stream pb.Relay_ShotServer) error {
+	log.Println("Relay|shot started")
 	defer stream.SendAndClose(&emptypb.Empty{})
 	for {
 		e, err := stream.Recv()
