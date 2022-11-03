@@ -6,8 +6,9 @@ import time
 import main_pb2
 import os
 
-count = 0
-data_str = ''
+action_classes = ["final", "grenade", "reload", "shield", "idle"]
+data_per_class = 25
+
 
 class SerialHandler(Thread):
     def __init__(self, beetle, lock, stub):
@@ -44,42 +45,50 @@ class GloveHandler(SerialHandler):
         self.next_send = 0
         self.send_buf = main_pb2.SensorData()
 
+        # get user number
+        self.user = input("Enter user number: ")
+        # create directory for user
+        current_directory = os.getcwd()
+        self.data_directory = os.path.join(current_directory, f'data{self.user}')
+        if not os.path.exists(self.data_directory):
+            os.makedirs(self.data_directory)
+
+        # initialize a sequence_of_action with data_per_class for each action class
+        self.sequence_of_action = []     
+        for action_class_index in range(len(action_classes)):
+            self.sequence_of_action.extend([action_class_index] * data_per_class)
+        self.action_class_count = [0, 0, 0, 0, 0]
+
+        # shuffle the sequence_of_action
+        import random
+        random.shuffle(self.sequence_of_action)  
+        self.current_action = self.sequence_of_action.pop(0)
+        print(f"Current action: {action_classes[self.current_action]}")
+
+        self.data_str = ''
+        self.count = [0, 0, 0, 0, 0]
+
     def pass_params(self, packet):
-        global count
-        global data_str
         glove_data = packet[1:14]
         data_obj = unpack_glove_data_into_dict(glove_data)
-        # now = time.monotonic_ns()
+
         if data_obj["index"] == 0:
-            if count == 50:
-                print("\n\n\n\n\nCollected 50! Exiting...")
-                exit()
-            if len(data_str) != 0:
-                with open(f'final{count}.csv', 'w') as f:
-                    f.write(data_str)
-                    count += 1
-                    data_str = ''
-                    print(f'wrote to final{count-1}')
 
+            if len(self.data_str) != 0:
+                with open(f'data{self.user}/{action_classes[self.current_action]}{self.action_class_count[self.current_action]}.csv', 'w') as f:
+                    print(f'wrote to {action_classes[self.current_action]}{self.action_class_count[self.current_action]}')
+                    f.write(self.data_str)
+                    self.action_class_count[self.current_action] += 1
+                    self.data_str = ''
             
-        # data = self.send_buf.data.add()
-        # data.player=1
-        # data.index=data_obj["index"]
-        # data.roll=data_obj["roll"]
-        # data.pitch=data_obj["pitch"]
-        # data.yaw=data_obj["yaw"]
-        # data.x=data_obj["x"]
-        # data.y=data_obj["y"]
-        # data.z=data_obj["z"]
+            if len(self.sequence_of_action) == 0:
+                print("All data collected! Exiting...")
+                exit()
 
-        data_str += f'{data_obj["roll"]}, {data_obj["pitch"]}, {data_obj["yaw"]}, {data_obj["x"]}, {data_obj["y"]}, {data_obj["z"]}\n'
+            self.current_action = self.sequence_of_action.pop(0)
+            print(f"Current action: {action_classes[self.current_action]}")
 
-        # if now < self.next_send:
-        #     return
-        
-        # self.next_send = now + int(20e6)
-        # self.stub.Gesture(self.send_buf)
-        # self.send_buf = main_pb2.SensorData()
+        self.data_str += f'{data_obj["roll"]}, {data_obj["pitch"]}, {data_obj["yaw"]}, {data_obj["x"]}, {data_obj["y"]}, {data_obj["z"]}\n'
 
     
 class VestHandler(SerialHandler):
