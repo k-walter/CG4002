@@ -1,6 +1,6 @@
 from bluepy import btle
 
-PACKET_SIZE = 15
+PACKET_SIZE = 16
 
 class Delegate(btle.DefaultDelegate):
     def __init__(self, serial_char, header):

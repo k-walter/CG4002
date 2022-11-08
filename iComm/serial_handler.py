@@ -66,27 +66,28 @@ class GloveHandler(SerialHandler):
         print(f"Current action: {action_classes[self.current_action]}")
 
         self.data_str = ''
-        self.count = [0, 0, 0, 0, 0]
 
     def pass_params(self, packet):
-        glove_data = packet[1:14]
+        glove_data = packet[1:15]
         data_obj = unpack_glove_data_into_dict(glove_data)
-
+        # print(data_obj)
         if data_obj["index"] == 0:
 
             if len(self.data_str) != 0:
                 with open(f'data{self.user}/{action_classes[self.current_action]}{self.action_class_count[self.current_action]}.csv', 'w') as f:
-                    print(f'wrote to {action_classes[self.current_action]}{self.action_class_count[self.current_action]}')
+                    # print(f'wrote to {action_classes[self.current_action]}{self.action_class_count[self.current_action]}')
                     f.write(self.data_str)
                     self.action_class_count[self.current_action] += 1
                     self.data_str = ''
-            
-            if len(self.sequence_of_action) == 0:
-                print("All data collected! Exiting...")
-                exit()
 
-            self.current_action = self.sequence_of_action.pop(0)
-            print(f"Current action: {action_classes[self.current_action]}")
+                if len(self.sequence_of_action) == 0:
+                    print("All data collected! Exiting...")
+                    exit()
+                self.current_action = self.sequence_of_action.pop(0)
+            if len(self.sequence_of_action) != 0:
+                print(f"Current action: {action_classes[self.sequence_of_action[0]]}")
+            else:
+                print("ended")
 
         self.data_str += f'{data_obj["roll"]}, {data_obj["pitch"]}, {data_obj["yaw"]}, {data_obj["x"]}, {data_obj["y"]}, {data_obj["z"]}\n'
 

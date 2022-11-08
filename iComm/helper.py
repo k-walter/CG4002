@@ -3,13 +3,13 @@ from constants import MAX_16_BIT_SIGNED, MAX_16_BIT_UNSIGNED
 # Helper function to unpack IMU sensor data
 def unpack_glove_data_into_dict(glove_data):
     glove_dict = {
-        "index": glove_data[0],
-        "roll": bytes_to_uint16_t(glove_data[1:3]),
-        "pitch": bytes_to_uint16_t(glove_data[3:5]),
-        "yaw": bytes_to_uint16_t(glove_data[5:7]),
-        "x": bytes_to_uint16_t(glove_data[7:9]),
-        "y": bytes_to_uint16_t(glove_data[9:11]),
-        "z": bytes_to_uint16_t(glove_data[11:13]),
+        "index": bytes_to_uint16_t(glove_data[:2]),
+        "roll": bytes_to_uint16_t(glove_data[2:4]),
+        "pitch": bytes_to_uint16_t(glove_data[4:6]),
+        "yaw": bytes_to_uint16_t(glove_data[6:8]),
+        "x": bytes_to_uint16_t(glove_data[8:10]),
+        "y": bytes_to_uint16_t(glove_data[10:12]),
+        "z": bytes_to_uint16_t(glove_data[12:14]),
     }
     return glove_dict
 
