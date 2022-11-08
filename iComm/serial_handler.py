@@ -6,9 +6,9 @@ import time
 import main_pb2
 import os
 
-action_classes = ["final", "grenade", "reload", "shield", "idle"]
-data_per_class = 25
-
+action_classes = ["idle"]
+# action_classes = ["final", "grenade", "reload", "shield"]
+data_per_class = 100
 
 class SerialHandler(Thread):
     def __init__(self, beetle, lock, stub):
@@ -85,7 +85,7 @@ class GloveHandler(SerialHandler):
                     exit()
                 self.current_action = self.sequence_of_action.pop(0)
             if len(self.sequence_of_action) != 0:
-                print(f"Current action: {action_classes[self.sequence_of_action[0]]}")
+                print(f"Current action: {action_classes[self.sequence_of_action[0]]}, Remaining Actions: {len(self.sequence_of_action)}")
             else:
                 print("ended")
 
