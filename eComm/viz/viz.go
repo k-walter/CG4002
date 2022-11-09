@@ -10,12 +10,11 @@ import (
 )
 
 const (
-	broker    = "tcp://broker.hivemq.com:1883"
 	timeoutMs = 1000
-
-	eventTopic     = "cg4002/b7/event"
-	inFovRespTopic = "cg4002/b7/inFovResp"
-	stateTopic     = "cg4002/b7/state"
+	//broker    = "tcp://broker.hivemq.com:1883"
+	//eventTopic     = "cg4002/b7/event"
+	//inFovRespTopic = "cg4002/b7/inFovResp"
+	//stateTopic     = "cg4002/b7/state"
 )
 
 type Visualizer struct {
@@ -27,19 +26,22 @@ type Visualizer struct {
 	state         *pb.State
 	shieldTimeout [2]*time.Timer
 	done          [2]bool
+
+	a *common.Arg
 }
 
-func Make(*common.Arg) *Visualizer {
+func Make(a *common.Arg) *Visualizer {
 	opts := mqtt.NewClientOptions().
-		AddBroker(broker).
+		AddBroker(a.Broker).
 		SetClientID("sample")
 	v := Visualizer{
 		clnt:          mqtt.NewClient(opts),
 		chState:       common.Sub[*common.EvalResp](common.EEvalResp),
 		chEvent:       common.Sub[*pb.Event](common.EEvent),
-		state:         common.NewState(),
+		state:         common.NewState(a),
 		shieldTimeout: [2]*time.Timer{time.NewTimer(0), time.NewTimer(0)}, // must be created with NewTimer
 		done:          [2]bool{false, false},
+		a:             a,
 	}
 
 	// Connect to mqtt broker
@@ -48,7 +50,7 @@ func Make(*common.Arg) *Visualizer {
 	}
 
 	// Subscribe to mqtt grenade inFov resp
-	if t := v.clnt.Subscribe(inFovRespTopic, 0, fovRespHandler); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
+	if t := v.clnt.Subscribe(a.InFovRespTopic, 0, fovRespHandler); t.WaitTimeout(timeoutMs*time.Millisecond) && t.Error() != nil {
 		log.Fatal(t.Error())
 	}
 
@@ -94,7 +96,7 @@ func (v *Visualizer) updateState(s *common.EvalResp) {
 		v.diffPlayer(2, v.state, s)...)
 	for _, e := range evs {
 		data := common.PbToJson(e.ProtoReflect())
-		v.pub(eventTopic, data)
+		v.pub(v.a.EventTopic, data)
 	}
 
 	// Publish state
@@ -111,7 +113,7 @@ func (v *Visualizer) checkFov(e *pb.Event) {
 		return
 	}
 	data := common.PbToJson(e.ProtoReflect())
-	v.pub(eventTopic, data)
+	v.pub(v.a.EventTopic, data)
 }
 
 func (v *Visualizer) pub(t string, data []byte) {
@@ -129,7 +131,7 @@ func (v *Visualizer) pubShieldAvail(i int) {
 		Action: pb.Action_shieldAvailable,
 	}
 	data := common.PbToJson(e.ProtoReflect())
-	v.pub(eventTopic, data)
+	v.pub(v.a.EventTopic, data)
 }
 
 func (v *Visualizer) checkDone(e *pb.Event) {
@@ -154,7 +156,7 @@ func (v *Visualizer) checkDone(e *pb.Event) {
 			Action: pb.Action_done,
 		}
 		data := common.PbToJson(ev.ProtoReflect())
-		v.pub(eventTopic, data)
+		v.pub(v.a.EventTopic, data)
 
 	case pb.Action_none:
 	case pb.Action_shot:
@@ -166,7 +168,7 @@ func (v *Visualizer) checkDone(e *pb.Event) {
 
 func (v *Visualizer) pubState() {
 	data := common.PbToJson(v.state.ProtoReflect())
-	v.pub(stateTopic, data)
+	v.pub(v.a.StateTopic, data)
 }
 
 func fovRespHandler(c mqtt.Client, m mqtt.Message) {

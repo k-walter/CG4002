@@ -36,22 +36,22 @@ type PlayerState struct {
 	PlayerImpl
 }
 
-func NewState() *pb.State {
+func NewState(a *Arg) *pb.State {
 	return &pb.State{
-		P1: NewPlayerState(),
-		P2: NewPlayerState(),
+		P1: NewPlayerState(a),
+		P2: NewPlayerState(a),
 	}
 }
 
-func NewPlayerState() *pb.PlayerState {
+func NewPlayerState(a *Arg) *pb.PlayerState {
 	return &pb.PlayerState{
-		Hp:           HpMax,
+		Hp:           a.HpMax,
 		Action:       pb.Action_none,
-		Bullets:      BulletMax,
-		Grenades:     GrenadeMax,
+		Bullets:      a.BulletMax,
+		Grenades:     a.GrenadeMax,
 		ShieldTime:   0,
 		ShieldHealth: 0,
 		NumDeaths:    0,
-		NumShield:    ShieldMax,
+		NumShield:    a.ShieldMax,
 	}
 }
