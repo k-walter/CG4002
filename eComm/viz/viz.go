@@ -64,6 +64,11 @@ func (v *Visualizer) Run() {
 	common.Drain(v.shieldTimeout[0].C)
 	common.Drain(v.shieldTimeout[1].C)
 
+	// Send initial state to clear debug
+	v.pubState()
+	v.pubShieldAvail(1)
+	v.pubShieldAvail(2)
+
 	for {
 		select {
 		case state := <-v.chState:
@@ -94,8 +99,7 @@ func (v *Visualizer) updateState(s *common.EvalResp) {
 
 	// Publish state
 	v.state = s.State
-	data := common.PbToJson(v.state.ProtoReflect())
-	v.pub(stateTopic, data)
+	v.pubState()
 
 	// Reset done flag
 	v.done[0] = false
@@ -158,6 +162,11 @@ func (v *Visualizer) checkDone(e *pb.Event) {
 	case pb.Action_shieldAvailable:
 	case pb.Action_checkFov:
 	}
+}
+
+func (v *Visualizer) pubState() {
+	data := common.PbToJson(v.state.ProtoReflect())
+	v.pub(stateTopic, data)
 }
 
 func fovRespHandler(c mqtt.Client, m mqtt.Message) {

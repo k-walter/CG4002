@@ -78,7 +78,7 @@ func shouldLog(e EventE) bool {
 	case ERound:
 		return true
 	case EInFov:
-		return true
+		return false
 	case EEvalResp:
 		return true
 	default:

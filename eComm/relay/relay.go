@@ -58,12 +58,13 @@ func (s *Server) Close() {
 
 func (s *Server) GetRound(_ *emptypb.Empty, stream pb.Relay_GetRoundServer) error {
 	log.Println("Relay|getRound started")
+	defer log.Println("Relay|Closed getRound")
 	for rnd := range s.chRnd {
 		err := stream.Send(&pb.RndResp{
 			Rnd: uint32(rnd),
 		})
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 	return nil
@@ -71,12 +72,13 @@ func (s *Server) GetRound(_ *emptypb.Empty, stream pb.Relay_GetRoundServer) erro
 
 func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
 	log.Println("Relay|gesture started")
+	defer log.Println("Relay|Closed gesture")
 	defer stream.SendAndClose(&emptypb.Empty{})
 	p1, p2 := 0, 0
 	for {
 		d, err := stream.Recv()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		// measure data rate using tumbling window
@@ -97,17 +99,17 @@ func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
 		common.Pub(common.EData, d)
 	}
 
-	log.Println("relay|Closed gesture")
 	return nil
 }
 
 func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
 	log.Println("Relay|shoot started")
+	defer log.Println("Relay|Closed shoot")
 	defer stream.SendAndClose(&emptypb.Empty{})
 	for {
 		e, err := stream.Recv()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		// Verification
@@ -123,17 +125,17 @@ func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
 		common.Pub(common.EEvent, e)
 	}
 
-	log.Println("relay|Closed shoot")
 	return nil
 }
 
 func (s *Server) Shot(stream pb.Relay_ShotServer) error {
 	log.Println("Relay|shot started")
+	defer log.Println("Relay|Closed shot")
 	defer stream.SendAndClose(&emptypb.Empty{})
 	for {
 		e, err := stream.Recv()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		// Verification
@@ -149,6 +151,5 @@ func (s *Server) Shot(stream pb.Relay_ShotServer) error {
 		common.Pub(common.EEvent, e)
 	}
 
-	log.Println("relay|Closed shot")
 	return nil
 }

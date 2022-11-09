@@ -61,7 +61,7 @@ func Make(a *cmn.Arg) *Engine {
 		state:   [2]PlayerImpl{NewPlayer(), NewPlayer()},
 		running: true,
 		rnd:     1,
-		eval:    eval.MakeMock(a), // eval.Make(a)
+		eval:    eval.Make(a),
 		rtt:     10 * time.Millisecond,
 
 		chEvent:   cmn.Sub[*pb.Event](cmn.EEvent),
@@ -78,6 +78,13 @@ func (e *Engine) Run() {
 		cmn.Drain(s.shootTimeout.C)
 	}
 
+	// Send initial round
+	cmn.Pub(cmn.ERound, e.rnd)
+
+	// Send shoot/shot on match for latency debugging
+	defer log.Println("P1 shot", e.state[0].shot, "shoot", e.state[0].shoot)
+	defer log.Println("P2 shot", e.state[1].shot, "shoot", e.state[1].shoot)
+
 	for e.running {
 		select {
 		case ev := <-e.chEvent:
@@ -89,9 +96,10 @@ func (e *Engine) Run() {
 		case <-e.state[1].shootTimeout.C:
 			handleShootTimeout(&e.state[1])
 			e.sendEval()
-
 		case rsp := <-e.chGrenade: // request must be sent from above
 			e.handleFov(rsp)
+			e.sendEval()
+
 		case <-e.state[0].shieldTimeout.C:
 			handleShieldAvail(&e.state[0])
 		case <-e.state[1].shieldTimeout.C:
@@ -121,7 +129,7 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 	}
 
 	u, v := e.GetPlayers(ev.Player)
-	log.Printf("Handling %v, state=%v\n", ev, u.fsm)
+	log.Printf("Eng|Handling %v, state=%v\n", ev, u.fsm)
 	doneWithAction := func() {
 		u.Action = ev.Action
 		u.fsm = done
@@ -269,6 +277,7 @@ func inflict(p *PlayerImpl, dmg uint32) {
 
 func handleShieldAvail(p *PlayerImpl) {
 	p.ShieldHealth = 0
+	p.ShieldTime = 0
 	p.shieldExpiry = cmn.GameTime
 	if !p.shieldTimeout.Stop() {
 		cmn.Drain(p.shieldTimeout.C)
@@ -276,6 +285,7 @@ func handleShieldAvail(p *PlayerImpl) {
 }
 
 func (e *Engine) handleFov(rsp *pb.InFovResp) {
+	log.Printf("Eng|Handling %v, rnd=%v\n", rsp, rsp.Rnd)
 	// Previous round?
 	if cmn.RoundT(rsp.Rnd) < e.rnd {
 		return
@@ -301,7 +311,7 @@ func (e *Engine) GetPlayers(i uint32) (*PlayerImpl, *PlayerImpl) {
 	case 2:
 		return &e.state[1], &e.state[0]
 	default:
-		log.Fatal("Unknown player ", i)
+		log.Fatal("Eng|Unknown player ", i)
 	}
 	return nil, nil
 }
@@ -387,5 +397,6 @@ func snapshotPlayer(p *PlayerImpl, t time.Time, rtt time.Duration) *pb.PlayerSta
 	if p.shieldExpiry.After(cmn.GameTime) {
 		p.ShieldTime = (p.shieldExpiry.Sub(t) - (rtt / 2)).Seconds()
 	}
+	// Else, don't reset ShieldTime because first shielding set ShieldTime = MAX
 	return p.PlayerState
 }

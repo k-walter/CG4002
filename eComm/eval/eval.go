@@ -39,6 +39,7 @@ func Make(args *common.Arg) *Client {
 		log.Fatal(err)
 	}
 
+	log.Println("Eval|Connected")
 	return &e
 }
 
