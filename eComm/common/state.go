@@ -7,22 +7,6 @@ import (
 
 const (
 	NPlayer = 2
-
-	// Health
-	HpMax       = 100 // instant rebirth
-	ShieldMax   = 3   // per life
-	ShieldHpMax = 30
-	ShieldTime  = 10 * time.Second // reset in next life
-
-	// Damage
-	BulletMax   = 6 // unlimited mags, reload only if mag=0
-	BulletDmg   = 10
-	GrenadeDmg  = 30
-	GrenadeMax  = 2               // per life
-	GrenadeTime = 2 * time.Second // to display
-
-	ShootErr = 300 * time.Millisecond
-	LPF      = float64(.5)
 )
 
 type PlayerImpl struct {

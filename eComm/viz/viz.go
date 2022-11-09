@@ -76,7 +76,6 @@ func (v *Visualizer) Run() {
 		case state := <-v.chState:
 			v.updateState(state) // serialize updates
 		case event := <-v.chEvent:
-			// TODO unrestricted mode
 			go v.checkDone(event)
 			go v.checkFov(event) // async send
 		case <-v.shieldTimeout[0].C:
@@ -88,8 +87,6 @@ func (v *Visualizer) Run() {
 }
 
 func (v *Visualizer) updateState(s *common.EvalResp) {
-	// TODO unrestricted mode
-
 	// Publish events
 	evs := append(
 		v.diffPlayer(1, v.state, s),
