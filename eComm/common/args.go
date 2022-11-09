@@ -41,7 +41,7 @@ type Arg struct {
 func ParseArgs() Arg {
 	// Bind a
 	a := Arg{}
-	flag.StringVar(&a.EvalAddr, "evalAddr", ":8080", "Eval server IP and port")
+	flag.StringVar(&a.EvalAddr, "evalAddr", "MOCK", "Eval server IP and port. Use MOCK for mock eval.")
 	flag.StringVar(&a.EvalKey, "evalKey", "PLSPLSPLSPLSWORK", "Symmetric key for eval server")
 	flag.UintVar(&a.RelayPort, "relayPort", 8081, "Port to be SSH forwarded to relay")
 	flag.UintVar(&a.PynqPort, "pynqPort", 8082, "Port to send/poll signals")
@@ -52,7 +52,6 @@ func ParseArgs() Arg {
 	flag.StringVar(&a.StateTopic, "StateTopic", "cg4002/b7/state", "")
 
 	flag.Float64Var(&a.LPF, "LPF", 0.5, "LPF factor for RTT estimation to eval")
-	flag.BoolVar(&a.MockEval, " MockEval", true, "Use mock eval?")
 
 	// Checks
 	flag.Parse()
@@ -74,6 +73,7 @@ func ParseArgs() Arg {
 
 	// Tuning
 	a.ShootErr = time.Millisecond * time.Duration(*flag.Uint64("ShootErrMs", 300, "Error for shoot/shot (ms)"))
+	a.MockEval = a.EvalAddr == "MOCK"
 
 	return a
 }

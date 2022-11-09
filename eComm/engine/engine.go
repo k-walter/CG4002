@@ -62,7 +62,7 @@ func Make(a *cmn.Arg) *Engine {
 		state:   [2]PlayerImpl{NewPlayer(a), NewPlayer(a)},
 		running: true,
 		rnd:     1,
-		eval:    eval.Make(a),
+		eval:    nil,
 		rtt:     10 * time.Millisecond,
 		a:       a,
 
@@ -94,7 +94,7 @@ func (e *Engine) Run() {
 	defer log.Println("P1 shot", e.state[0].shot, "shoot", e.state[0].shoot)
 	defer log.Println("P2 shot", e.state[1].shot, "shoot", e.state[1].shoot)
 
-	for e.running {
+	for e.a.MockEval || e.running {
 		select {
 		case ev := <-e.chEvent:
 			e.handleEvent(ev)
