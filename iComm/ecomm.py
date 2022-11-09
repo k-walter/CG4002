@@ -41,12 +41,14 @@ class EComm(Thread):
         async def f(data: main_pb2.Event):
             data.rnd = self._rnd
             await self._shootStub.write(data)
+            print("sent shoot")
         asyncio.run_coroutine_threadsafe(f(data), self._loop)
 
     def shot(self, data: main_pb2.Event) -> None:
         async def f(data: main_pb2.Event):
             data.rnd = self._rnd
             await self._shotStub.write(data)
+        print("send shot")
         asyncio.run_coroutine_threadsafe(f(data), self._loop)
 
     """ ASYNCIO SAFE """

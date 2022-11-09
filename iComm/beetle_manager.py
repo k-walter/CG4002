@@ -1,4 +1,4 @@
-from constants import address_list_2, header_list, RETRY_COUNT
+from constants import address_list_1, address_list_2, header_list, RETRY_COUNT
 from beetle import Beetle
 
 class BeetleManager():
@@ -14,8 +14,8 @@ class BeetleManager():
     # Creates Beetle objects with their corresponding address and name,
     # and appends it to the beetle list.
     def init_params_beetle_list(self):
-        # for addr, header in zip(address_list_1, header_list):
-        #     self.beetle_list.append(Beetle(addr, 1, header))
+        for addr, header in zip(address_list_1, header_list):
+            self.beetle_list.append(Beetle(addr, 1, header))
         for addr, header in zip(address_list_2, header_list):
             self.beetle_list.append(Beetle(addr, 2, header))
         

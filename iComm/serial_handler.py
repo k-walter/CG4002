@@ -43,7 +43,10 @@ class GloveHandler(SerialHandler):
         glove_data = packet[3:-1]
         data_obj = unpack_glove_data_into_dict(glove_data)
         index = bytes_to_uint16_t(packet[1:3])
-
+        if index > 2000 or index < 0:
+            return
+        # if index % 5 == 0:
+        #     print(f'player {self.player_no}, idx {index}')
         msg = main_pb2.Data(
             player=self.player_no,
             index=index,

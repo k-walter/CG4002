@@ -19,15 +19,15 @@ name_dict = {
     HEADER_VEST: "Vest"
 }
 
-# address_list_1 = [ADDRESS_GLOVE_1, ADDRESS_GUN_1, ADDRESS_VEST_1]
-# address_list_2 = [ADDRESS_GLOVE_2, ADDRESS_GUN_2, ADDRESS_VEST_2]
+address_list_1 = [ADDRESS_GLOVE_1, ADDRESS_GUN_1, ADDRESS_VEST_1]
+address_list_2 = [ADDRESS_GLOVE_2, ADDRESS_GUN_2, ADDRESS_VEST_2]
 
-# header_list = [HEADER_GLOVE, HEADER_GUN, HEADER_VEST]
+header_list = [HEADER_GLOVE, HEADER_GUN, HEADER_VEST]
 
-address_list_2 = [ADDRESS_GLOVE_1]
-header_list = [HEADER_GLOVE]
+# address_list_2 = [ADDRESS_GLOVE_1]
+# header_list = [HEADER_GLOVE]
 
-MY_PORT = 'localhost:8081'
+MY_PORT = 'pynq.tail20035.ts.net:8081'
 
 RETRY_COUNT = 8
 PACKET_SIZE = 16

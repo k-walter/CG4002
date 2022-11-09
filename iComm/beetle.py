@@ -76,7 +76,7 @@ class Beetle():
                 self.__receive_ack()
 
     # Sets serial characteristic in order to write to beetle
-    def set_serial_char(self):
+    def __set_serial_char(self):
         print(f"Setting serial characteristic for {self.name}...")
         chars = self.peripheral.getCharacteristics()
         serial_char = [c for c in chars if c.uuid == SERIAL_UUID][0]
