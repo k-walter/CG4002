@@ -70,6 +70,13 @@ func Make(a *cmn.Arg) *Engine {
 		chGrenade: cmn.Sub[*pb.InFovResp](cmn.EInFov),
 	}
 
+	// Use mock eval server
+	if a.MockEval {
+		e.eval = eval.MakeMock(a)
+	} else {
+		e.eval = eval.Make(a)
+	}
+
 	return &e
 }
 
@@ -107,16 +114,6 @@ func (e *Engine) Run() {
 		case <-e.state[1].shieldTimeout.C:
 			handleShieldAvail(&e.state[1])
 		}
-	}
-}
-
-func handleShootTimeout(p *PlayerImpl) {
-	if p.fsm != shotBullet {
-		return
-	}
-	p.fsm = done
-	if !p.shootTimeout.Stop() {
-		cmn.Drain(p.shootTimeout.C)
 	}
 }
 
@@ -274,15 +271,6 @@ func inflict(p *PlayerImpl, dmg uint32, a *cmn.Arg) {
 	} else {
 		// Dmg shield
 		p.ShieldHealth -= dmg
-	}
-}
-
-func handleShieldAvail(p *PlayerImpl) {
-	p.ShieldHealth = 0
-	p.ShieldTime = 0
-	p.shieldExpiry = cmn.GameTime
-	if !p.shieldTimeout.Stop() {
-		cmn.Drain(p.shieldTimeout.C)
 	}
 }
 

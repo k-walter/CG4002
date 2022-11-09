@@ -35,6 +35,7 @@ type Arg struct {
 	// Tuning
 	ShootErr time.Duration
 	LPF      float64
+	MockEval bool
 }
 
 func ParseArgs() Arg {
@@ -51,6 +52,7 @@ func ParseArgs() Arg {
 	flag.StringVar(&a.StateTopic, "StateTopic", "cg4002/b7/state", "")
 
 	flag.Float64Var(&a.LPF, "LPF", 0.5, "LPF factor for RTT estimation to eval")
+	flag.BoolVar(&a.MockEval, " MockEval", true, "Use mock eval?")
 
 	// Checks
 	flag.Parse()
