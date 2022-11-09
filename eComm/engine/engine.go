@@ -132,7 +132,7 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 	doneWithAction := func() {
 		u.Action = ev.Action
 		u.fsm = done
-		log.Printf("Player %v done\n", ev.Player)
+		log.Printf("Eng|Player %v done\n", ev.Player)
 	}
 
 	// change tmp state
@@ -248,7 +248,6 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 	return
 }
 
-// Returns true if died (and revived)
 func inflict(p *PlayerImpl, dmg uint32, a *cmn.Arg) {
 	if p.Hp+p.ShieldHealth <= dmg {
 		// Die & revive
@@ -301,7 +300,7 @@ func (e *Engine) GetPlayers(i uint32) (*PlayerImpl, *PlayerImpl) {
 	case 2:
 		return &e.state[1], &e.state[0]
 	default:
-		log.Fatal("Eng|Unknown player ", i)
+		log.Fatal("Eng|Unknown player", i)
 	}
 	return nil, nil
 }
