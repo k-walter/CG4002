@@ -48,8 +48,8 @@ float avgNetAcceleration;                                 // average net acceler
 #define MOTION_FIRST_DATA_FRAME                     (MOTION_FIRST_DATA_FRAME_DURATION * UPDATE_RATE)
 #define MOTION_SECOND_DATA_FRAME                    (MOTION_SECOND_DATA_FRAME_DURATION * UPDATE_RATE)
 #define WINDOW_SIZE                                 75
-int motionDataCounter = 0;
-int windowDataCounter = 0;
+int16_t motionDataCounter = 0;
+int16_t windowDataCounter = 0;
 bool isDataCollecting = false;
 ///////////////////////////////////////////////////////
 
