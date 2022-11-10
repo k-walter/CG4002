@@ -17,13 +17,10 @@ type Proc interface {
 
 func main() {
 	// Log us
-	log.SetFlags(log.LstdFlags | log.Lmicroseconds)
+	log.SetFlags(log.LstdFlags | log.Lmicroseconds) //  | log.Lshortfile
 
 	// Read args, else panic
 	args := common.ParseArgs()
-
-	// Setup pub sub observer pattern, monotonic+logical clock
-	common.MakeObserver()
 
 	// Setup all Proc, else panic
 	proc := []Proc{

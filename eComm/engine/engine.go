@@ -15,8 +15,9 @@ type Engine struct {
 	state   [2]PlayerImpl
 	running bool
 	rnd     cmn.RoundT
-	eval    *eval.Client
+	eval    eval.IEval
 	rtt     time.Duration
+	a       *cmn.Arg
 
 	// Channels
 	chEvent   chan *pb.Event     // from relay, pynq
@@ -35,12 +36,15 @@ type PlayerImpl struct {
 	shootTimeout *time.Timer
 }
 
-func NewPlayer() PlayerImpl {
+func NewPlayer(a *cmn.Arg) PlayerImpl {
 	return PlayerImpl{
-		PlayerState:   cmn.NewPlayerState(),
+		PlayerState:   cmn.NewPlayerState(a),
 		fsm:           waiting,
 		shieldExpiry:  cmn.GameTime,
 		shieldTimeout: time.NewTimer(0),
+		shoot:         make(map[uint32]time.Time),
+		shot:          make(map[uint32]time.Time),
+		shootTimeout:  time.NewTimer(0),
 	}
 }
 
@@ -55,14 +59,22 @@ const (
 
 func Make(a *cmn.Arg) *Engine {
 	e := Engine{
-		state:   [2]PlayerImpl{NewPlayer(), NewPlayer()},
+		state:   [2]PlayerImpl{NewPlayer(a), NewPlayer(a)},
 		running: true,
 		rnd:     1,
-		eval:    eval.Make(a),
+		eval:    nil,
 		rtt:     10 * time.Millisecond,
+		a:       a,
 
 		chEvent:   cmn.Sub[*pb.Event](cmn.EEvent),
 		chGrenade: cmn.Sub[*pb.InFovResp](cmn.EInFov),
+	}
+
+	// Use mock eval server
+	if a.MockEval {
+		e.eval = eval.MakeMock(a)
+	} else {
+		e.eval = eval.Make(a)
 	}
 
 	return &e
@@ -70,10 +82,19 @@ func Make(a *cmn.Arg) *Engine {
 
 func (e *Engine) Run() {
 	// Drain timers
-	cmn.Drain(e.state[0].shieldTimeout.C)
-	cmn.Drain(e.state[1].shieldTimeout.C)
+	for _, s := range e.state {
+		cmn.Drain(s.shieldTimeout.C)
+		cmn.Drain(s.shootTimeout.C)
+	}
 
-	for e.running {
+	// Send initial round
+	cmn.Pub(cmn.ERound, e.rnd)
+
+	// Send shoot/shot on match for latency debugging
+	defer log.Println("P1 shot", e.state[0].shot, "shoot", e.state[0].shoot)
+	defer log.Println("P2 shot", e.state[1].shot, "shoot", e.state[1].shoot)
+
+	for e.a.MockEval || e.running {
 		select {
 		case ev := <-e.chEvent:
 			e.handleEvent(ev)
@@ -84,9 +105,10 @@ func (e *Engine) Run() {
 		case <-e.state[1].shootTimeout.C:
 			handleShootTimeout(&e.state[1])
 			e.sendEval()
-
 		case rsp := <-e.chGrenade: // request must be sent from above
 			e.handleFov(rsp)
+			e.sendEval()
+
 		case <-e.state[0].shieldTimeout.C:
 			handleShieldAvail(&e.state[0])
 		case <-e.state[1].shieldTimeout.C:
@@ -95,21 +117,10 @@ func (e *Engine) Run() {
 	}
 }
 
-func handleShootTimeout(p *PlayerImpl) {
-	if p.fsm != shotBullet {
-		return
-	}
-	p.fsm = done
-	if !p.shootTimeout.Stop() {
-		cmn.Drain(p.shootTimeout.C)
-	}
-}
-
 func (e *Engine) Close() {
 	// TODO Close channels
 }
 
-// Returns if event modified state
 func (e *Engine) handleEvent(ev *pb.Event) {
 	// previous round?
 	if cmn.RoundT(ev.Rnd) < e.rnd {
@@ -117,9 +128,11 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 	}
 
 	u, v := e.GetPlayers(ev.Player)
+	log.Printf("Eng|Handling %v, state=%v\n", ev, u.fsm)
 	doneWithAction := func() {
 		u.Action = ev.Action
 		u.fsm = done
+		log.Printf("Eng|Player %v done\n", ev.Player)
 	}
 
 	// change tmp state
@@ -128,47 +141,50 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 		if u.fsm != waiting {
 			return
 		}
+		doneWithAction()
+		if u.Grenades == 0 {
+			return
+		}
+		u.Grenades--
+
 		cmn.Pub(cmn.EEvent, &pb.Event{
-			Player: ev.Player ^ 0b11,
+			Player: ev.Player,
 			Time:   ev.Time,
 			Rnd:    ev.Rnd,
 			Action: pb.Action_checkFov,
 		})
 		u.fsm = threwGrenade
-		return
 
 	case pb.Action_checkFov: // from eng to viz
-		return
 
 	case pb.Action_reload:
 		if u.fsm != waiting {
 			return
 		}
 		doneWithAction()
-		if u.Bullets > 0 {
-			u.Bullets = cmn.BulletMax
+		if u.Bullets == 0 {
+			u.Bullets = e.a.BulletMax
 		}
-		return
 
 	case pb.Action_logout:
 		if u.fsm != waiting {
 			return
 		}
 		doneWithAction()
-		return
 
 	case pb.Action_shield:
 		if u.fsm != waiting {
 			return
 		}
 		doneWithAction()
-		// Shield running?
-		if u.shieldExpiry.After(cmn.GameTime) {
+		// No shield or shield cooling down?
+		if u.NumShield == 0 || u.shieldExpiry.After(cmn.GameTime) {
 			return
 		}
 		// Set state only, set timeout after eval resp
-		u.ShieldHealth = cmn.ShieldHpMax
-		u.ShieldTime = cmn.ShieldTime.Seconds()
+		u.NumShield -= 1
+		u.ShieldHealth = e.a.ShieldHpMax
+		u.ShieldTime = e.a.ShieldTime.Seconds()
 
 	case pb.Action_shoot:
 		if u.fsm != waiting {
@@ -189,11 +205,11 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 		v.shoot[ev.ShootID] = cmn.NsToTime(ev.Time)
 
 		if matchShot(ev.ShootID, v) {
-			inflict(v, cmn.BulletDmg)
+			inflict(v, e.a.BulletDmg, e.a)
 		} else {
 			// Set timeout
 			u.fsm = shotBullet
-			u.shootTimeout.Reset(cmn.ShootErr)
+			u.shootTimeout.Reset(e.a.ShootErr)
 		}
 
 	case pb.Action_shot:
@@ -211,7 +227,7 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 			return
 		}
 
-		inflict(u, cmn.BulletDmg)
+		inflict(u, e.a.BulletDmg, e.a)
 		cmn.EXIT_UNLESS(v.fsm == shotBullet)
 		v.fsm = done
 		if !v.shootTimeout.Stop() {
@@ -232,16 +248,15 @@ func (e *Engine) handleEvent(ev *pb.Event) {
 	return
 }
 
-// Returns true if died (and revived)
-func inflict(p *PlayerImpl, dmg uint32) {
+func inflict(p *PlayerImpl, dmg uint32, a *cmn.Arg) {
 	if p.Hp+p.ShieldHealth <= dmg {
 		// Die & revive
 		p.NumDeaths += 1
-		p.Hp = cmn.HpMax
+		p.Hp = a.HpMax
 		p.ShieldHealth = 0
-		p.Grenades = cmn.GrenadeMax
-		p.NumShield = cmn.ShieldMax
-		p.Bullets = cmn.BulletMax
+		p.Grenades = a.GrenadeMax
+		p.NumShield = a.ShieldMax
+		p.Bullets = a.BulletMax
 
 		// RULE reset shield cooldown
 		if p.shieldExpiry.After(cmn.GameTime) {
@@ -258,15 +273,8 @@ func inflict(p *PlayerImpl, dmg uint32) {
 	}
 }
 
-func handleShieldAvail(p *PlayerImpl) {
-	p.ShieldHealth = 0
-	p.shieldExpiry = cmn.GameTime
-	if !p.shieldTimeout.Stop() {
-		cmn.Drain(p.shieldTimeout.C)
-	}
-}
-
 func (e *Engine) handleFov(rsp *pb.InFovResp) {
+	log.Printf("Eng|Handling %v, rnd=%v\n", rsp, rsp.Rnd)
 	// Previous round?
 	if cmn.RoundT(rsp.Rnd) < e.rnd {
 		return
@@ -281,7 +289,7 @@ func (e *Engine) handleFov(rsp *pb.InFovResp) {
 
 	// Damage me
 	if rsp.InFov {
-		inflict(me, cmn.GrenadeDmg)
+		inflict(me, e.a.GrenadeDmg, e.a)
 	}
 }
 
@@ -292,12 +300,19 @@ func (e *Engine) GetPlayers(i uint32) (*PlayerImpl, *PlayerImpl) {
 	case 2:
 		return &e.state[1], &e.state[0]
 	default:
-		log.Fatal("Unknown player ", i)
+		log.Fatal("Eng|Unknown player", i)
 	}
 	return nil, nil
 }
 
 func (e *Engine) sendEval() {
+	// All done?
+	for _, s := range e.state {
+		if s.fsm != done {
+			return
+		}
+	}
+
 	// Snapshot state
 	st := time.Now()
 	s := pb.State{
@@ -311,7 +326,7 @@ func (e *Engine) sendEval() {
 
 	// Update rtt
 	en := time.Now()
-	rtt := (1-cmn.LPF)*e.rtt.Seconds() + cmn.LPF*en.Sub(st).Seconds()
+	rtt := (1-e.a.LPF)*e.rtt.Seconds() + e.a.LPF*en.Sub(st).Seconds()
 	e.rtt = time.Duration(rtt) * time.Second
 
 	// Reset players
@@ -336,13 +351,10 @@ func (e *Engine) diffPlayer(u *PlayerImpl, v *pb.PlayerState, now time.Time) {
 		}
 
 	case pb.Action_grenade:
-		return
 	case pb.Action_none:
-		return
 	case pb.Action_reload:
-		return
-	case pb.Action_shoot:
-		return // OPTIMIZE clear opp's shoot/shot
+	case pb.Action_shoot: // OPTIMIZE clear opp's shoot/shot
+
 	case pb.Action_logout:
 		e.running = false
 
@@ -374,5 +386,6 @@ func snapshotPlayer(p *PlayerImpl, t time.Time, rtt time.Duration) *pb.PlayerSta
 	if p.shieldExpiry.After(cmn.GameTime) {
 		p.ShieldTime = (p.shieldExpiry.Sub(t) - (rtt / 2)).Seconds()
 	}
+	// Else, don't reset ShieldTime because first shielding set ShieldTime = MAX
 	return p.PlayerState
 }

@@ -18,10 +18,6 @@ type Client struct {
 	pyConn *grpc.ClientConn
 }
 
-const (
-	pollIntervalMs = 10
-)
-
 func Make(a *common.Arg) *Client {
 	// To pynq
 	pyConn, err := grpc.Dial(fmt.Sprintf(":%v", a.PynqPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
@@ -31,7 +27,7 @@ func Make(a *common.Arg) *Client {
 
 	// Init client
 	c := Client{
-		chData: common.Sub[*pb.Data](common.EData),
+		chData: common.SubCap[*pb.Data](common.EData, 2*3*50),
 		py:     pb.NewPynqClient(pyConn),
 		pyConn: pyConn,
 	}
@@ -72,7 +68,8 @@ func (c *Client) forward(d *pb.Data) *pb.Event {
 	defer cancel()
 	ev, err := c.py.Emit(ctx, d)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Pynq|err", err)
+		return nil
 	}
 
 	// Infered anything?
@@ -88,7 +85,8 @@ func (c *Client) pollEvent() *pb.Event {
 	defer cancel()
 	event, err := c.py.Poll(ctx, &emptypb.Empty{})
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Pynq|err", err)
+		return nil
 	}
 
 	if event == nil || event.Action == pb.Action_none {

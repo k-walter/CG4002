@@ -41,14 +41,14 @@ class EComm(Thread):
         async def f(data: main_pb2.Event):
             data.rnd = self._rnd
             await self._shootStub.write(data)
-            print("sent shoot")
+            print(f"sent shoot ID={data.shootID}")
         asyncio.run_coroutine_threadsafe(f(data), self._loop)
 
     def shot(self, data: main_pb2.Event) -> None:
         async def f(data: main_pb2.Event):
             data.rnd = self._rnd
             await self._shotStub.write(data)
-        print("send shot")
+            print(f"sent shot ID={data.shootID}")
         asyncio.run_coroutine_threadsafe(f(data), self._loop)
 
     """ ASYNCIO SAFE """
@@ -63,9 +63,9 @@ def benchmark():
     ec.start()
     N = 100
 
-    for i in range(N):
+    for i in range(1,N+1):
         ec.shoot(main_pb2.Event(player=1, shootID=i, action=main_pb2.shoot))
-    for i in range(N):
+    for i in range(1,N+1):
         ec.gesture(main_pb2.Data(player=2, index=i,
                    roll=1, pitch=1, yaw=1, x=1, y=1, z=1))
 

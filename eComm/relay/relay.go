@@ -23,7 +23,6 @@ type Server struct {
 
 	// Bookeeping
 	nextMetric time.Time
-	hz         int
 }
 
 func Make(a *common.Arg) *Server {
@@ -31,7 +30,6 @@ func Make(a *common.Arg) *Server {
 		lis:        nil,
 		chRnd:      common.Sub[common.RoundT](common.ERound),
 		nextMetric: time.Now(),
-		hz:         0,
 	}
 
 	// From relay
@@ -47,10 +45,11 @@ func Make(a *common.Arg) *Server {
 func (s *Server) Run() {
 	g := grpc.NewServer()
 	pb.RegisterRelayServer(g, s)
+	log.Println("Relay|running")
 	if err := g.Serve(s.lis); err != nil {
 		log.Fatal(err)
 	}
-	log.Println("running relay")
+	log.Println("Relay|stopped")
 }
 
 func (s *Server) Close() {
@@ -58,30 +57,39 @@ func (s *Server) Close() {
 }
 
 func (s *Server) GetRound(_ *emptypb.Empty, stream pb.Relay_GetRoundServer) error {
+	log.Println("Relay|getRound started")
+	defer log.Println("Relay|Closed getRound")
 	for rnd := range s.chRnd {
 		err := stream.Send(&pb.RndResp{
 			Rnd: uint32(rnd),
 		})
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 	}
 	return nil
 }
 
 func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
+	log.Println("Relay|gesture started")
+	defer log.Println("Relay|Closed gesture")
 	defer stream.SendAndClose(&emptypb.Empty{})
+	p1, p2 := 0, 0
 	for {
 		d, err := stream.Recv()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
 
 		// measure data rate using tumbling window
-		s.hz += 1
-		if now := time.Now(); !s.nextMetric.Before(now) {
-			log.Println("Relay|Gesture rate = ", s.hz)
-			s.hz = 0
+		if d.Player == 1 {
+			p1 += 1
+		} else {
+			p2 += 1
+		}
+		if now := time.Now(); !s.nextMetric.After(now) {
+			log.Printf("Relay|Gesture rate=%v, p1=%v, p2=%v\n", p1+p2, p1, p2)
+			p1, p2 = 0, 0
 			s.nextMetric = now.Add(time.Second)
 		}
 
@@ -91,18 +99,18 @@ func (s *Server) Gesture(stream pb.Relay_GestureServer) error {
 		common.Pub(common.EData, d)
 	}
 
-	log.Println("relay|Closed gesture")
 	return nil
 }
 
 func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
+	log.Println("Relay|shoot started")
+	defer log.Println("Relay|Closed shoot")
 	defer stream.SendAndClose(&emptypb.Empty{})
 	for {
 		e, err := stream.Recv()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-		log.Println("relay|Received shoot", e.ShootID)
 
 		// Verification
 		if !(1 <= e.Player && e.Player <= 2) {
@@ -117,24 +125,24 @@ func (s *Server) Shoot(stream pb.Relay_ShootServer) error {
 		common.Pub(common.EEvent, e)
 	}
 
-	log.Println("relay|Closed shoot")
 	return nil
 }
 
 func (s *Server) Shot(stream pb.Relay_ShotServer) error {
+	log.Println("Relay|shot started")
+	defer log.Println("Relay|Closed shot")
 	defer stream.SendAndClose(&emptypb.Empty{})
 	for {
 		e, err := stream.Recv()
 		if err != nil {
-			log.Fatal(err)
+			return err
 		}
-		log.Println("relay|Received shot")
 
 		// Verification
 		if !(1 <= e.Player && e.Player <= 2) {
 			return status.Error(codes.Unknown, "Player must be 1/2")
 		}
-		if e.Action != pb.Action_shoot {
+		if e.Action != pb.Action_shot {
 			return status.Error(codes.Unknown, "Shot() called with non-shot action")
 		}
 
@@ -143,6 +151,5 @@ func (s *Server) Shot(stream pb.Relay_ShotServer) error {
 		common.Pub(common.EEvent, e)
 	}
 
-	log.Println("relay|Closed shoot")
 	return nil
 }
