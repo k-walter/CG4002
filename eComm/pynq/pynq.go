@@ -68,7 +68,8 @@ func (c *Client) forward(d *pb.Data) *pb.Event {
 	defer cancel()
 	ev, err := c.py.Emit(ctx, d)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Pynq|err", err)
+		return nil
 	}
 
 	// Infered anything?
@@ -84,7 +85,8 @@ func (c *Client) pollEvent() *pb.Event {
 	defer cancel()
 	event, err := c.py.Poll(ctx, &emptypb.Empty{})
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Pynq|err", err)
+		return nil
 	}
 
 	if event == nil || event.Action == pb.Action_none {
