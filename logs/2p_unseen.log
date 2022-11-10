@@ -1,0 +1,662 @@
+> ./ecomm -evalAddr "137.132.92.184:9999"
+2022/11/10 10:01:06.601255 Subscribe pb.Event
+2022/11/10 10:01:06.601494 Subscribe pb.InFovResp
+2022/11/10 10:01:06.602624 Eval|Connected
+2022/11/10 10:01:06.602653 Subscribe Round(RoundT)
+2022/11/10 10:01:06.604410 Subscribe pb.Data
+2022/11/10 10:01:06.604512 Subscribe EvalResp
+2022/11/10 10:01:06.604530 Subscribe pb.Event
+2022/11/10 10:01:07.153915 Viz|Pub to MQTT| {"p1":{"hp":100,"action":"none","bullets":6,"grenades":2,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":3},"p2":{"hp":100,"action":"none","bullets":6,"grenades":2,"shield_ti
+me":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/11/10 10:01:07.154208 Publish Round(RoundT), val=1
+2022/11/10 10:01:07.154358 Relay|running
+2022/11/10 10:01:07.343479 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:01:07.521578 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:02:03.308793 Relay|gesture started
+2022/11/10 10:02:03.308967 Relay|shot started
+2022/11/10 10:02:03.309117 Relay|getRound started
+2022/11/10 10:02:03.309125 Relay|shoot started
+^C
+>
+> ./ecomm -evalAddr "137.132.92.184:9999"
+2022/11/10 10:02:45.663755 Subscribe pb.Event
+2022/11/10 10:02:45.663989 Subscribe pb.InFovResp
+2022/11/10 10:02:45.665163 Eval|Connected
+2022/11/10 10:02:45.665186 Subscribe Round(RoundT)
+2022/11/10 10:02:45.666890 Subscribe pb.Data
+2022/11/10 10:02:45.666975 Subscribe EvalResp
+2022/11/10 10:02:45.666994 Subscribe pb.Event
+2022/11/10 10:02:46.459630 Publish Round(RoundT), val=1
+2022/11/10 10:02:46.460686 Viz|Pub to MQTT| {"p1":{"hp":100,"action":"none","bullets":6,"grenades":2,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":3},"p2":{"hp":100,"action":"none","bullets":6,"grenades":2,"shield_ti
+me":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/11/10 10:02:46.460710 Relay|running
+2022/11/10 10:02:46.647322 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:02:46.827836 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:02:59.232160 Relay|gesture started
+2022/11/10 10:02:59.232323 Relay|shot started
+2022/11/10 10:02:59.232427 Relay|shoot started
+2022/11/10 10:02:59.232451 Relay|getRound started
+2022/11/10 10:03:20.559491 Relay|Gesture rate=1, p1=1, p2=0
+2022/11/10 10:03:20.560711 Eng|Handling player:2 time:34896882232 rnd:1 action:shoot shootID:19, state=0
+2022/11/10 10:03:20.560749 Eng|Player 2 done
+2022/11/10 10:03:20.560839 Eng|Handling player:1 time:34896976886 rnd:1 action:shot shootID:19, state=0
+2022/11/10 10:03:20.560857 matched shootID = 19
+2022/11/10 10:03:20.560982 Viz|Pub to MQTT| {"player":2,"time":"34896882232","rnd":1,"action":"done","shootID":0}
+2022/11/10 10:03:21.359168 Eng|Handling player:1 time:35690941199 rnd:1 action:shield, state=0
+2022/11/10 10:03:21.359241 Eng|Player 1 done
+2022/11/10 10:03:21.359333 Viz|Pub to MQTT| {"player":1,"time":"35690941199","rnd":1,"action":"done","shootID":0}
+2022/11/10 10:03:21.359507 eval|Send {"p1":{"hp":90,"action":"shield","bullets":6,"grenades":2,"shield_time":10,"shi
+eld_health":30,"num_deaths":0,"num_shield":2},"p2":{"hp":100,"action":"shoot","bullets":5,"grenades":2,"shield_time"
+:0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/11/10 10:03:21.373846 eval|Received {"p1": {"hp": 100, "action": "shield", "bullets": 6, "grenades": 2, "shield
+_time": 10, "shield_health": 20, "num_deaths": 0, "num_shield": 2}, "p2": {"hp": 100, "action": "shoot", "bullets":
+5, "grenades": 2, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 3}}
+2022/11/10 10:03:21.374567 Publish EvalResp, val=p1:{hp:100 action:shield bullets:6 grenades:2 shield_time:10 shield
+_health:20 num_shield:2} p2:{hp:100 action:shoot bullets:5 grenades:2 num_shield:3}
+2022/11/10 10:03:21.374618 Publish Round(RoundT), val=2
+2022/11/10 10:03:21.374818 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shield","shootID":0}
+2022/11/10 10:03:21.549806 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:03:21.580625 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:03:21.729478 Viz|Pub to MQTT| {"p1":{"hp":100,"action":"shield","bullets":6,"grenades":2,"shield_time"
+:10,"shield_health":20,"num_deaths":0,"num_shield":2},"p2":{"hp":100,"action":"shoot","bullets":5,"grenades":2,"shie
+ld_time":0,"shield_health":0,"num_deaths":0,"num_shield":3}}
+2022/11/10 10:03:22.614208 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:03:31.360489 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:03:40.380857 Relay|Gesture rate=22, p1=21, p2=1
+2022/11/10 10:03:40.820752 Eng|Handling player:2 time:55145214299 rnd:2 action:shield, state=0
+2022/11/10 10:03:40.820820 Eng|Player 2 done
+2022/11/10 10:03:40.821042 Viz|Pub to MQTT| {"player":2,"time":"55145214299","rnd":2,"action":"done","shootID":0}
+2022/11/10 10:03:41.387638 Relay|Gesture rate=60, p1=0, p2=60
+2022/11/10 10:03:42.125944 Eng|Handling player:2 time:56462238873 rnd:2 action:shot shootID:25, state=3
+2022/11/10 10:03:42.153305 Eng|Handling player:1 time:56489592485 rnd:2 action:shoot shootID:25, state=0
+2022/11/10 10:03:42.153359 Eng|Player 1 done
+2022/11/10 10:03:42.153382 matched shootID = 25
+2022/11/10 10:03:42.153386 Viz|Pub to MQTT| {"player":1,"time":"56489592485","rnd":2,"action":"done","shootID":0}
+2022/11/10 10:03:42.153564 eval|Send {"p1":{"hp":100,"action":"shoot","bullets":5,"grenades":2,"shield_time":0,"shie
+ld_health":0,"num_deaths":0,"num_shield":2},"p2":{"hp":100,"action":"shield","bullets":5,"grenades":2,"shield_time":
+10,"shield_health":20,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:03:42.165862 eval|Received {"p1": {"hp": 100, "action": "shoot", "bullets": 5, "grenades": 2, "shield_
+time": 3.7596395015716553, "shield_health": 20, "num_deaths": 0, "num_shield": 2}, "p2": {"hp": 100, "action": "shie
+ld", "bullets": 5, "grenades": 2, "shield_time": 10, "shield_health": 20, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:03:42.166400 Publish EvalResp, val=p1:{hp:100 action:shoot bullets:5 grenades:2 shield_time:3.75963950
+15716553 shield_health:20 num_shield:2} p2:{hp:100 action:shield bullets:5 grenades:2 shield_time:10 shield_health:2
+0 num_shield:2}
+2022/11/10 10:03:42.166459 Publish Round(RoundT), val=3
+2022/11/10 10:03:42.166659 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:03:42.342683 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shield","shootID":0}
+2022/11/10 10:03:42.469448 Relay|Gesture rate=54, p1=0, p2=54
+2022/11/10 10:03:42.520058 Viz|Pub to MQTT| {"p1":{"hp":100,"action":"shoot","bullets":5,"grenades":2,"shield_time":
+3.7596395015716553,"shield_health":20,"num_deaths":0,"num_shield":2},"p2":{"hp":100,"action":"shield","bullets":5,"g
+renades":2,"shield_time":10,"shield_health":20,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:03:50.303419 Relay|Gesture rate=29, p1=0, p2=29
+2022/11/10 10:03:51.336550 Relay|Gesture rate=63, p1=0, p2=63
+2022/11/10 10:03:52.153958 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:03:55.262839 Relay|Gesture rate=11, p1=0, p2=11
+2022/11/10 10:03:56.063001 Eng|Handling player:2 time:70394637359 rnd:3 action:grenade, state=0
+2022/11/10 10:03:56.063071 Eng|Player 2 done
+2022/11/10 10:03:56.063125 Eng|Handling player:2 time:70394637359 rnd:3 action:checkFov, state=1
+2022/11/10 10:03:56.063236 Viz|Pub to MQTT| {"player":2,"time":"70394637359","rnd":3,"action":"checkFov","shootID":0
+}
+2022/11/10 10:03:56.063240 Viz|Pub to MQTT| {"player":2,"time":"70394637359","rnd":3,"action":"done","shootID":0}
+2022/11/10 10:03:56.284095 Relay|Gesture rate=57, p1=0, p2=57
+2022/11/10 10:03:56.564764 Eng|Handling player:1 time:70394637359 rnd:3 inFov:true, rnd=3
+2022/11/10 10:03:57.311128 Relay|Gesture rate=71, p1=22, p2=49
+2022/11/10 10:03:57.359391 Eng|Handling player:1 time:71691462304 rnd:3 action:reload, state=0
+2022/11/10 10:03:57.359460 Eng|Player 1 done
+2022/11/10 10:03:57.359698 eval|Send {"p1":{"hp":90,"action":"reload","bullets":5,"grenades":2,"shield_time":3.75963
+95015716553,"shield_health":0,"num_deaths":0,"num_shield":2},"p2":{"hp":100,"action":"grenade","bullets":5,"grenades
+":1,"shield_time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:03:57.359440 Viz|Pub to MQTT| {"player":1,"time":"71691462304","rnd":3,"action":"done","shootID":0}
+2022/11/10 10:03:57.370111 eval|Received {"p1": {"hp": 100, "action": "shield", "bullets": 5, "grenades": 2, "shield
+_time": 10, "shield_health": 0, "num_deaths": 0, "num_shield": 1}, "p2": {"hp": 100, "action": "grenade", "bullets":
+ 5, "grenades": 1, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:03:57.370783 Publish EvalResp, val=p1:{hp:100 action:shield bullets:5 grenades:2 shield_time:10 num_sh
+ield:1} p2:{hp:100 action:grenade bullets:5 grenades:1 num_shield:2}
+2022/11/10 10:03:57.370835 Publish Round(RoundT), val=4
+2022/11/10 10:03:57.371068 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shield","shootID":0}
+2022/11/10 10:03:57.548994 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"grenade","shootID":0}
+2022/11/10 10:03:57.728510 Viz|Pub to MQTT| {"p1":{"hp":100,"action":"shield","bullets":5,"grenades":2,"shield_time"
+:10,"shield_health":0,"num_deaths":0,"num_shield":1},"p2":{"hp":100,"action":"grenade","bullets":5,"grenades":1,"shi
+eld_time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:03:58.345214 Relay|Gesture rate=76, p1=50, p2=26
+2022/11/10 10:04:07.360173 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:04:15.598887 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:04:15.599058 Eng|Handling player:1 time:89935351995 rnd:4 action:shot shootID:20, state=0
+2022/11/10 10:04:15.599118 Eng|Handling player:2 time:89935353495 rnd:4 action:shoot shootID:20, state=0
+2022/11/10 10:04:15.599135 Eng|Player 2 done
+2022/11/10 10:04:15.599150 matched shootID = 20
+2022/11/10 10:04:15.599168 Viz|Pub to MQTT| {"player":2,"time":"89935353495","rnd":4,"action":"done","shootID":0}
+2022/11/10 10:04:16.277524 Eng|Handling player:1 time:90603559899 rnd:4 action:reload, state=0
+2022/11/10 10:04:16.277590 Eng|Player 1 done
+2022/11/10 10:04:16.277646 Viz|Pub to MQTT| {"player":1,"time":"90603559899","rnd":4,"action":"done","shootID":0}
+2022/11/10 10:04:16.277765 eval|Send {"p1":{"hp":90,"action":"reload","bullets":5,"grenades":2,"shield_time":0,"shie
+ld_health":0,"num_deaths":0,"num_shield":1},"p2":{"hp":100,"action":"shoot","bullets":4,"grenades":1,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:04:16.288848 eval|Received {"p1": {"hp": 90, "action": "reload", "bullets": 5, "grenades": 2, "shield_
+time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 1}, "p2": {"hp": 100, "action": "shoot", "bullets": 4,
+"grenades": 1, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:04:16.289330 Publish EvalResp, val=p1:{hp:90 action:reload bullets:5 grenades:2 num_shield:1} p2:{hp:1
+00 action:shoot bullets:4 grenades:1 num_shield:2}
+2022/11/10 10:04:16.289385 Publish Round(RoundT), val=5
+2022/11/10 10:04:16.289575 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:04:16.489386 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shot","shootID":0}
+2022/11/10 10:04:16.617003 Relay|Gesture rate=53, p1=53, p2=0
+2022/11/10 10:04:16.676125 Viz|Pub to MQTT| {"p1":{"hp":90,"action":"reload","bullets":5,"grenades":2,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":1},"p2":{"hp":100,"action":"shoot","bullets":4,"grenades":1,"shield_
+time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:04:17.655381 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:04:24.031661 Relay|Gesture rate=7, p1=6, p2=1
+2022/11/10 10:04:25.038724 Relay|Gesture rate=59, p1=0, p2=59
+2022/11/10 10:04:27.424883 Relay|Gesture rate=17, p1=1, p2=16
+2022/11/10 10:04:28.263769 Eng|Handling player:1 time:102592470338 rnd:5 action:reload, state=0
+2022/11/10 10:04:28.263839 Eng|Player 1 done
+2022/11/10 10:04:28.263799 Viz|Pub to MQTT| {"player":1,"time":"102592470338","rnd":5,"action":"done","shootID":0}
+2022/11/10 10:04:28.451585 Relay|Gesture rate=47, p1=47, p2=0
+2022/11/10 10:04:29.452878 Relay|Gesture rate=76, p1=50, p2=26
+2022/11/10 10:04:29.462243 Eng|Handling player:2 time:103789433256 rnd:5 action:logout, state=0
+2022/11/10 10:04:29.462307 Eng|Player 2 done
+2022/11/10 10:04:29.462345 Viz|Pub to MQTT| {"player":2,"time":"103789433256","rnd":5,"action":"done","shootID":0}
+2022/11/10 10:04:29.462482 eval|Send {"p1":{"hp":90,"action":"reload","bullets":5,"grenades":2,"shield_time":0,"shie
+ld_health":0,"num_deaths":0,"num_shield":1},"p2":{"hp":100,"action":"logout","bullets":4,"grenades":1,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:04:29.470705 eval|Received {"p1": {"hp": 90, "action": "reload", "bullets": 5, "grenades": 2, "shield_
+time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 1}, "p2": {"hp": 100, "action": "reload", "bullets": 4,
+ "grenades": 1, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:04:29.471248 Publish EvalResp, val=p1:{hp:90 action:reload bullets:5 grenades:2 num_shield:1} p2:{hp:1
+00 action:reload bullets:4 grenades:1 num_shield:2}
+2022/11/10 10:04:29.471307 Publish Round(RoundT), val=6
+2022/11/10 10:04:29.471620 Viz|Pub to MQTT| {"p1":{"hp":90,"action":"reload","bullets":5,"grenades":2,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":1},"p2":{"hp":100,"action":"reload","bullets":4,"grenades":1,"shield
+_time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:04:30.485858 Relay|Gesture rate=57, p1=10, p2=47
+2022/11/10 10:04:43.375516 Eng|Handling player:2 time:117711779821 rnd:6 action:shoot shootID:21, state=0
+2022/11/10 10:04:43.375583 Eng|Player 2 done
+2022/11/10 10:04:43.375601 Viz|Pub to MQTT| {"player":2,"time":"117711779821","rnd":6,"action":"done","shootID":0}
+2022/11/10 10:04:43.390801 Relay|Gesture rate=44, p1=1, p2=43
+2022/11/10 10:04:44.392633 Eng|Handling player:1 time:118723745172 rnd:6 action:shield, state=0
+2022/11/10 10:04:44.392702 Eng|Player 1 done
+2022/11/10 10:04:44.392814 Viz|Pub to MQTT| {"player":1,"time":"118723745172","rnd":6,"action":"done","shootID":0}
+2022/11/10 10:04:44.392925 eval|Send {"p1":{"hp":90,"action":"shield","bullets":5,"grenades":2,"shield_time":10,"shi
+eld_health":30,"num_deaths":0,"num_shield":0},"p2":{"hp":100,"action":"shoot","bullets":3,"grenades":1,"shield_time"
+:0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:04:44.401790 eval|Received {"p1": {"hp": 90, "action": "shield", "bullets": 5, "grenades": 2, "shield_
+time": 10, "shield_health": 30, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 100, "action": "shoot", "bullets": 3
+, "grenades": 1, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:04:44.402309 Publish EvalResp, val=p1:{hp:90 action:shield bullets:5 grenades:2 shield_time:10 shield_
+health:30} p2:{hp:100 action:shoot bullets:3 grenades:1 num_shield:2}
+2022/11/10 10:04:44.402358 Publish Round(RoundT), val=7
+2022/11/10 10:04:44.402604 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shield","shootID":0}
+2022/11/10 10:04:44.427948 Relay|Gesture rate=50, p1=50, p2=0
+2022/11/10 10:04:44.579557 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:04:44.770975 Viz|Pub to MQTT| {"p1":{"hp":90,"action":"shield","bullets":5,"grenades":2,"shield_time":
+10,"shield_health":30,"num_deaths":0,"num_shield":0},"p2":{"hp":100,"action":"shoot","bullets":3,"grenades":1,"shiel
+d_time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:04:45.461894 Relay|Gesture rate=47, p1=47, p2=0
+2022/11/10 10:04:54.393891 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:04:57.266873 Eng|Handling player:1 time:131603072389 rnd:7 action:shoot shootID:26, state=0
+2022/11/10 10:04:57.266936 Eng|Player 1 done
+2022/11/10 10:04:57.266993 Eng|Handling player:2 time:131603179624 rnd:7 action:shot shootID:26, state=0
+2022/11/10 10:04:57.267010 matched shootID = 26
+2022/11/10 10:04:57.267115 Viz|Pub to MQTT| {"player":1,"time":"131603072389","rnd":7,"action":"done","shootID":0}
+2022/11/10 10:04:57.487024 Relay|Gesture rate=25, p1=24, p2=1
+2022/11/10 10:04:58.536763 Relay|Gesture rate=49, p1=0, p2=49
+2022/11/10 10:04:58.659062 Eng|Handling player:2 time:132990854823 rnd:7 action:grenade, state=0
+2022/11/10 10:04:58.659131 Eng|Player 2 done
+2022/11/10 10:04:58.659175 Eng|Handling player:2 time:132990854823 rnd:7 action:checkFov, state=1
+2022/11/10 10:04:58.659253 Viz|Pub to MQTT| {"player":2,"time":"132990854823","rnd":7,"action":"done","shootID":0}
+2022/11/10 10:04:58.659264 Viz|Pub to MQTT| {"player":2,"time":"132990854823","rnd":7,"action":"checkFov","shootID":
+0}
+2022/11/10 10:04:59.112272 Eng|Handling player:1 time:132990854823 rnd:7 inFov:true, rnd=7
+2022/11/10 10:04:59.112498 eval|Send {"p1":{"hp":60,"action":"shoot","bullets":4,"grenades":2,"shield_time":0,"shiel
+d_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":90,"action":"grenade","bullets":3,"grenades":0,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:04:59.122390 eval|Received {"p1": {"hp": 60, "action": "shoot", "bullets": 4, "grenades": 2, "shield_t
+ime": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 90, "action": "grenade", "bullets": 3,
+"grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:04:59.122804 Publish EvalResp, val=p1:{hp:60 action:shoot bullets:4 grenades:2} p2:{hp:90 action:grena
+de bullets:3 num_shield:2}
+2022/11/10 10:04:59.122857 Publish Round(RoundT), val=8
+2022/11/10 10:04:59.123040 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:04:59.382761 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shot","shootID":0}
+2022/11/10 10:04:59.556357 Relay|Gesture rate=49, p1=0, p2=49
+2022/11/10 10:04:59.561849 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"grenade","shootID":0}
+2022/11/10 10:04:59.752262 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"grenaded","shootID":0}
+2022/11/10 10:04:59.929209 Viz|Pub to MQTT| {"p1":{"hp":60,"action":"shoot","bullets":4,"grenades":2,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":90,"action":"grenade","bullets":3,"grenades":0,"shield_
+time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:05:06.441511 Eng|Handling player:2 time:140777774535 rnd:8 action:shoot shootID:22, state=0
+2022/11/10 10:05:06.441589 Eng|Player 2 done
+2022/11/10 10:05:06.441539 Viz|Pub to MQTT| {"player":2,"time":"140777774535","rnd":8,"action":"done","shootID":0}
+2022/11/10 10:05:06.573326 Relay|Gesture rate=41, p1=1, p2=40
+2022/11/10 10:05:07.162133 Eng|Handling player:1 time:141494102782 rnd:8 action:grenade, state=0
+2022/11/10 10:05:07.162208 Eng|Player 1 done
+2022/11/10 10:05:07.162254 Eng|Handling player:1 time:141494102782 rnd:8 action:checkFov, state=1
+2022/11/10 10:05:07.162349 Viz|Pub to MQTT| {"player":1,"time":"141494102782","rnd":8,"action":"done","shootID":0}
+2022/11/10 10:05:07.162356 Viz|Pub to MQTT| {"player":1,"time":"141494102782","rnd":8,"action":"checkFov","shootID":
+0}
+2022/11/10 10:05:07.589667 Eng|Handling player:2 time:141494102782 rnd:8 inFov:true, rnd=8
+2022/11/10 10:05:07.589942 eval|Send {"p1":{"hp":60,"action":"grenade","bullets":4,"grenades":1,"shield_time":0,"shi
+eld_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":60,"action":"shoot","bullets":2,"grenades":0,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:05:07.600965 eval|Received {"p1": {"hp": 50, "action": "reload", "bullets": 4, "grenades": 2, "shield_
+time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 90, "action": "shoot", "bullets": 2, "
+grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:05:07.601458 Publish EvalResp, val=p1:{hp:50 action:reload bullets:4 grenades:2} p2:{hp:90 action:shoo
+t bullets:2 num_shield:2}
+2022/11/10 10:05:07.601507 Publish Round(RoundT), val=9
+2022/11/10 10:05:07.601638 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:05:07.647252 Relay|Gesture rate=50, p1=50, p2=0
+2022/11/10 10:05:07.793229 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shot","shootID":0}
+2022/11/10 10:05:07.979016 Viz|Pub to MQTT| {"p1":{"hp":50,"action":"reload","bullets":4,"grenades":2,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":90,"action":"shoot","bullets":2,"grenades":0,"shield_t
+ime":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:05:08.683579 Relay|Gesture rate=48, p1=48, p2=0
+2022/11/10 10:05:17.849807 Relay|Gesture rate=4, p1=4, p2=0
+2022/11/10 10:05:18.430338 Eng|Handling player:2 time:152749720474 rnd:9 action:logout, state=0
+2022/11/10 10:05:18.430406 Eng|Player 2 done
+2022/11/10 10:05:18.430745 Viz|Pub to MQTT| {"player":2,"time":"152749720474","rnd":9,"action":"done","shootID":0}
+2022/11/10 10:05:18.700203 Eng|Handling player:1 time:153017790438 rnd:9 action:grenade, state=0
+2022/11/10 10:05:18.700275 Eng|Player 1 done
+2022/11/10 10:05:18.700324 Eng|Handling player:1 time:153017790438 rnd:9 action:checkFov, state=1
+2022/11/10 10:05:18.700366 Viz|Pub to MQTT| {"player":1,"time":"153017790438","rnd":9,"action":"done","shootID":0}
+2022/11/10 10:05:18.700417 Viz|Pub to MQTT| {"player":1,"time":"153017790438","rnd":9,"action":"checkFov","shootID":
+0}
+2022/11/10 10:05:18.852415 Relay|Gesture rate=103, p1=50, p2=53
+2022/11/10 10:05:19.279105 Eng|Handling player:2 time:153017790438 rnd:9 inFov:true, rnd=9
+2022/11/10 10:05:19.279357 eval|Send {"p1":{"hp":50,"action":"grenade","bullets":4,"grenades":1,"shield_time":0,"shi
+eld_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":60,"action":"logout","bullets":2,"grenades":0,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:05:19.290809 eval|Received {"p1": {"hp": 50, "action": "grenade", "bullets": 4, "grenades": 1, "shield
+_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 60, "action": "reload", "bullets": 2,
+ "grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:05:19.291290 Publish EvalResp, val=p1:{hp:50 action:grenade bullets:4 grenades:1} p2:{hp:60 action:rel
+oad bullets:2 num_shield:2}
+2022/11/10 10:05:19.291353 Publish Round(RoundT), val=10
+2022/11/10 10:05:19.291572 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"grenade","shootID":0}
+2022/11/10 10:05:19.475102 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"grenaded","shootID":0}
+2022/11/10 10:05:19.652411 Viz|Pub to MQTT| {"p1":{"hp":50,"action":"grenade","bullets":4,"grenades":1,"shield_time"
+:0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":60,"action":"reload","bullets":2,"grenades":0,"shield
+_time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:05:19.865870 Relay|Gesture rate=105, p1=55, p2=50
+2022/11/10 10:05:47.361815 Relay|Gesture rate=46, p1=28, p2=18
+2022/11/10 10:06:20.345363 Relay|Gesture rate=1, p1=0, p2=1
+2022/11/10 10:06:21.046044 Eng|Handling player:1 time:215382317281 rnd:10 action:shoot shootID:27, state=0
+2022/11/10 10:06:21.046063 Viz|Pub to MQTT| {"player":1,"time":"215382317281","rnd":10,"action":"done","shootID":0}
+2022/11/10 10:06:21.046689 Eng|Player 1 done
+2022/11/10 10:06:21.293110 Eng|Handling player:2 time:215618628612 rnd:10 action:grenade, state=0
+2022/11/10 10:06:21.293181 Eng|Player 2 done
+2022/11/10 10:06:21.293416 Viz|Pub to MQTT| {"player":2,"time":"215618628612","rnd":10,"action":"done","shootID":0}
+2022/11/10 10:06:21.347668 eval|Send {"p1":{"hp":50,"action":"shoot","bullets":3,"grenades":1,"shield_time":0,"shiel
+d_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":60,"action":"grenade","bullets":2,"grenades":0,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:06:21.356431 eval|Received {"p1": {"hp": 50, "action": "shoot", "bullets": 3, "grenades": 1, "shield_t
+ime": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 50, "action": "grenade", "bullets": 2,
+"grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:06:21.356853 Publish EvalResp, val=p1:{hp:50 action:shoot bullets:3 grenades:1} p2:{hp:50 action:grena
+de bullets:2 num_shield:2}
+2022/11/10 10:06:21.356905 Publish Round(RoundT), val=11
+2022/11/10 10:06:21.357082 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:06:21.365478 Relay|Gesture rate=59, p1=0, p2=59
+2022/11/10 10:06:21.532887 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shot","shootID":0}
+2022/11/10 10:06:21.711736 Viz|Pub to MQTT| {"p1":{"hp":50,"action":"shoot","bullets":3,"grenades":1,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":50,"action":"grenade","bullets":2,"grenades":0,"shield_
+time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:06:22.400717 Relay|Gesture rate=52, p1=0, p2=52
+2022/11/10 10:06:31.504613 Relay|Gesture rate=22, p1=1, p2=21
+2022/11/10 10:06:31.541689 Eng|Handling player:2 time:225877912408 rnd:11 action:shoot shootID:23, state=0
+2022/11/10 10:06:31.541857 Eng|Player 2 done
+2022/11/10 10:06:31.541780 Viz|Pub to MQTT| {"player":2,"time":"225877912408","rnd":11,"action":"done","shootID":0}
+2022/11/10 10:06:31.542223 Eng|Handling player:1 time:225877987741 rnd:11 action:shot shootID:23, state=0
+2022/11/10 10:06:31.542253 matched shootID = 23
+2022/11/10 10:06:32.253488 Eng|Handling player:1 time:226585352138 rnd:11 action:shield, state=0
+2022/11/10 10:06:32.253554 Eng|Player 1 done
+2022/11/10 10:06:32.253747 eval|Send {"p1":{"hp":40,"action":"shield","bullets":3,"grenades":1,"shield_time":0,"shie
+ld_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":50,"action":"shoot","bullets":1,"grenades":0,"shield_time":0,
+"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:06:32.254202 Viz|Pub to MQTT| {"player":1,"time":"226585352138","rnd":11,"action":"done","shootID":0}
+2022/11/10 10:06:32.265131 eval|Received {"p1": {"hp": 40, "action": "shield", "bullets": 3, "grenades": 1, "shield_
+time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 50, "action": "shoot", "bullets": 1, "
+grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:06:32.265677 Publish EvalResp, val=p1:{hp:40 action:shield bullets:3 grenades:1} p2:{hp:50 action:shoo
+t bullets:1 num_shield:2}
+2022/11/10 10:06:32.265731 Publish Round(RoundT), val=12
+2022/11/10 10:06:32.265867 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:06:32.454433 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shot","shootID":0}
+2022/11/10 10:06:32.525552 Relay|Gesture rate=53, p1=53, p2=0
+2022/11/10 10:06:32.642288 Viz|Pub to MQTT| {"p1":{"hp":40,"action":"shield","bullets":3,"grenades":1,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":50,"action":"shoot","bullets":1,"grenades":0,"shield_t
+ime":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:06:33.553338 Relay|Gesture rate=52, p1=52, p2=0
+2022/11/10 10:06:39.693371 Relay|Gesture rate=16, p1=16, p2=0
+2022/11/10 10:06:40.707946 Relay|Gesture rate=56, p1=56, p2=0
+2022/11/10 10:06:41.744017 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:06:44.098842 Relay|Gesture rate=28, p1=27, p2=1
+2022/11/10 10:06:44.761703 Eng|Handling player:1 time:239097996498 rnd:12 action:shoot shootID:28, state=0
+2022/11/10 10:06:44.761783 Eng|Player 1 done
+2022/11/10 10:06:44.761746 Viz|Pub to MQTT| {"player":1,"time":"239097996498","rnd":12,"action":"done","shootID":0}
+2022/11/10 10:06:45.085876 Eng|Handling player:2 time:239417095303 rnd:12 action:reload, state=0
+2022/11/10 10:06:45.085946 Eng|Player 2 done
+2022/11/10 10:06:45.086035 Viz|Pub to MQTT| {"player":2,"time":"239417095303","rnd":12,"action":"done","shootID":0}
+2022/11/10 10:06:45.086109 eval|Send {"p1":{"hp":40,"action":"shoot","bullets":2,"grenades":1,"shield_time":0,"shiel
+d_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":50,"action":"reload","bullets":1,"grenades":0,"shield_time":0,
+"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:06:45.098857 eval|Received {"p1": {"hp": 40, "action": "shoot", "bullets": 2, "grenades": 1, "shield_t
+ime": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 50, "action": "reload", "bullets": 1, "
+grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:06:45.099303 Publish EvalResp, val=p1:{hp:40 action:shoot bullets:2 grenades:1} p2:{hp:50 action:reloa
+d bullets:1 num_shield:2}
+2022/11/10 10:06:45.099355 Publish Round(RoundT), val=13
+2022/11/10 10:06:45.099553 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:06:45.125423 Relay|Gesture rate=49, p1=0, p2=49
+2022/11/10 10:06:45.277695 Viz|Pub to MQTT| {"p1":{"hp":40,"action":"shoot","bullets":2,"grenades":1,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":50,"action":"reload","bullets":1,"grenades":0,"shield_t
+ime":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:06:46.161321 Relay|Gesture rate=48, p1=0, p2=48
+2022/11/10 10:06:54.814187 Relay|Gesture rate=52, p1=1, p2=51
+2022/11/10 10:06:55.698508 Eng|Handling player:1 time:250030170993 rnd:13 action:grenade, state=0
+2022/11/10 10:06:55.698601 Eng|Player 1 done
+2022/11/10 10:06:55.698647 Eng|Handling player:1 time:250030170993 rnd:13 action:checkFov, state=1
+2022/11/10 10:06:55.698685 Viz|Pub to MQTT| {"player":1,"time":"250030170993","rnd":13,"action":"done","shootID":0}
+2022/11/10 10:06:55.698747 Viz|Pub to MQTT| {"player":1,"time":"250030170993","rnd":13,"action":"checkFov","shootID"
+:0}
+2022/11/10 10:06:55.829278 Relay|Gesture rate=56, p1=49, p2=7
+2022/11/10 10:06:56.105882 Eng|Handling player:2 time:250030170993 rnd:13, rnd=13
+2022/11/10 10:06:56.656524 Eng|Handling player:2 time:250988401738 rnd:13 action:grenade, state=0
+2022/11/10 10:06:56.656617 Eng|Player 2 done
+2022/11/10 10:06:56.656543 Viz|Pub to MQTT| {"player":2,"time":"250988401738","rnd":13,"action":"done","shootID":0}
+2022/11/10 10:06:56.656848 eval|Send {"p1":{"hp":40,"action":"grenade","bullets":2,"grenades":0,"shield_time":0,"shi
+eld_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":50,"action":"grenade","bullets":1,"grenades":0,"shield_time"
+:0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:06:56.668136 eval|Received {"p1": {"hp": 40, "action": "grenade", "bullets": 2, "grenades": 0, "shield
+_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 20, "action": "grenade", "bullets": 1
+, "grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:06:56.668649 Publish EvalResp, val=p1:{hp:40 action:grenade bullets:2} p2:{hp:20 action:grenade bullet
+s:1 num_shield:2}
+2022/11/10 10:06:56.668700 Publish Round(RoundT), val=14
+2022/11/10 10:06:56.668863 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"grenade","shootID":0}
+2022/11/10 10:06:56.857579 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"grenaded","shootID":0}
+2022/11/10 10:06:56.863900 Relay|Gesture rate=98, p1=52, p2=46
+2022/11/10 10:06:57.034586 Viz|Pub to MQTT| {"p1":{"hp":40,"action":"grenade","bullets":2,"grenades":0,"shield_time"
+:0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"grenade","bullets":1,"grenades":0,"shiel
+d_time":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:06:57.864174 Relay|Gesture rate=100, p1=48, p2=52
+2022/11/10 10:07:06.725555 Eng|Handling player:2 time:261061731831 rnd:14 action:shoot shootID:24, state=0
+2022/11/10 10:07:06.725629 Eng|Player 2 done
+2022/11/10 10:07:06.725895 Viz|Pub to MQTT| {"player":2,"time":"261061731831","rnd":14,"action":"done","shootID":0}
+2022/11/10 10:07:07.034918 Relay|Gesture rate=36, p1=2, p2=34
+2022/11/10 10:07:07.906308 Eng|Handling player:1 time:262228893963 rnd:14 action:reload, state=0
+2022/11/10 10:07:07.906367 Viz|Pub to MQTT| {"player":1,"time":"262228893963","rnd":14,"action":"done","shootID":0}
+2022/11/10 10:07:07.906381 Eng|Player 1 done
+2022/11/10 10:07:07.906693 eval|Send {"p1":{"hp":40,"action":"reload","bullets":2,"grenades":0,"shield_time":0,"shie
+ld_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"shoot","bullets":0,"grenades":0,"shield_time":0,
+"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:07:07.914750 eval|Received {"p1": {"hp": 30, "action": "reload", "bullets": 2, "grenades": 0, "shield_
+time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 20, "action": "shoot", "bullets": 0, "
+grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 2}}
+2022/11/10 10:07:07.915217 Publish EvalResp, val=p1:{hp:30 action:reload bullets:2} p2:{hp:20 action:shoot num_shiel
+d:2}
+2022/11/10 10:07:07.915273 Publish Round(RoundT), val=15
+2022/11/10 10:07:07.915401 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:07:08.069228 Relay|Gesture rate=50, p1=50, p2=0
+2022/11/10 10:07:08.110269 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shot","shootID":0}
+2022/11/10 10:07:08.290425 Viz|Pub to MQTT| {"p1":{"hp":30,"action":"reload","bullets":2,"grenades":0,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"shoot","bullets":0,"grenades":0,"shield_t
+ime":0,"shield_health":0,"num_deaths":0,"num_shield":2}}
+2022/11/10 10:07:09.107509 Relay|Gesture rate=47, p1=47, p2=0
+2022/11/10 10:07:15.152455 Relay|Gesture rate=13, p1=12, p2=1
+2022/11/10 10:07:16.176671 Relay|Gesture rate=64, p1=0, p2=64
+2022/11/10 10:07:19.371921 Relay|Gesture rate=11, p1=0, p2=11
+2022/11/10 10:07:20.139913 Eng|Handling player:1 time:274467409273 rnd:15 action:grenade, state=0
+2022/11/10 10:07:20.139981 Eng|Player 1 done
+2022/11/10 10:07:20.140017 Viz|Pub to MQTT| {"player":1,"time":"274467409273","rnd":15,"action":"done","shootID":0}
+2022/11/10 10:07:20.288410 Eng|Handling player:2 time:274611179868 rnd:15 action:shield, state=0
+2022/11/10 10:07:20.288528 Eng|Player 2 done
+2022/11/10 10:07:20.288757 eval|Send {"p1":{"hp":30,"action":"grenade","bullets":2,"grenades":0,"shield_time":0,"shi
+eld_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"shield","bullets":0,"grenades":0,"shield_time":
+10,"shield_health":30,"num_deaths":0,"num_shield":1}}
+2022/11/10 10:07:20.288417 Viz|Pub to MQTT| {"player":2,"time":"274611179868","rnd":15,"action":"done","shootID":0}
+2022/11/10 10:07:20.299732 eval|Received {"p1": {"hp": 30, "action": "grenade", "bullets": 2, "grenades": 0, "shield
+_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 20, "action": "shield", "bullets": 0,
+ "grenades": 0, "shield_time": 10, "shield_health": 30, "num_deaths": 0, "num_shield": 1}}
+2022/11/10 10:07:20.300357 Publish EvalResp, val=p1:{hp:30 action:grenade bullets:2} p2:{hp:20 action:shield shield_
+time:10 shield_health:30 num_shield:1}
+2022/11/10 10:07:20.300407 Publish Round(RoundT), val=16
+2022/11/10 10:07:20.300532 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shield","shootID":0}
+2022/11/10 10:07:20.398668 Relay|Gesture rate=110, p1=52, p2=58
+2022/11/10 10:07:20.639185 Viz|Pub to MQTT| {"p1":{"hp":30,"action":"grenade","bullets":2,"grenades":0,"shield_time"
+:0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"shield","bullets":0,"grenades":0,"shield
+_time":10,"shield_health":30,"num_deaths":0,"num_shield":1}}
+2022/11/10 10:07:21.398992 Relay|Gesture rate=100, p1=49, p2=51
+2022/11/10 10:07:22.425215 Relay|Gesture rate=97, p1=49, p2=48
+2022/11/10 10:07:26.560472 Relay|Gesture rate=5, p1=5, p2=0
+2022/11/10 10:07:27.600184 Relay|Gesture rate=60, p1=60, p2=0
+2022/11/10 10:07:28.635900 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:07:29.670009 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:07:30.289547 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:07:30.703739 Relay|Gesture rate=50, p1=50, p2=0
+2022/11/10 10:07:31.738738 Relay|Gesture rate=75, p1=39, p2=36
+2022/11/10 10:07:31.933163 Eng|Handling player:2 time:286264621373 rnd:16 action:reload, state=0
+2022/11/10 10:07:31.933233 Eng|Player 2 done
+2022/11/10 10:07:31.933323 Viz|Pub to MQTT| {"player":2,"time":"286264621373","rnd":16,"action":"done","shootID":0}
+2022/11/10 10:07:32.775211 Relay|Gesture rate=107, p1=51, p2=56
+2022/11/10 10:07:33.809268 Relay|Gesture rate=82, p1=51, p2=31
+2022/11/10 10:07:41.686737 Relay|Gesture rate=46, p1=46, p2=0
+2022/11/10 10:07:42.280301 Eng|Handling player:1 time:296607844667 rnd:16 action:grenade, state=0
+2022/11/10 10:07:42.280371 Eng|Player 1 done
+2022/11/10 10:07:42.280476 Viz|Pub to MQTT| {"player":1,"time":"296607844667","rnd":16,"action":"done","shootID":0}
+2022/11/10 10:07:42.280566 eval|Send {"p1":{"hp":30,"action":"grenade","bullets":2,"grenades":0,"shield_time":0,"shi
+eld_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"reload","bullets":6,"grenades":0,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":1}}
+2022/11/10 10:07:42.292003 eval|Received {"p1": {"hp": 30, "action": "grenade", "bullets": 2, "grenades": 0, "shield
+_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 20, "action": "reload", "bullets": 6,
+ "grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 1}}
+2022/11/10 10:07:42.292572 Publish EvalResp, val=p1:{hp:30 action:grenade bullets:2} p2:{hp:20 action:reload bullets
+:6 num_shield:1}
+2022/11/10 10:07:42.292628 Publish Round(RoundT), val=17
+2022/11/10 10:07:42.292828 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"reload","shootID":0}
+2022/11/10 10:07:42.689818 Viz|Pub to MQTT| {"p1":{"hp":30,"action":"grenade","bullets":2,"grenades":0,"shield_time"
+:0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"reload","bullets":6,"grenades":0,"shield
+_time":0,"shield_health":0,"num_deaths":0,"num_shield":1}}
+2022/11/10 10:07:42.719040 Relay|Gesture rate=68, p1=68, p2=0
+2022/11/10 10:07:43.754575 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:07:45.287409 Relay|Gesture rate=39, p1=39, p2=0
+2022/11/10 10:07:46.364958 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:07:54.589805 Relay|Gesture rate=29, p1=29, p2=0
+2022/11/10 10:07:55.633420 Relay|Gesture rate=58, p1=58, p2=0
+2022/11/10 10:07:56.718215 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:07:57.750667 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:08:01.031817 Relay|Gesture rate=36, p1=36, p2=0
+2022/11/10 10:08:02.070832 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:08:06.584312 Relay|Gesture rate=21, p1=20, p2=1
+2022/11/10 10:08:19.172379 Relay|Gesture rate=1, p1=1, p2=0
+2022/11/10 10:08:20.205286 Relay|Gesture rate=20, p1=20, p2=0
+2022/11/10 10:08:54.354583 Eng|Handling player:2 time:368690747008 rnd:17 action:shot shootID:29, state=0
+2022/11/10 10:08:54.354703 Eng|Handling player:1 time:368690837722 rnd:17 action:shoot shootID:29, state=0
+2022/11/10 10:08:54.354722 Eng|Player 1 done
+2022/11/10 10:08:54.354734 matched shootID = 29
+2022/11/10 10:08:54.354607 Viz|Pub to MQTT| {"player":1,"time":"368690837722","rnd":17,"action":"done","shootID":0}
+2022/11/10 10:08:56.982588 Relay|Gesture rate=7, p1=6, p2=1
+2022/11/10 10:08:58.015394 Relay|Gesture rate=49, p1=0, p2=49
+2022/11/10 10:08:58.021164 Eng|Handling player:2 time:372351943978 rnd:17 action:shield, state=0
+2022/11/10 10:08:58.021235 Eng|Player 2 done
+2022/11/10 10:08:58.021377 Viz|Pub to MQTT| {"player":2,"time":"372351943978","rnd":17,"action":"done","shootID":0}
+2022/11/10 10:08:58.021451 eval|Send {"p1":{"hp":30,"action":"shoot","bullets":1,"grenades":0,"shield_time":0,"shiel
+d_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":10,"action":"shield","bullets":6,"grenades":0,"shield_time":10
+,"shield_health":30,"num_deaths":0,"num_shield":0}}
+2022/11/10 10:08:58.030809 eval|Received {"p1": {"hp": 30, "action": "shoot", "bullets": 1, "grenades": 0, "shield_t
+ime": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 20, "action": "shield", "bullets": 6, "
+grenades": 0, "shield_time": 10, "shield_health": 20, "num_deaths": 0, "num_shield": 0}}
+2022/11/10 10:08:58.031359 Publish EvalResp, val=p1:{hp:30 action:shoot bullets:1} p2:{hp:20 action:shield bullets:6
+ shield_time:10 shield_health:20}
+2022/11/10 10:08:58.031409 Publish Round(RoundT), val=18
+2022/11/10 10:08:58.031586 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:08:58.212135 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shield","shootID":0}
+2022/11/10 10:08:58.770073 Viz|Pub to MQTT| {"p1":{"hp":30,"action":"shoot","bullets":1,"grenades":0,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"shield","bullets":6,"grenades":0,"shield_t
+ime":10,"shield_health":20,"num_deaths":0,"num_shield":0}}
+2022/11/10 10:08:59.050134 Relay|Gesture rate=52, p1=0, p2=52
+2022/11/10 10:09:05.513140 Relay|Gesture rate=51, p1=0, p2=51
+2022/11/10 10:09:06.210721 Eng|Handling player:2 time:380542555258 rnd:18 action:shield, state=0
+2022/11/10 10:09:06.210794 Eng|Player 2 done
+2022/11/10 10:09:06.210996 Viz|Pub to MQTT| {"player":2,"time":"380542555258","rnd":18,"action":"done","shootID":0}
+2022/11/10 10:09:06.520730 Relay|Gesture rate=59, p1=0, p2=59
+2022/11/10 10:09:07.098405 Eng|Handling player:1 time:381434709582 rnd:18 action:shoot shootID:30, state=0
+2022/11/10 10:09:07.098472 Viz|Pub to MQTT| {"player":1,"time":"381434709582","rnd":18,"action":"done","shootID":0}
+2022/11/10 10:09:07.098472 Eng|Player 1 done
+2022/11/10 10:09:07.100137 Eng|Handling player:2 time:381436497985 rnd:18 action:shot shootID:30, state=3
+2022/11/10 10:09:07.100172 matched shootID = 30
+2022/11/10 10:09:07.100427 eval|Send {"p1":{"hp":30,"action":"shoot","bullets":0,"grenades":0,"shield_time":0,"shiel
+d_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":20,"action":"shield","bullets":6,"grenades":0,"shield_time":0.
+930996721,"shield_health":10,"num_deaths":0,"num_shield":0}}
+2022/11/10 10:09:07.108536 eval|Received {"p1": {"hp": 30, "action": "shoot", "bullets": 0, "grenades": 0, "shield_t
+ime": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 10, "action": "shield", "bullets": 6, "
+grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}}
+2022/11/10 10:09:07.108970 Publish EvalResp, val=p1:{hp:30 action:shoot} p2:{hp:10 action:shield bullets:6}
+2022/11/10 10:09:07.109017 Publish Round(RoundT), val=19
+2022/11/10 10:09:07.109181 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"shoot","shootID":0}
+2022/11/10 10:09:07.296329 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shot","shootID":0}
+2022/11/10 10:09:07.473401 Viz|Pub to MQTT| {"p1":{"hp":30,"action":"shoot","bullets":0,"grenades":0,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":10,"action":"shield","bullets":6,"grenades":0,"shield_t
+ime":0,"shield_health":0,"num_deaths":0,"num_shield":0}}
+2022/11/10 10:09:07.559228 Relay|Gesture rate=50, p1=0, p2=50
+2022/11/10 10:09:08.021898 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"shieldAvailable","shootID":0}
+2022/11/10 10:09:10.157280 Relay|Gesture rate=39, p1=1, p2=38
+2022/11/10 10:09:11.192346 Relay|Gesture rate=50, p1=50, p2=0
+2022/11/10 10:09:15.184967 Relay|Gesture rate=29, p1=28, p2=1
+2022/11/10 10:09:15.481001 Eng|Handling player:2 time:389812985867 rnd:19 action:logout, state=0
+2022/11/10 10:09:15.481073 Eng|Player 2 done
+2022/11/10 10:09:15.481361 Viz|Pub to MQTT| {"player":2,"time":"389812985867","rnd":19,"action":"done","shootID":0}
+2022/11/10 10:09:16.186124 Relay|Gesture rate=73, p1=15, p2=58
+2022/11/10 10:09:17.223870 Relay|Gesture rate=99, p1=50, p2=49
+2022/11/10 10:09:18.255795 Relay|Gesture rate=99, p1=52, p2=47
+2022/11/10 10:09:20.372555 Relay|Gesture rate=21, p1=21, p2=0
+2022/11/10 10:09:21.406671 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:09:22.407276 Relay|Gesture rate=60, p1=47, p2=13
+2022/11/10 10:09:22.642786 Eng|Handling player:2 time:396969183639 rnd:19 action:logout, state=3
+2022/11/10 10:09:23.441777 Relay|Gesture rate=91, p1=43, p2=48
+2022/11/10 10:09:24.466780 Relay|Gesture rate=53, p1=1, p2=52
+2022/11/10 10:09:25.500526 Relay|Gesture rate=50, p1=47, p2=3
+2022/11/10 10:09:26.535380 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:09:28.660203 Relay|Gesture rate=53, p1=52, p2=1
+2022/11/10 10:09:29.116904 Eng|Handling player:2 time:403447916370 rnd:19 action:logout, state=3
+2022/11/10 10:09:29.690246 Relay|Gesture rate=71, p1=25, p2=46
+2022/11/10 10:09:30.722779 Relay|Gesture rate=103, p1=51, p2=52
+2022/11/10 10:09:31.726887 Relay|Gesture rate=101, p1=50, p2=51
+2022/11/10 10:09:34.776504 Relay|Gesture rate=46, p1=32, p2=14
+2022/11/10 10:09:35.830369 Relay|Gesture rate=64, p1=57, p2=7
+2022/11/10 10:09:36.104526 Eng|Handling player:2 time:410426432135 rnd:19 action:logout, state=3
+2022/11/10 10:09:36.840516 Relay|Gesture rate=104, p1=53, p2=51
+2022/11/10 10:09:37.841712 Relay|Gesture rate=77, p1=26, p2=51
+2022/11/10 10:09:40.083127 Relay|Gesture rate=10, p1=1, p2=9
+2022/11/10 10:09:41.115474 Relay|Gesture rate=47, p1=47, p2=0
+2022/11/10 10:09:42.150911 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:09:43.783994 Relay|Gesture rate=20, p1=19, p2=1
+2022/11/10 10:09:44.416058 Eng|Handling player:2 time:418747448468 rnd:19 action:logout, state=3
+2022/11/10 10:09:44.815040 Relay|Gesture rate=49, p1=0, p2=49
+2022/11/10 10:09:45.840554 Relay|Gesture rate=80, p1=33, p2=47
+2022/11/10 10:09:46.841195 Relay|Gesture rate=97, p1=47, p2=50
+2022/11/10 10:09:47.868118 Relay|Gesture rate=71, p1=51, p2=20
+2022/11/10 10:09:51.143337 Relay|Gesture rate=7, p1=7, p2=0
+2022/11/10 10:09:52.186079 Relay|Gesture rate=58, p1=58, p2=0
+2022/11/10 10:09:58.589291 Relay|Gesture rate=45, p1=45, p2=0
+2022/11/10 10:09:58.869489 Eng|Handling player:2 time:433197744310 rnd:19 action:logout, state=3
+2022/11/10 10:09:59.610526 Relay|Gesture rate=121, p1=60, p2=61
+2022/11/10 10:10:00.610690 Relay|Gesture rate=96, p1=46, p2=50
+2022/11/10 10:10:01.647961 Relay|Gesture rate=18, p1=0, p2=18
+2022/11/10 10:10:01.970998 Eng|Handling player:2 time:436303121285 rnd:19 action:logout, state=3
+2022/11/10 10:10:02.680928 Relay|Gesture rate=51, p1=0, p2=51
+2022/11/10 10:10:03.707159 Relay|Gesture rate=78, p1=29, p2=49
+2022/11/10 10:10:04.741202 Relay|Gesture rate=95, p1=50, p2=45
+2022/11/10 10:10:08.999877 Relay|Gesture rate=35, p1=35, p2=0
+2022/11/10 10:10:10.006764 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:10:11.009528 Relay|Gesture rate=76, p1=53, p2=23
+2022/11/10 10:10:11.107163 Eng|Handling player:2 time:445432602176 rnd:19 action:logout, state=3
+2022/11/10 10:10:12.041801 Relay|Gesture rate=54, p1=5, p2=49
+2022/11/10 10:10:13.076007 Relay|Gesture rate=51, p1=0, p2=51
+2022/11/10 10:10:16.192583 Relay|Gesture rate=27, p1=1, p2=26
+2022/11/10 10:10:17.205867 Relay|Gesture rate=53, p1=53, p2=0
+2022/11/10 10:10:41.239717 Relay|Gesture rate=30, p1=30, p2=0
+2022/11/10 10:10:42.246579 Relay|Gesture rate=63, p1=63, p2=0
+2022/11/10 10:10:43.262495 Relay|Gesture rate=50, p1=50, p2=0
+2022/11/10 10:10:44.296903 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:10:45.332388 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:10:45.427779 Eng|Handling player:1 time:479758894835 rnd:19 action:shield, state=0
+2022/11/10 10:10:45.427860 Eng|Player 1 done
+2022/11/10 10:10:45.427781 Viz|Pub to MQTT| {"player":1,"time":"479758894835","rnd":19,"action":"done","shootID":0}
+2022/11/10 10:10:45.428017 eval|Send {"p1":{"hp":30,"action":"shield","bullets":0,"grenades":0,"shield_time":0,"shie
+ld_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":10,"action":"logout","bullets":6,"grenades":0,"shield_time":0
+,"shield_health":0,"num_deaths":0,"num_shield":0}}
+2022/11/10 10:10:45.428224 eval|Received {"p1": {"hp": 30, "action": "logout", "bullets": 0, "grenades": 0, "shield_
+time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}, "p2": {"hp": 10, "action": "logout", "bullets": 6,
+"grenades": 0, "shield_time": 0, "shield_health": 0, "num_deaths": 0, "num_shield": 0}}
+2022/11/10 10:10:45.428646 Publish EvalResp, val=p1:{hp:30 action:logout} p2:{hp:10 action:logout bullets:6}
+2022/11/10 10:10:45.428678 Publish Round(RoundT), val=20
+2022/11/10 10:10:45.428820 Viz|Pub to MQTT| {"player":1,"time":"0","rnd":0,"action":"logout","shootID":0}
+2022/11/10 10:10:45.428901 P2 shot map[25:2022-11-10 10:03:42.125751355 +0800 +08 m=+56.467815883 26:2022-11-10 10:0
+4:57.266692106 +0800 +08 m=+131.608756634 29:2022-11-10 10:08:54.35425949 +0800 +08 m=+368.696324018 30:2022-11-10 1
+0:09:07.100010467 +0800 +08 m=+381.442074995] shoot map[25:2022-11-10 10:03:42.153104967 +0800 +08 m=+56.495169495 2
+6:2022-11-10 10:04:57.266584871 +0800 +08 m=+131.608649399 27:2022-11-10 10:06:21.045829763 +0800 +08 m=+215.3878942
+91 28:2022-11-10 10:06:44.76150898 +0800 +08 m=+239.103573508 29:2022-11-10 10:08:54.354350204 +0800 +08 m=+368.6964
+14732 30:2022-11-10 10:09:07.098222064 +0800 +08 m=+381.440286592]
+2022/11/10 10:10:45.429014 P1 shot map[19:2022-11-10 10:03:20.560489368 +0800 +08 m=+34.902553896 20:2022-11-10 10:0
+4:15.598864477 +0800 +08 m=+89.940929005 23:2022-11-10 10:06:31.541500223 +0800 +08 m=+225.883564751] shoot map[19:2
+022-11-10 10:03:20.560394714 +0800 +08 m=+34.902459242 20:2022-11-10 10:04:15.598865977 +0800 +08 m=+89.940930505 21
+:2022-11-10 10:04:43.375292303 +0800 +08 m=+117.717356831 22:2022-11-10 10:05:06.441287017 +0800 +08 m=+140.78335154
+5 23:2022-11-10 10:06:31.54142489 +0800 +08 m=+225.883489418 24:2022-11-10 10:07:06.725244313 +0800 +08 m=+261.06730
+8841]
+2022/11/10 10:10:46.161507 Viz|Pub to MQTT| {"player":2,"time":"0","rnd":0,"action":"logout","shootID":0}
+2022/11/10 10:10:46.332679 Relay|Gesture rate=97, p1=49, p2=48
+2022/11/10 10:10:46.342339 Viz|Pub to MQTT| {"p1":{"hp":30,"action":"logout","bullets":0,"grenades":0,"shield_time":
+0,"shield_health":0,"num_deaths":0,"num_shield":0},"p2":{"hp":10,"action":"logout","bullets":6,"grenades":0,"shield_
+time":0,"shield_health":0,"num_deaths":0,"num_shield":0}}
+2022/11/10 10:10:47.357094 Relay|Gesture rate=96, p1=50, p2=46
+2022/11/10 10:10:49.114892 Relay|Gesture rate=23, p1=23, p2=0
+2022/11/10 10:10:49.747362 Viz|Pub to MQTT| {"player":1,"time":"484078929784","rnd":20,"action":"done","shootID":0}
+2022/11/10 10:10:50.146582 Relay|Gesture rate=51, p1=51, p2=0
+2022/11/10 10:10:51.188245 Relay|Gesture rate=52, p1=52, p2=0
+2022/11/10 10:10:53.164723 Relay|Gesture rate=21, p1=21, p2=0
+2022/11/10 10:10:54.198071 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:10:54.710349 Viz|Pub to MQTT| {"player":2,"time":"489039367382","rnd":20,"action":"done","shootID":0}
+2022/11/10 10:10:55.217351 Relay|Gesture rate=70, p1=46, p2=24
+2022/11/10 10:10:56.223770 Relay|Gesture rate=102, p1=50, p2=52
+2022/11/10 10:10:57.257234 Relay|Gesture rate=52, p1=52, p2=0
+2022/11/10 10:10:58.293286 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:11:00.779291 Relay|Gesture rate=36, p1=35, p2=1
+2022/11/10 10:11:01.812916 Relay|Gesture rate=46, p1=0, p2=46
+2022/11/10 10:11:08.289761 Relay|Gesture rate=40, p1=1, p2=39
+2022/11/10 10:11:09.315216 Relay|Gesture rate=93, p1=64, p2=29
+2022/11/10 10:11:10.351678 Relay|Gesture rate=93, p1=48, p2=45
+2022/11/10 10:11:11.385609 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:11:12.386763 Relay|Gesture rate=42, p1=15, p2=27
+2022/11/10 10:11:13.422259 Relay|Gesture rate=52, p1=0, p2=52
+2022/11/10 10:11:16.708074 Relay|Gesture rate=31, p1=1, p2=30
+2022/11/10 10:11:17.732954 Relay|Gesture rate=60, p1=60, p2=0
+2022/11/10 10:11:18.869034 Relay|Gesture rate=16, p1=15, p2=1
+2022/11/10 10:11:19.902346 Relay|Gesture rate=52, p1=0, p2=52
+2022/11/10 10:11:20.939112 Relay|Gesture rate=51, p1=0, p2=51
+2022/11/10 10:11:33.821977 Relay|Gesture rate=19, p1=0, p2=19
+2022/11/10 10:11:34.833008 Relay|Gesture rate=57, p1=3, p2=54
+2022/11/10 10:11:35.836643 Relay|Gesture rate=89, p1=42, p2=47
+2022/11/10 10:11:37.589614 Relay|Gesture rate=51, p1=36, p2=15
+2022/11/10 10:11:38.622735 Relay|Gesture rate=49, p1=0, p2=49
+2022/11/10 10:11:39.841135 Relay|Gesture rate=30, p1=0, p2=30
+2022/11/10 10:11:40.874083 Relay|Gesture rate=53, p1=0, p2=53
+2022/11/10 10:11:41.907578 Relay|Gesture rate=45, p1=0, p2=45
+2022/11/10 10:11:42.942366 Relay|Gesture rate=53, p1=0, p2=53
+2022/11/10 10:11:45.153396 Relay|Gesture rate=11, p1=0, p2=11
+2022/11/10 10:11:46.182348 Relay|Gesture rate=48, p1=0, p2=48
+2022/11/10 10:11:57.622350 Relay|Gesture rate=40, p1=1, p2=39
+2022/11/10 10:12:01.108900 Relay|Gesture rate=14, p1=14, p2=0
+2022/11/10 10:12:11.511775 Relay|Gesture rate=55, p1=55, p2=0
+2022/11/10 10:12:12.543722 Relay|Gesture rate=56, p1=56, p2=0
+2022/11/10 10:12:13.577891 Relay|Gesture rate=43, p1=43, p2=0
+2022/11/10 10:12:14.613212 Relay|Gesture rate=49, p1=49, p2=0
+2022/11/10 10:12:15.641991 Relay|Closed shot
+2022/11/10 10:12:15.642111 Relay|Closed gesture
+2022/11/10 10:12:15.642066 Relay|Closed shoot
+^C
+~/cg4002 ----------------------------------------------- INT took 3h 2m 5s py pynq-venv with xilinx@pynq at 13:04:50
+> tmux capture-pane -pS -1000000 > 2p_unseen.log
+
