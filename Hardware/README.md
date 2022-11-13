@@ -20,12 +20,12 @@ I2C protocol is used for communication between Beetle and MPU6050. The driver li
 
 # Files description
 ## Player 1's Gear
-[player_1_gun_ble](player_1_gun_ble) folder contains Arduino code for the player 1's gun.
-[player_1_vest_ble](player_1_vest_ble) folder contains Arduino code for the player 1's vest
+[player_1_gun_ble](player_1_gun_ble) folder contains Arduino code for the player 1's gun.  
+[player_1_vest_ble](player_1_vest_ble) folder contains Arduino code for the player 1's vest  
 
 ## Player 2's Gear
-[player_2_gun_ble](player_2_gun_ble) folder contains Arduino code for the player 2's gun.
-[player_2_vest_ble](player_2_vest_ble) folder contains Arduino code for the player 2's vest
+[player_2_gun_ble](player_2_gun_ble) folder contains Arduino code for the player 2's gun.  
+[player_2_vest_ble](player_2_vest_ble) folder contains Arduino code for the player 2's vest.  
 
 ## Common Gear
-[gloves](gloves) folder contains Arduino code for both player 1 and player 2 gloves.
+[gloves](gloves) folder contains Arduino code for both player 1 and player 2 gloves.  
