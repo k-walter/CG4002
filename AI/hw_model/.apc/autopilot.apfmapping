@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<autopilotfilemapping:AutoPilotFileMapping xmlns:autopilotfilemapping="www.autoesl.com/autopilotfilemapping">
+  <source>
+    <originFiles name="CNN_model.cpp" path="\\Mac\Home\Documents\NUS_Y3S1\CG4002\hw_model\source\CNN_model.cpp"/>
+    <originFiles name="DenseLayer.cpp" path="\\Mac\Home\Documents\NUS_Y3S1\CG4002\hw_model\source\DenseLayer.cpp"/>
+    <originFiles name="DenseLayer.h" path="\\Mac\Home\Documents\NUS_Y3S1\CG4002\hw_model\source\DenseLayer.h"/>
+    <originFiles name="FIR_CNN.cpp" path="\\Mac\Home\Documents\NUS_Y3S1\CG4002\hw_model\source\FIR_CNN.cpp"/>
+    <originFiles name="FIR_CNN.h" path="\\Mac\Home\Documents\NUS_Y3S1\CG4002\hw_model\source\FIR_CNN.h"/>
+    <originFiles name="activation.h" path="\\Mac\Home\Documents\NUS_Y3S1\CG4002\hw_model\source\activation.h"/>
+    <originFiles name="set_weight_bias.cpp" path="\\Mac\Home\Documents\NUS_Y3S1\CG4002\hw_model\source\set_weight_bias.cpp"/>
+    <originFiles name="set_weight_bias.h" path="\\Mac\Home\Documents\NUS_Y3S1\CG4002\hw_model\source\set_weight_bias.h"/>
+  </source>
+  <testbench>
+    <originFiles name="source" path="\\MAC\Home\Documents\NUS_Y3S1\CG4002\hw_model\source"/>
+  </testbench>
+</autopilotfilemapping:AutoPilotFileMapping>

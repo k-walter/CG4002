@@ -1,0 +1,31 @@
+#ifndef FIR_CNN
+#define FIR_CNN
+
+typedef float CNN_RAW_IN_DTYPE;
+
+#define INPUT_DEPTH 6
+#define INPUT_LENGTH 75
+
+#define CNN_KERNEL_DEPTH 6
+#define CNN_KERNEL_LENGTH 15
+#define CNN_KERNEL_STRIDE 1
+#define CNN_KERNEL_COUNT 64
+
+#define CNN_OUTPUT_DEPTH CNN_KERNEL_COUNT
+#define CNN_OUTPUT_LENGTH ((INPUT_LENGTH - CNN_KERNEL_LENGTH) / CNN_KERNEL_STRIDE + 1)
+
+typedef float CNN_DTYPE;
+
+void compute_convolution(
+		CNN_DTYPE input_buffer[CNN_KERNEL_LENGTH][INPUT_DEPTH],
+		CNN_DTYPE CNN_weights[CNN_KERNEL_COUNT][CNN_KERNEL_LENGTH][CNN_KERNEL_DEPTH],
+		CNN_DTYPE CNN_bias[CNN_KERNEL_COUNT],
+		CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH],
+		CNN_DTYPE cnn_output_exit[CNN_OUTPUT_DEPTH]);
+
+void compute_global_average_pool(
+		CNN_DTYPE cnn_output_buffer[CNN_OUTPUT_LENGTH][CNN_OUTPUT_DEPTH],
+		CNN_DTYPE cnn_output_exit[CNN_OUTPUT_DEPTH],
+		CNN_DTYPE averaged[CNN_OUTPUT_DEPTH]);
+
+#endif

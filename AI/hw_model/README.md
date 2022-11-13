@@ -1,0 +1,1 @@
+This repository contains contains the C++ source code that is used for HLS to generate the hardware AI RTL file.
