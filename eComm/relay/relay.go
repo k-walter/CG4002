@@ -4,13 +4,14 @@ import (
 	"cg4002/eComm/common"
 	pb "cg4002/protos"
 	"fmt"
+	"log"
+	"net"
+	"time"
+
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/emptypb"
-	"log"
-	"net"
-	"time"
 )
 
 type Server struct {
@@ -46,10 +47,10 @@ func (s *Server) Run() {
 	g := grpc.NewServer()
 	pb.RegisterRelayServer(g, s)
 	log.Println("Relay|running")
+	defer log.Println("Relay|stopped")
 	if err := g.Serve(s.lis); err != nil {
 		log.Fatal(err)
 	}
-	log.Println("Relay|stopped")
 }
 
 func (s *Server) Close() {
