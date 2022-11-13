@@ -1,6 +1,7 @@
 package engine
 
 import (
+	cmn "cg4002/eComm/common"
 	"log"
 )
 
@@ -19,4 +20,29 @@ func matchShot(shootID uint32, s *PlayerImpl) bool {
 	log.Println("matched shootID =", shootID)
 
 	return true
+}
+
+func inflict(p *PlayerImpl, dmg uint32, a *cmn.Arg) {
+	if p.Hp+p.ShieldHealth <= dmg {
+		// Die & revive
+		p.NumDeaths += 1
+		p.Hp = a.HpMax
+		p.ShieldHealth = 0
+		p.Grenades = a.GrenadeMax
+		p.NumShield = a.ShieldMax
+		p.Bullets = a.BulletMax
+
+		// RULE reset shield cooldown
+		if p.shieldExpiry.After(cmn.GameTime) {
+			handleShieldAvail(p)
+		}
+
+	} else if p.ShieldHealth <= dmg {
+		// Dmg shield+health
+		p.Hp -= dmg - p.ShieldHealth
+		p.ShieldHealth = 0
+	} else {
+		// Dmg shield
+		p.ShieldHealth -= dmg
+	}
 }
