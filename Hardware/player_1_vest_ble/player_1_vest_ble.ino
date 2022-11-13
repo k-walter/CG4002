@@ -25,7 +25,7 @@ bool isShot = false;
 
 //////////////////////// BLE RELATED ////////////////////////
 #define PACKET_SIZE 16
-#define TIMEOUT 100
+#define TIMEOUT 300
 
 const char ackPacket[] = {'A', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', 'A'};
 
@@ -67,7 +67,7 @@ void setup() {
   }
 
   for (int i = 0; i < 3; i++) {
-    digitalWrite(LED_BAR[i], HIGH);
+    digitalWrite(LED_BAR[i], LOW);
   }
   
   //Initialises flags
@@ -77,6 +77,7 @@ void setup() {
   //shotID = 0;
 
   //Initial Handshaking
+  digitalWrite(LED_BAR[2], HIGH);
   while (!has_handshake) {
     if (Serial.available() && Serial.read() == 'H') {
       has_handshake = true;
@@ -89,6 +90,9 @@ void setup() {
   setupTimer1();
   startTimer1();
   sei();
+
+  // play led Squence to signal start
+  playLEDSequence();
   
   // start the IR receiver
   IrReceiver.begin (IR_RECEIVE_PIN, ENABLE_LED_FEEDBACK);
@@ -139,6 +143,13 @@ void loop() {
     playLEDSequence();
     isShot = false;
   }
+
+  if (has_ack) {
+    for (int i = 0; i < 3; i++) {
+      digitalWrite(LED_BAR[i], LOW);
+    }
+    digitalWrite(LED_BAR[0], HIGH);
+  }
 }
 
 
@@ -153,6 +164,7 @@ void playLEDSequence() {
     digitalWrite(LED_BAR[i], HIGH);
     delay(100);
   }  
+  delay(150);
 }
 
 
