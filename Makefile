@@ -1,11 +1,15 @@
 SHELL := /bin/bash
-default: grpc ecomm
+default: pynq ecomm
 
 ecomm:
 	# build and sync
 	cd eComm; \
 		env GOOS=linux GOARCH=arm64 go build -o ecomm; \
 		rsync -rauzvP ecomm xilinx:~/cg4002
+
+pynq:
+	rsync -rauzvP eComm/pynq/*.py xilinx:~/cg4002/pynq
+	rsync -rauzvP eComm/pynq/*.npy xilinx:~/cg4002/pynq
 
 grpc:
 	# Generate go
